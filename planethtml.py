@@ -84,11 +84,11 @@ class PlanetHtml:
 			else:
 				self.str += feed[0]
 			self.str += """
-<a href="%s"><img border="0" src="http://www.postgresql.org/layout/images/ico_rss.png" /></a></li>""" % (feed[2]) 
+<a href="%s"><img border="0" src="http://www.postgresql.org/layout/images/ico_rss.png" alt="rss" /></a></li>""" % (feed[2]) 
 		self.str += """   </ul>
     <div class="planetRightTitle">Feeds</div>
     <ul>
-     <li><a href="rss20.xml">Planet PostgreSQL</a>  <a href="rss20.xml"><img border="0" src="http://www.postgresql.org/layout/images/ico_rss.png"></a></li>
+     <li><a href="rss20.xml">Planet PostgreSQL</a>  <a href="rss20.xml"><img border="0" src="http://www.postgresql.org/layout/images/ico_rss.png" alt="rss"></a></li>
     </ul>
    </div>
 """
