@@ -130,3 +130,10 @@ a:visited                       { color:#004E66; text-decoration: underline; }
 a:active                        { color:#0085B0; text-decoration: underline; }
 a:hover                         { color:#000000; text-decoration: underline; }
 
+/* blog-specific hackery */
+div.serendipity_authorpic {
+   display: block;
+   float: right;
+   margin: 5px;
+}
+}
