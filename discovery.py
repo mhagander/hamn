@@ -33,11 +33,15 @@ class Aggregator:
 			# not ok!
 			print "Feed %s status %s" % (feedinfo[1], feed.status)
 			return
-		
-		if feed.feed.link:
-			print "Setting feed for %s to %s" % (feedinfo[2], feed.feed.link)
-			c = self.db.cursor()
-			c.execute("UPDATE planet.feeds SET blogurl='%s' WHERE id=%i" % (feed.feed.link, feedinfo[0]))
+
+		try:
+			if feed.feed.link:
+				print "Setting feed for %s to %s" % (feedinfo[2], feed.feed.link)
+				c = self.db.cursor()
+				c.execute("UPDATE planet.feeds SET blogurl='%s' WHERE id=%i" % (feed.feed.link, feedinfo[0]))
+		except:
+			print "Exception when processing feed for %s" % (feedinfo[2])
+			print feed
 
 if __name__=="__main__":
 	Aggregator(psycopg2.connect('dbname=planetpg host=/tmp/')).Update()
