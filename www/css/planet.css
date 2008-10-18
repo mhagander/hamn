@@ -1,0 +1,132 @@
+body {
+  font-family: verdana, sans-serif;
+  color: #000000;
+  background-color: #ffffff;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  font-size: 13px;
+}
+
+div#planetHeader {
+  width: 800px;
+  background: url(http://www.postgresql.org/layout/images/hdr_fill.png);
+  padding: 0 0 0 0;
+  height: 80px;
+  margin: 5px 0 2px 0;
+}
+
+div#planetMain {
+  width: 800px;
+  border: none;
+}
+
+div#planetLeft {
+  width: 590px;
+  float:left;
+  padding-top: 10px;
+}
+
+div.planetNewDate {
+  display: none;
+  color: #ec5800;
+  font-size: 20px;
+  text-align: left;
+  margin-left: 40px;
+}
+
+div.planetPost {
+  margin-bottom: 15px;
+  padding: 5px 5px 15px 5px;
+  text-align: left;
+  border-bottom: thin solid #dadada;
+}
+
+div.planetPostTitle {
+  font-size: 20px;
+  font-style: bold;
+  font-family: verdana, helvetica, arial, sans-serif;
+  padding-bottom: 15px;
+}
+
+div.planetPostTitle a {
+  text-decoration: none;
+}
+
+div.planetPostTitle a:hover {
+  text-decoration: underline;
+}
+
+div.ppa_top {
+   margin: 0 10px 0 -10px;
+   height: 27px;
+   background: url(/img/tleft.png) no-repeat top left;
+}
+
+div.ppa_bottom {
+   margin: 0 10px 0 -10px;
+   height: 27px;
+   background: url(/img/bleft.png) no-repeat top left;
+}
+
+div.planetPostAuthor {
+/*   color: #ec5800; */
+  width: 57px;
+  color: #909090;
+  text-align: center;
+  font-size: .8em;
+  margin: 0;
+  padding: 0 10px 0 10px;
+  float: left;
+  background-color: #dadada;
+  overflow: hidden;
+}  
+
+div.planetPostAuthor a.author {
+  font-style: italic;
+}
+
+div.planetPostAuthor span.date {
+  font-style: italic;
+}
+
+div.planetPostContent {
+  text-align: left;
+/*  float: right; 
+  width: 480px; */
+  margin-left: 85px;
+}
+
+div.planetPostContent img {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+max-height: 100px;
+max-width: 100px;
+}
+
+div#planetRight {
+   width: 190px;
+   margin-top: 10px;
+   float: right;
+   text-align: left;
+}
+
+div#planetRight div.planetRightTitle {
+   font-weight: bold;
+   font-size: 20px;
+}
+
+div#planetRight ul {
+   list-style: none;
+   padding-left: 5px;
+}
+
+div.fl { float: left; border: none; text-align: left; }
+div.fr { float: right; }
+div.cb { clear: both;  }
+
+a:link                          { color:#0085B0; text-decoration: underline; }
+a:visited                       { color:#004E66; text-decoration: underline; }
+a:active                        { color:#0085B0; text-decoration: underline; }
+a:hover                         { color:#000000; text-decoration: underline; }
+
