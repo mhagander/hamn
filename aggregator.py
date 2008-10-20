@@ -48,8 +48,9 @@ class Aggregator:
 			else:
 				guidisperma = True
 			self.StoreEntry(feedinfo[0], entry.id, entry.date, entry.link, guidisperma, entry.title, txt)
-		self.db.cursor().execute('UPDATE planet.feeds SET lastget=%(lg)s WHERE id=%(feed)s', {'lg':parsestart, 'feed': feedinfo[0]})
-		
+		self.db.cursor().execute("UPDATE planet.feeds SET lastget=COALESCE((SELECT max(dat) FROM planet.posts WHERE planet.posts.feed=planet.feeds.id),'2000-01-01') WHERE planet.feeds.id=%(feed)s", {'feed': feedinfo[0]})
+		#self.db.cursor().execute('UPDATE planet.feeds SET lastget=%(lg)s WHERE id=%(feed)s', {'lg':parsestart, 'feed': feedinfo[0]})
+
 	def StoreEntry(self, feedid, guid, date, link, guidisperma, title, txt):
 		c = self.db.cursor()
 		c.execute("SELECT id FROM planet.posts WHERE feed=%(feed)s AND guid=%(guid)s", {'feed':feedid, 'guid':guid})
