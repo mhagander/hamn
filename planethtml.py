@@ -9,6 +9,7 @@ Copyright (C) 2008 PostgreSQL Global Development Group
 """
 
 import datetime
+import urllib
 
 class PlanetHtml:
 	def __init__(self):
@@ -25,9 +26,9 @@ class PlanetHtml:
   <style type="text/css" media="screen" title="Normal Text">@import url("css/planet.css");</style>
  </head>
  <body>
-  <div align="center">
+  <div id="planetWrap">
   <div id="planetHeader">
-   <div class="fl"><img src="http://www.postgresql.org/layout/images/hdr_left.png" border="0" alt="PostgreSQL" /></div>
+   <div class="fl"><img src="http://www.postgresql.org/layout/images/hdr_left.png" alt="PostgreSQL" /></div>
    <div class="fr"><img width="210" height="80" src="http://www.postgresql.org/layout/images/hdr_right.png" alt="The world's most advanced open source database" /></div>
    <div class="cb"></div>
   </div>
@@ -64,14 +65,18 @@ class PlanetHtml:
      <div class="planetPostTitle"><a href="%s">%s</a></div>
      <div class="planetPostAuthor">
       <div class="ppa_top">&nbsp;</div>
-      <p>Posted by %s on <span class="date">%s at %s</span></p>
-      <div class="ppa_bottom">&nbsp;</div>
+       <p>Posted by %s on <span class="date">%s at %s</span></p>
+       <div class="ppa_bottom">&nbsp;</div>
       </div>
      <div class="planetPostContent">%s</div>
-     <div class="cb"></div>
+     <div class="cl"></div>
     </div>""" % (post[1], post[3], posterstr, post[2].date(), post[2].time(), txt)
 
 		self.str += """   </div>"""
+
+	def quoteurl(self, str):
+		p = str.split(":",2)
+		return p[0] + ":" + urllib.quote(p[1])
 
 	def BuildRight(self):
 		self.str += """   <div id="planetRight">
@@ -80,23 +85,23 @@ class PlanetHtml:
 		for feed in self.feeds:
 			self.str += "<li>"
 			if feed[1] != '':
-				self.str += """<a href="%s">%s</a>""" % (feed[1], feed[0])
+				self.str += """<a href="%s">%s</a>""" % (self.quoteurl(feed[1]), feed[0])
 			else:
 				self.str += feed[0]
 			self.str += """
-<a href="%s"><img border="0" src="http://www.postgresql.org/layout/images/ico_rss.png" alt="rss" /></a></li>""" % (feed[2]) 
-		self.str += """   </ul>
+<a href="%s"><img src="http://www.postgresql.org/layout/images/ico_rss.png" alt="rss" /></a></li>""" % (feed[2]) 
+		self.str += """
+    </ul>
     <div class="planetRightTitle">Feeds</div>
     <ul>
-     <li><a href="rss20.xml">Planet PostgreSQL</a>  <a href="rss20.xml"><img border="0" src="http://www.postgresql.org/layout/images/ico_rss.png" alt="rss"></a></li>
+     <li><a href="rss20.xml">Planet PostgreSQL</a>  <a href="rss20.xml"><img src="http://www.postgresql.org/layout/images/ico_rss.png" alt="rss" /></a></li>
     </ul>
    </div>
 """
 	def WriteFile(self,filename):
-		self.BuildPosts()
 		self.BuildRight()
+		self.BuildPosts()
 		self.str += """
-  </div>
   </div>
  </div>
 </body>
