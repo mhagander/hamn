@@ -15,8 +15,8 @@ class PlanetHtml:
 	def __init__(self):
 		self.items = []
 		self.feeds = []
-		self.str = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+		self.str = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
  <head>
   <title>Planet PostgreSQL</title>
@@ -46,7 +46,7 @@ class PlanetHtml:
 		lastdate = None
 		for post in self.items:
 			if post[6].endswith('[...]'):
-				txt = post[6][:len(post[6])-4] + """<a href="%s">continue reading...</a>]""" % (post[1])
+				txt = post[6][:len(post[6])-5] + """<p>[<a href="%s">continue reading...</a>]</p>""" % (post[1])
 			else:
 				txt = post[6]
 			

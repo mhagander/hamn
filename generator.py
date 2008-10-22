@@ -11,12 +11,22 @@ import psycopg2
 import PyRSS2Gen
 import datetime
 import sys
+import tidy
+import urllib
 from HTMLParser import HTMLParser
 from planethtml import PlanetHtml
 
 class Generator:
 	def __init__(self,db):
 		self.db = db
+		self.tidyopts = dict(   drop_proprietary_attributes=1,
+					alt_text='',
+					hide_comments=1,
+					output_xhtml=1,
+					show_body_only=1,
+					clean=1,
+					)
+
 
 	def Generate(self):
 		rss = PyRSS2Gen.RSS2(
@@ -48,6 +58,10 @@ class Generator:
 		html.WriteFile("www/index.html")
 
 	def TruncateAndCleanDescription(self, txt, title):
+		# First apply Tidy
+		txt = str(tidy.parseString(txt, **self.tidyopts))
+
+		# Then truncate as necessary
 		ht = HtmlTruncator(1024, title)
 		ht.feed(txt)
 		out = ht.GetText()
@@ -78,10 +92,19 @@ class HtmlTruncator(HTMLParser):
 		if self.skiprest: return
 		self.trunctxt += self.get_starttag_text()
 	
+	def quoteurl(self, str):
+		p = str.split(":",2)
+		return p[0] + ":" + urllib.quote(p[1])
+
+	def cleanhref(self, attrs):
+		if attrs[0] == 'href':
+			return 'href', self.quoteurl(attrs[1])
+		return attrs
+
 	def handle_starttag(self, tag, attrs):
 		if self.skiprest: return
 		self.trunctxt += "<" + tag
-		self.trunctxt += (' '.join([(' %s="%s"' % (k,v)) for k,v in attrs]))
+		self.trunctxt += (' '.join([(' %s="%s"' % (k,v)) for k,v in map(self.cleanhref, attrs)]))
 		self.trunctxt += ">"
 		self.tagstack.append(tag)
 
@@ -102,17 +125,15 @@ class HtmlTruncator(HTMLParser):
 		if self.len > self.maxlen:
 			# Passed max length, so truncate text as close to the limit as possible
 			self.trunctxt = self.trunctxt[0:len(self.trunctxt)-(self.len-self.maxlen)]
-			# Terminate at whitespace if possible, max 12 chars back
-			for i in range(len(self.trunctxt)-1, len(self.trunctxt)-12, -1):
-				if self.trunctxt[i].isspace():
-					self.trunctxt = self.trunctxt[0:i] + " [...]"
-					break
 
 			# Now append any tags that weren't properly closed
 			self.tagstack.reverse()
 			for tag in self.tagstack:
 				self.trunctxt += "</" + tag + ">"
 			self.skiprest = True
+
+			# Finally, append the continuation chars
+			self.trunctxt += "[...]"
 
 	def GetText(self):
 		if self.len > self.maxlen:
