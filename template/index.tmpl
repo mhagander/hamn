@@ -20,12 +20,12 @@
      <div class="planetRightTitle">Subscriptions</div>
      <ul>
 % for feed in feeds:
-      <li><%call expr="coalescelink(feed.name, feed.blogurl)"></%call><a href="${feed.feedurl}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a></li>
+      <li><a href="${feed.feedurl}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> <%call expr="coalescelink(feed.name, feed.blogurl)"></%call></li>
 % endfor
      </ul>
      <div class="planetRightTitle">Feeds</div>
      <ul>
-      <li><a href="rss20.xml">Planet PostgreSQL</a> <a href="rss20.xml"><img src="img/feed-icon-14x14.png" alt="rss" /></a></li>
+      <li><a href="rss20.xml"><img src="img/feed-icon-14x14.png" alt="rss" /></a> <a href="rss20.xml">Planet PostgreSQL</a></li>
      </ul>
     </div> <!-- planetRight -->
     <div id="planetLeft">
