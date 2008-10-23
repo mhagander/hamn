@@ -8,13 +8,15 @@ Copyright (C) 2008 PostgreSQL Global Development Group
 """
 
 import psycopg2
+import psycopg2.extensions
 import PyRSS2Gen
 import datetime
 import sys
 import tidy
 import urllib
+from mako.template import Template
 from HTMLParser import HTMLParser
-from planethtml import PlanetHtml
+from planethtml import *
 
 class Generator:
 	def __init__(self,db):
@@ -26,6 +28,8 @@ class Generator:
 					show_body_only=1,
 					clean=1,
 					)
+		self.items = []
+		self.feeds = []
 
 
 	def Generate(self):
@@ -35,34 +39,43 @@ class Generator:
 			description = 'Planet PostgreSQL',
 			generator = 'Planet PostgreSQL',
 			lastBuildDate = datetime.datetime.utcnow())
-		html = PlanetHtml()
 
+		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+		self.db.set_client_encoding('UTF8')
 		c = self.db.cursor()
 		c.execute("SET TIMEZONE=GMT")
 		c.execute("SELECT guid,link,dat,title,txt,name,blogurl,guidisperma FROM planet.posts INNER JOIN planet.feeds ON planet.feeds.id=planet.posts.feed ORDER BY dat DESC LIMIT 30")
 		for post in c.fetchall():
-			desc = self.TruncateAndCleanDescription(post[4], post[3])
+			desc = self.TruncateAndCleanDescription(post[4])
 			rss.items.append(PyRSS2Gen.RSSItem(
 				title=post[5] + ': ' + post[3],
 				link=post[1],
 				guid=PyRSS2Gen.Guid(post[0],post[7]),
 				pubDate=post[2],
 				description=desc))
-			html.AddItem(post[0], post[1], post[2], post[3], post[5], post[6], desc)
+			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc))
 
 		c.execute("SELECT name,blogurl,feedurl FROM planet.feeds ORDER BY name")
 		for feed in c.fetchall():
-			html.AddFeed(feed[0], feed[1], feed[2])
+			self.feeds.append(PlanetFeed(feed[0], feed[1], feed[2]))
 
 		rss.write_xml(open("www/rss20.xml","w"), encoding='utf-8')
-		html.WriteFile("www/index.html")
 
-	def TruncateAndCleanDescription(self, txt, title):
+		self.WriteFromTemplate('template/index.tmpl', 'www/index.html')
+
+	def WriteFromTemplate(self, templatename, outputname):
+		tmpl = Template(filename=templatename, output_encoding='utf-8', input_encoding='utf-8')
+		f = open(outputname, "w")
+		f.write(tmpl.render_unicode(feeds=self.feeds, posts=self.items).encode('utf-8'))
+		f.close()
+		
+
+	def TruncateAndCleanDescription(self, txt):
 		# First apply Tidy
-		txt = str(tidy.parseString(txt, **self.tidyopts))
+		txt = unicode(tidy.parseString(txt.encode('utf-8'), **self.tidyopts))
 
 		# Then truncate as necessary
-		ht = HtmlTruncator(1024, title)
+		ht = HtmlTruncator(1024)
 		ht.feed(txt)
 		out = ht.GetText()
 
@@ -73,7 +86,7 @@ class Generator:
 		return out
 
 class HtmlTruncator(HTMLParser):
-	def __init__(self, maxlen, title = None):
+	def __init__(self, maxlen):
 		HTMLParser.__init__(self)
 		self.len = 0
 		self.maxlen = maxlen
@@ -81,7 +94,6 @@ class HtmlTruncator(HTMLParser):
 		self.trunctxt = ''
 		self.tagstack = []
 		self.skiprest = False
-		self.title = title
 	
 	def feed(self, txt):
 		txt = txt.lstrip()

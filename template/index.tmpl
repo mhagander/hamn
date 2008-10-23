@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+ <head>
+  <title>Planet PostgreSQL</title>
+  <meta http-equiv="Content-Type" content="text/xhtml; charset=utf-8" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="alternate" type="application/rss+xml" title="Planet PostgreSQL" href="http://planet.postgresql.org/rss20.xml" />
+  <style type="text/css" media="screen" title="Normal Text">@import url("css/planet.css");</style>
+ </head>
+ <body>
+  <div id="planetWrap">
+   <div id="planetHeader">
+    <div class="fl"><img src="http://www.postgresql.org/layout/images/hdr_left.png" alt="PostgreSQL" /></div>
+    <div class="fr"><img width="210" height="80" src="http://www.postgresql.org/layout/images/hdr_right.png" alt="The world's most advanced open source database" /></div>
+    <div class="cb"></div>
+   </div> <!-- planetHeader -->
+   <div id="planetMain">
+    <div id="planetRight">
+     <div class="planetRightTitle">Subscriptions</div>
+     <ul>
+% for feed in feeds:
+      <li><%call expr="coalescelink(feed.name, feed.blogurl)"></%call><a href="${feed.feedurl}"><img src="http://www.postgresql.org/layout/images/ico_rss.png" alt="RSS"/></a></li>
+% endfor
+     </ul>
+     <div class="planetRightTitle">Feeds</div>
+     <ul>
+      <li><a href="rss20.xml">Planet PostgreSQL</a><a href="rss20.xml"><img src="http://www.postgresql.org/layout/images/ico_rss.png" alt="rss" /></a></li>
+     </ul>
+    </div> <!-- planetRight -->
+    <div id="planetLeft">
+% for post in posts:
+     <div class="planetPost">
+      <div class="planetPostTitle"><a href="${post.link}">${post.title}</a></div>
+      <div class="planetPostAuthor">
+       <div class="ppa_top">&nbsp;</div>
+       <p>Posted by <%call expr="coalescelink(post.author, post.blogurl)"></%call> on <span class="date">${post.datetime}</span></p>
+       <div class="ppa_bottom">&nbsp;</div>
+      </div>
+      <div class="planetPostContent">${post.contents}</div>
+      <div class="cl"></div>
+     </div>
+% endfor
+    </div> <!-- planetLeft -->
+   </div> <!-- planetMain -->
+  </div> <!-- planetWrap -->
+ </body>
+</html>
+<%def name="coalescelink(txt, link)">
+%if link=='':
+${txt}
+%else:
+<a href="${link}">${txt}</a>
+%endif
+</%def>
