@@ -12,6 +12,7 @@ import psycopg2
 import feedparser
 import datetime
 import socket
+import ConfigParser
 
 class Aggregator:
 	def __init__(self, db):
@@ -44,4 +45,6 @@ class Aggregator:
 			print feed
 
 if __name__=="__main__":
-	Aggregator(psycopg2.connect('dbname=planetpg host=/tmp/')).Update()
+	c = ConfigParser.ConfigParser()
+	c.read('planet.ini')
+	Aggregator(psycopg2.connect(c.get('planet','db'))).Update()

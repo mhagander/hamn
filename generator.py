@@ -10,6 +10,7 @@ Copyright (C) 2008 PostgreSQL Global Development Group
 import psycopg2
 import psycopg2.extensions
 import PyRSS2Gen
+import ConfigParser 
 import datetime
 import sys
 import tidy
@@ -154,4 +155,6 @@ class HtmlTruncator(HTMLParser):
 			return self.fulltxt
 
 if __name__=="__main__":
-	Generator(psycopg2.connect('dbname=planetpg host=/tmp')).Generate()
+	c = ConfigParser.ConfigParser()
+	c.read('planet.ini')
+	Generator(psycopg2.connect(c.get('planet','db'))).Generate()
