@@ -131,6 +131,10 @@ div#planetRight ul {
    padding-left: 15px;
 }
 
+div#planetRight p {
+   padding-left: 15px;
+}
+
 div.fl { float: left; border: none; text-align: left; }
 div.fr { float: right; }
 div.cb { clear: both;  }

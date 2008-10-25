@@ -12,10 +12,12 @@ import psycopg2.extensions
 import PyRSS2Gen
 import ConfigParser 
 import datetime
+import os.path
 import sys
 import tidy
 import urllib
 from mako.template import Template
+from mako.lookup import TemplateLookup
 from HTMLParser import HTMLParser
 from planethtml import *
 
@@ -32,6 +34,7 @@ class Generator:
 					)
 		self.items = []
 		self.feeds = []
+		self.staticfiles = ['policy']
 
 
 	def Generate(self):
@@ -63,13 +66,22 @@ class Generator:
 
 		rss.write_xml(open("www/rss20.xml","w"), encoding='utf-8')
 
-		self.WriteFromTemplate('template/index.tmpl', 'www/index.html')
+		self.WriteFromTemplate('index.tmpl', 'www/index.html')
+		for staticfile in self.staticfiles:
+			self.UpdateStaticFile(staticfile)
 
 	def WriteFromTemplate(self, templatename, outputname):
-		tmpl = Template(filename=templatename, output_encoding='utf-8', input_encoding='utf-8')
+		lookup = TemplateLookup(directories=['template'], output_encoding='utf-8', input_encoding='utf-8')
+		tmpl = lookup.get_template(templatename)
 		f = open(outputname, "w")
 		f.write(tmpl.render_unicode(feeds=self.feeds, posts=self.items).encode('utf-8'))
 		f.close()
+
+	def UpdateStaticFile(self, filename):
+		if not os.path.exists("www/%s.html" % (filename)) or \
+			os.path.getmtime("www/%s.html" % (filename)) < os.path.getmtime("template/%s.tmpl" % (filename)):
+			print "Updating %s.html" % (filename)
+			self.WriteFromTemplate("%s.tmpl" % (filename), "www/%s.html" % (filename))
 		
 
 	def TruncateAndCleanDescription(self, txt):
