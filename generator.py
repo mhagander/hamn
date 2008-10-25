@@ -28,6 +28,7 @@ class Generator:
 					output_xhtml=1,
 					show_body_only=1,
 					clean=1,
+					char_encoding='utf8',
 					)
 		self.items = []
 		self.feeds = []
@@ -73,7 +74,7 @@ class Generator:
 
 	def TruncateAndCleanDescription(self, txt):
 		# First apply Tidy
-		txt = unicode(tidy.parseString(txt.encode('utf-8'), **self.tidyopts))
+		txt = unicode(str(tidy.parseString(txt.encode('utf-8'), **self.tidyopts)),'utf8')
 
 		# Then truncate as necessary
 		ht = HtmlTruncator(1024)
