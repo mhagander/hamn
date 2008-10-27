@@ -23,7 +23,11 @@ class Aggregator:
 		feeds = self.db.cursor()
 		feeds.execute('SELECT id,feedurl,name,lastget FROM planet.feeds')
 		for feed in feeds.fetchall():
-			self.ParseFeed(feed)
+			try:
+				self.ParseFeed(feed)
+			except Exception, e:
+				print "Exception when parsing feed '%s': %s" % (feed[1], e)
+
 		self.db.commit()
 
 	def ParseFeed(self, feedinfo):
