@@ -1,0 +1,35 @@
+Welcome to Planet PostgreSQL!
+
+Author: Magnus Hagander <magnus@hagander.net>
+
+== INSTALLATION ==
+Needed:
+* Python
+* PostgreSQL
+* Psycopg2 - http://www.initd.org/pub/software/psycopg/PSYCOPG-2-0/
+* uTidy - http://utidylib.berlios.de/
+
+== CONFIGURATION ==
+
+* Copy planet.ini.sample to planet.ini and add your conninfo string
+* Create database using schema.sql
+* Adapt planet_run.sh to your needs
+* Run planet_run.sh (probably from cron?)
+
+== PLATFORM SPECIFIC NOTES ==
+
+* MAC OS X
+Patch to fix libtidy:
+
+--- uTidylib-0.2/tidy/lib.py    2008-10-24 08:46:32.000000000 -0700
++++ uTidylib-0.2.1/tidy/lib.py  2008-10-24 08:47:18.000000000 -0700
+@@ -23,7 +23,7 @@
+ thelib=None
+ os.environ['PATH'] = "%s%s%s" % (packagedir, os.pathsep, os.environ['PATH'])
+ for libname in ('cygtidy-0-99-0', 'libtidy', 'libtidy.so',
+-                'libtidy-0.99.so.0', 'tidylib'):
++                'libtidy-0.99.so.0', 'tidylib', 'libtidy.dynlib'):
+     try:
+         thelib = getattr(ctypes.cdll, libname)
+         break
+
