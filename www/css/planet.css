@@ -8,7 +8,7 @@ body {
 }
 
 div#planetHeader {
-  width: 90%;
+  width: 100%;
   background: url(http://www.postgresql.org/layout/images/hdr_fill.png);
   padding: 0 0 0 0;
   height: 80px;
@@ -17,6 +17,7 @@ div#planetHeader {
 
 div#planetWrap {
   margin-left: 20px;
+  margin-right: 20px;
 }
 
 div#planetWrap img {
@@ -25,7 +26,7 @@ div#planetWrap img {
 }
 
 div#planetMain {
-  width: 90%;
+  width: 100%;
 }
 
 div#planetLeft {
