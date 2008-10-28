@@ -11,10 +11,10 @@ import datetime
 import urllib
 
 # Yes, a global function (!)
+# Hmm. We only quote the ampersand here, since it's a HTML escape that
+# shows up in URLs quote often.
 def quoteurl(str):
-	if str=="": return ""
-	p = str.split(":",2)
-	return p[0] + ":" + urllib.quote(p[1])
+	return str.replace('&','&amp;')
 
 class PlanetPost:
 	def __init__(self, guid,link,dat,title,author,blogurl,txt):
