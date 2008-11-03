@@ -1,10 +1,11 @@
-<%inherit file="base.tmpl" />
+{% extends "base.tmpl" %}
+{% block content %}
     <div id="planetRight">
      <div class="planetRightTitle">Subscriptions</div>
      <ul>
-% for feed in feeds:
-      <li><a href="${feed.feedurl}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> <%call expr="coalescelink(feed.name, feed.blogurl)"></%call></li>
-% endfor
+{% for feed in feeds %}
+      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+{% endfor %}
      </ul>
      <div class="planetRightTitle">Feeds</div>
      <ul>
@@ -14,23 +15,17 @@
      <p><a href="policy.html">Policy</a> for being listed on Planet PostgreSQL</p>
     </div> <!-- planetRight -->
     <div id="planetLeft">
-% for post in posts:
+{% for post in posts %}
      <div class="planetPost">
-      <div class="planetPostTitle"><a href="${post.link}">${post.title}</a></div>
+      <div class="planetPostTitle"><a href="{{post.link}}">{{post.title}}</a></div>
       <div class="planetPostAuthor">
        <div class="ppa_top">&nbsp;</div>
-       <p>Posted by <%call expr="coalescelink(post.author, post.blogurl)"></%call> on <span class="date">${post.datetime}</span></p>
+       <p>Posted by {%if post.blogurl%}<a href="{{post.blogurl}}">{{post.author}}</a>{%else%}{{post.author}}{%endif%} on <span class="date">{{post.datetime}}</span></p>
        <div class="ppa_bottom">&nbsp;</div>
       </div>
-      <div class="planetPostContent">${post.contents}</div>
+      <div class="planetPostContent">{{post.contents|safe}}</div>
       <div class="cl"></div>
      </div>
-% endfor
+{% endfor %}
     </div> <!-- planetLeft -->
-<%def name="coalescelink(txt, link)">
-%if link=='':
-${txt}
-%else:
-<a href="${link}">${txt}</a>
-%endif
-</%def>
+{% endblock %}

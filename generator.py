@@ -16,8 +16,9 @@ import os.path
 import sys
 import tidy
 import urllib
-from mako.template import Template
-from mako.lookup import TemplateLookup
+from django.template import Context
+from django.template.loader import get_template
+from django.conf import settings
 from HTMLParser import HTMLParser
 from planethtml import *
 
@@ -36,6 +37,9 @@ class Generator:
 		self.feeds = []
 		self.staticfiles = ['policy']
 
+		settings.configure(
+			TEMPLATE_DIRS=('template',),
+		)
 
 	def Generate(self):
 		rss = PyRSS2Gen.RSS2(
@@ -71,10 +75,12 @@ class Generator:
 			self.UpdateStaticFile(staticfile)
 
 	def WriteFromTemplate(self, templatename, outputname):
-		lookup = TemplateLookup(directories=['template'], output_encoding='utf-8', input_encoding='utf-8')
-		tmpl = lookup.get_template(templatename)
+		tmpl = get_template(templatename)
 		f = open(outputname, "w")
-		f.write(tmpl.render_unicode(feeds=self.feeds, posts=self.items).encode('utf-8'))
+		f.write(tmpl.render(Context({
+			'feeds': self.feeds,
+			'posts': self.items,
+		})).encode('utf-8'))
 		f.close()
 
 	def UpdateStaticFile(self, filename):
