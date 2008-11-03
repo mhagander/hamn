@@ -48,6 +48,12 @@ class Generator:
 			description = 'Planet PostgreSQL',
 			generator = 'Planet PostgreSQL',
 			lastBuildDate = datetime.datetime.utcnow())
+		rssshort = PyRSS2Gen.RSS2(
+			title = 'Planet PostgreSQL (short)',
+			link = 'http://planet.postgresql.org',
+			description = 'Planet PostgreSQL (short)',
+			generator = 'Planet PostgreSQL',
+			lastBuildDate = datetime.datetime.utcnow())
 
 		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 		self.db.set_client_encoding('UTF8')
@@ -61,6 +67,12 @@ class Generator:
 				link=post[1],
 				guid=PyRSS2Gen.Guid(post[0],post[7]),
 				pubDate=post[2],
+				description=post[4]))
+			rssshort.items.append(PyRSS2Gen.RSSItem(
+				title=post[5] + ': ' + post[3],
+				link=post[1],
+				guid=PyRSS2Gen.Guid(post[0],post[7]),
+				pubDate=post[2],
 				description=desc))
 			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc))
 
@@ -69,6 +81,7 @@ class Generator:
 			self.feeds.append(PlanetFeed(feed[0], feed[1], feed[2]))
 
 		rss.write_xml(open("www/rss20.xml","w"), encoding='utf-8')
+		rssshort.write_xml(open("www/rss20_short.xml","w"), encoding='utf-8')
 
 		self.WriteFromTemplate('index.tmpl', 'www/index.html')
 		for staticfile in self.staticfiles:
