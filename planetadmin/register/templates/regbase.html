@@ -1,0 +1,11 @@
+{%extends "base.tmpl" %}
+{%block content%}
+{%if user.is_authenticated %}
+<div style="float:right;"><a href="/register/logout">Log out</a></div>
+{%endif%}
+<h1>Welcome to planet administration</h1>
+{%if user.is_superuser %}
+<h2>You are registered as an administrator. BE CAREFUL!</h2>
+{% endif %}
+{%block regcontent%}{%endblock%}
+{%endblock%}

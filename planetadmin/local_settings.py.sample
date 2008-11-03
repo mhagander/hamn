@@ -1,0 +1,6 @@
+# Add any settings here to override the default ones
+
+DATABASE_NAME = 'planetbeta'
+DATABASE_USER = 'planetadmin'
+
+DEBUG = True

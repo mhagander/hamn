@@ -1,0 +1,32 @@
+{% extends "regbase.html" %}
+{%block regcontent %}
+<p>
+This is a list of the blogposts we have found in your feed.
+Please note that if you delete a post, it will be automatically
+re-added if it's still in your RSS. This can be used to force
+planet to fetch a new version of the post. If you want the post
+not to show up, it should stay in planet and be hidden.
+</p>
+<p>
+Return to <a href="../..">blog list</a>.
+</p>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr>
+ <th>Date</th>
+ <th>Title</th>
+ <th>Status</th>
+ <th>Operation</th>
+</tr>
+{% for post in posts %}
+<tr valign="top">
+ <td>{{post.dat}}</td>
+ <td>{{post.title}}</td>
+ <td>{{post.visible}}</td>
+ <td>
+  {%if post.hidden%}<a href="unhide/{{post.id}}/">Unhide</a>{%else%}<a href="hide/{{post.id}}/">Hide</a>{%endif%}<br/>
+  <a href="delete/{{post.id}}/">Delete</a>
+ </td>
+</tr>
+{%endfor%}
+</table>
+{% endblock %}

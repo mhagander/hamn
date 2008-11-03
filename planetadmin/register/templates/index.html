@@ -1,0 +1,72 @@
+{% extends "regbase.html" %}
+{%block regcontent%}
+{%if blogs %}
+<p>
+We have the following blog(s) registered:
+</p>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr>
+ <th>Userid</th>
+ <th>Name</th>
+ <th>Approved</th>
+ <th>Feed URL/Blog URL</th>
+ <th>Operations</th>
+{% if user.is_superuser %}
+ <th>Admin</th>
+{%endif%}
+</tr>
+{%for blog in blogs%}
+<tr valign="top" {%if user.is_superuser and not blog.approved%}bgcolor="red"{%endif%}>
+ <td>{{blog.userid}}</td>
+ <td>{%if user.is_superuser %}
+<form method="post" action="modify/{{blog.id}}/">
+<input type="text" name="blogname" value="{{blog.name}}">
+<input type="submit" value="Save">
+</form>
+{%else%}
+{{blog.name}}
+{%endif%}
+ </td>
+ <td>{{blog.approved_}}</td>
+ <td>{{blog.feedurl}}<br/>{{blog.blogurl}}</td>
+ <td>{% if blog.approved  or user.is_superuser%}
+  <a href="blogposts/{{blog.id}}/">Posts</a><br/>
+  <a href="delete/{{blog.id}}/">Delete</a><br/>
+{%else%}
+Not approved yet.
+{%endif%}</td>
+{%if user.is_superuser %}
+<td>
+{%if blog.approved %}<a href="unapprove/{{blog.id}}/">Unapprove</a>{%else%}<a href="approve/{{blog.id}}/">Approve</a>{%endif%}<br/>
+{%if blog.userid %}<a href="detach/{{blog.id}}/">Detach from user</a><br/>{%endif%}
+  <a href="discover/{{blog.id}}/">Discover metadata</a><br/>
+{%if blog.blogurl %}<a href="undiscover/{{blog.id}}/">Undiscover metadata</a><br/>{%endif%}
+</td>
+{%endif%}
+</tr>
+{%endfor%}
+</table>
+{%else%}
+<p>We have no blogs registered to your account. To register
+a new blog or associate an existing one, please enter the
+URL to your RSS feed (PostgreSQL category only!) below.
+Note that if you attach an existing blog, it will temporarily
+be removed from planet while a moderator verifies that the
+attachment is correct.
+</p>
+<form method="post" action="new/">
+<input type="text" name="feedurl"><br/>
+<input type="submit" value="New blog">
+</form>
+{%endif%}
+{%if user.is_superuser %}
+<p>As superuser, you can add a new blog. Note that normally the user requests the addition and you
+then update it! Leave the userid blank to let the user attach it later, but that's a really ugly
+way to do it :-P</p>
+<form method="post" action="new/">
+<input type="text" name="feedurl"><br/>
+<input type="text" name="userid"><br/>
+<input type="submit" value="New blog">
+</form>
+{%endif%}
+{%endblock%}
