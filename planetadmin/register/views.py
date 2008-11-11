@@ -208,7 +208,7 @@ def __setposthide(request, blogid, postid, status):
 		return HttpResponse(e)
 	post.hidden = status
 	post.save()
-	AuditEntry(request.user.username, 'Set post %i on blog %i visibility to %s' % (postid, blogid, status)).save()
+	AuditEntry(request.user.username, 'Set post %s on blog %s visibility to %s' % (postid, blogid, status)).save()
 	return HttpResponseRedirect('../..')
 
 @login_required
@@ -230,5 +230,5 @@ def blogpost_delete(request, blogid, postid):
 		return HttpResponse(e)
 
 	post.delete()
-	AuditEntry(request.user.username, 'Deleted post %i from blog %i' % (postid, blogid)).save()
+	AuditEntry(request.user.username, 'Deleted post %s from blog %s' % (postid, blogid)).save()
 	return HttpResponseRedirect('../..')
