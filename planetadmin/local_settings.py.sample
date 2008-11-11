@@ -4,3 +4,6 @@ DATABASE_NAME = 'planetbeta'
 DATABASE_USER = 'planetadmin'
 
 DEBUG = True
+
+NOTIFYADDR='some@where.com'
+

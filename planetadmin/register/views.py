@@ -2,6 +2,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.conf import settings
+from django.core.mail import send_mail
 
 from planetadmin.register.models import *
 
@@ -43,8 +45,17 @@ def new(request):
 			return HttpResponse("Specified blog is already registered to account '%s'" % (blog.userid))
 		# Found a match, so we're going to register this blog
 		# For safety reasons, we're going to require approval before we do it as well :-P
+		if not settings.NOTIFYADDR:
+			raise Exception('Notify address not specified, cannot complete')
 		blog.userid = request.user.username
 		blog.approved = False
+		send_mail('New blog assignment', """
+The user '%s' has requested the attachment of the blog at
+%s
+to his/her account. 
+
+So, head off to the admin interface and approve or reject this!
+""" % (blog.userid, blog.feedurl), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 		blog.save()
 		return HttpResponse('The blog has been attached to your account. For security reasons, it has been disapproved until a moderator has approved this connection.')
 
@@ -66,6 +77,9 @@ def new(request):
 	if not status == 200:
 		return HttpResponse('Attempt to download blog feed returned status %s.' % (status))
 	
+	if not settings.NOTIFYADDR:
+		raise Exception('Notify address not specified, cannot complete')
+
 	blog = Blog()
 	blog.name = request.user.first_name
 	if request.user.is_superuser:
@@ -75,6 +89,14 @@ def new(request):
 	blog.feedurl = feedurl
 	blog.blogurl = lnk
 	blog.approved = False
+	send_mail('New blog assignment', """
+The user '%s' has requested the blog at
+%s
+is added to Planet PostgreSQL!
+
+So, head off to the admin interface and approve or reject this!
+""" % (blog.userid, blog.feedurl), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
+
 	blog.save()
 	return HttpResponseRedirect('..')
 
