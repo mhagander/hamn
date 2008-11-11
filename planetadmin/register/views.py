@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db import transaction
 
 from planetadmin.register.models import *
 
@@ -27,6 +28,7 @@ def root(request):
 	}, context_instance=RequestContext(request))
 
 @login_required
+@transaction.commit_on_success
 def new(request):
 	if not request.method== 'POST':
 		raise Exception('must be POST')
@@ -49,6 +51,7 @@ def new(request):
 			raise Exception('Notify address not specified, cannot complete')
 		blog.userid = request.user.username
 		blog.approved = False
+		AuditEntry(request.user.username, 'Requested blog attachment for %s' % blog.feedurl).save()
 		send_mail('New blog assignment', """
 The user '%s' has requested the attachment of the blog at
 %s
@@ -98,39 +101,49 @@ So, head off to the admin interface and approve or reject this!
 """ % (blog.userid, blog.feedurl), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 
 	blog.save()
+	AuditEntry(request.user.username, 'Added blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('..')
 
 @login_required
+@transaction.commit_on_success
 def delete(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	if not request.user.is_superuser:
 		if not blog.userid == request.user.username:
 			return HttpResponse("You can only delete your own feeds! Don't try to hack!")
 	blog.delete()
+	AuditEntry(request.user.username, 'Deleted blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)
+@transaction.commit_on_success
 def modify(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	blog.name = request.POST['blogname']
 	blog.save()
+	AuditEntry(request.user.username, 'Changed name of blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
 	
 @user_passes_test(issuperuser)
+@transaction.commit_on_success
 def approve(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	blog.approved = True
 	blog.save()
+	AuditEntry(request.user.username, 'Approved blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)
+@transaction.commit_on_success
 def unapprove(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	blog.approved = False
 	blog.save()
+	AuditEntry(request.user.username, 'Unapproved blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)
+@transaction.commit_on_success
 def discover(request, id):
 	blog = get_object_or_404(Blog, id=id)
 
@@ -141,26 +154,33 @@ def discover(request, id):
 		if not blog.blogurl == feed.feed.link:
 			blog.blogurl = feed.feed.link
 			blog.save()
+			AuditEntry(request.user.username, 'Discovered metadata for %s' % blog.feedurl).save()
 	except Exception, e:
 		return HttpResponse('Failed to discover metadata: %s' % (e))
 
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)
+@transaction.commit_on_success
 def undiscover(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	blog.blogurl = ''
 	blog.save()
+	AuditEntry(request.user.username, 'Undiscovered blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)
+@transaction.commit_on_success
 def detach(request, id):
 	blog = get_object_or_404(Blog, id=id)
+	olduid = blog.userid
 	blog.userid = None
 	blog.save()
+	AuditEntry(request.user.username, 'Detached blog %s from %s' % (blog.feedurl, olduid)).save()
 	return HttpResponseRedirect('../..')
 
 @login_required
+@transaction.commit_on_success
 def blogposts(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	if not blog.userid == request.user.username and not request.user.is_superuser:
@@ -188,17 +208,21 @@ def __setposthide(request, blogid, postid, status):
 		return HttpResponse(e)
 	post.hidden = status
 	post.save()
+	AuditEntry(request.user.username, 'Set post %i on blog %i visibility to %s' % (postid, blogid, status)).save()
 	return HttpResponseRedirect('../..')
 
 @login_required
+@transaction.commit_on_success
 def blogpost_hide(request, blogid, postid):
 	return __setposthide(request, blogid, postid, True)
 
 @login_required
+@transaction.commit_on_success
 def blogpost_unhide(request, blogid, postid):
 	return __setposthide(request, blogid, postid, False)
 
 @login_required
+@transaction.commit_on_success
 def blogpost_delete(request, blogid, postid):
 	try:
 		post = __getvalidblogpost(request, blogid, postid)
@@ -206,4 +230,5 @@ def blogpost_delete(request, blogid, postid):
 		return HttpResponse(e)
 
 	post.delete()
+	AuditEntry(request.user.username, 'Deleted post %i from blog %i' % (postid, blogid)).save()
 	return HttpResponseRedirect('../..')

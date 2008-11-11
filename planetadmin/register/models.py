@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 class Blog(models.Model):
 	feedurl = models.CharField(max_length=255, blank=False)
@@ -48,3 +49,22 @@ class Post(models.Model):
 
 	class Admin:
 		pass
+
+
+class AuditEntry(models.Model):
+	logtime = models.DateTimeField(default=datetime.now)
+	user = models.CharField(max_length=32)
+	logtxt = models.CharField(max_length=1024)
+
+	def __init__(self, userid, txt):
+		super(AuditEntry, self).__init__()
+		self.user = userid
+		self.logtxt = txt
+
+	def __str__(self):
+		return "%s (%s): %s" % (self.logtime, self.user, self.logtxt)
+
+
+	class Meta:
+		db_table = 'planetadmin\".\"auditlog'
+		ordering = ['logtime']
