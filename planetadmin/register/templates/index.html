@@ -1,6 +1,12 @@
 {% extends "regbase.html" %}
 {%block regcontent%}
 {%if blogs %}
+<script language="javascript">
+ function confirmDelete(name,id) {
+  if (confirm('Are you sure you want to delete the blog \'' + name + '\'?'))
+    location.href='delete/' + id + '/';
+ }
+</script>
 <p>
 We have the following blog(s) registered:
 </p>
@@ -31,7 +37,7 @@ We have the following blog(s) registered:
  <td>{{blog.feedurl}}<br/>{{blog.blogurl}}</td>
  <td>{% if blog.approved  or user.is_superuser%}
   <a href="blogposts/{{blog.id}}/">Posts</a><br/>
-  <a href="delete/{{blog.id}}/">Delete</a><br/>
+  <a href="#" onClick="confirmDelete('{{blog.feedurl}}',{{blog.id}})">Delete</a><br/>
 {%else%}
 Not approved yet.
 {%endif%}</td>

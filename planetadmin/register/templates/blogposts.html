@@ -1,5 +1,11 @@
 {% extends "regbase.html" %}
 {%block regcontent %}
+<script language="javascript">
+ function confirmDelete(name,id) {
+  if (confirm('Are you sure you want to delete the blog post at \'' + name + '\'?'))
+    location.href='delete/' + id + '/';
+ }
+</script>
 <p>
 This is a list of the blogposts we have found in your feed.
 Please note that if you delete a post, it will be automatically
@@ -24,7 +30,7 @@ Return to <a href="../..">blog list</a>.
  <td>{{post.visible}}</td>
  <td>
   {%if post.hidden%}<a href="unhide/{{post.id}}/">Unhide</a>{%else%}<a href="hide/{{post.id}}/">Hide</a>{%endif%}<br/>
-  <a href="delete/{{post.id}}/">Delete</a>
+  <a href="#" onClick="confirmDelete('{{post.title}}',{{post.id}})">Delete</a>
  </td>
 </tr>
 {%endfor%}
