@@ -2,3 +2,9 @@
 
 [planet]
 db=dbname=planetbeta host=/tmp/ user=planetbeta
+
+[list]
+server=localhost
+listname=planet-subscribers
+password=yeahthatssecret
+
