@@ -59,7 +59,7 @@ class Generator:
 		self.db.set_client_encoding('UTF8')
 		c = self.db.cursor()
 		c.execute("SET TIMEZONE=GMT")
-		c.execute("SELECT guid,link,dat,title,txt,name,blogurl,guidisperma FROM planet.posts INNER JOIN planet.feeds ON planet.feeds.id=planet.posts.feed ORDER BY dat DESC LIMIT 30")
+		c.execute("SELECT guid,link,dat,title,txt,name,blogurl,guidisperma FROM planet.posts INNER JOIN planet.feeds ON planet.feeds.id=planet.posts.feed WHERE planet.feeds.approved AND NOT planet.posts.hidden ORDER BY dat DESC LIMIT 30")
 		for post in c.fetchall():
 			desc = self.TruncateAndCleanDescription(post[4])
 			rss.items.append(PyRSS2Gen.RSSItem(
