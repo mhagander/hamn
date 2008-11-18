@@ -9,6 +9,7 @@ class AuthBackend:
 			cur = conn.cursor()
 			cur.execute('SELECT * FROM community_login(%s,%s)', (username, password))
 			row  = cur.fetchall()[0]
+			conn.commit()
 		finally:
 			conn.close()
 
