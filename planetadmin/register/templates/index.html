@@ -23,7 +23,7 @@ We have the following blog(s) registered:
 </tr>
 {%for blog in blogs%}
 <tr valign="top" {%if user.is_superuser and not blog.approved%}bgcolor="red"{%endif%}>
- <td>{{blog.userid}}</td>
+ <td{%if not blog.userid %} bgcolor="red"{%endif%}>{{blog.userid}}</td>
  <td>{%if user.is_superuser %}
 <form method="post" action="modify/{{blog.id}}/">
 <input type="text" name="blogname" value="{{blog.name}}">
