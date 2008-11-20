@@ -75,7 +75,6 @@ So, head off to the admin interface and approve or reject this!
 		if l < 1:
 			return HttpResponse('Blog feed contains no entries.')
 	except Exception, e:
-		print e
 		return HttpResponse('Failed to download blog feed')
 	if not status == 200:
 		return HttpResponse('Attempt to download blog feed returned status %s.' % (status))
@@ -94,11 +93,11 @@ So, head off to the admin interface and approve or reject this!
 	blog.approved = False
 	send_mail('New blog assignment', """
 The user '%s' has requested the blog at
-%s
+%s (name %s)
 is added to Planet PostgreSQL!
 
 So, head off to the admin interface and approve or reject this!
-""" % (blog.userid, blog.feedurl), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
+""" % (blog.userid, blog.feedurl, blog.name), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 
 	blog.save()
 	AuditEntry(request.user.username, 'Added blog %s' % blog.feedurl).save()
