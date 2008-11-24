@@ -7,15 +7,13 @@ from django.core.mail import send_mail
 from django.db import transaction
 
 from planetadmin.register.models import *
+from planetadmin.exceptions import pExcept
 
 import socket
 import feedparser
 
 def issuperuser(user):
 	return user.is_authenticated() and user.is_superuser
-
-class pExcept(Exception):
-	pass
 
 @login_required
 def root(request):
@@ -31,10 +29,10 @@ def root(request):
 @transaction.commit_on_success
 def new(request):
 	if not request.method== 'POST':
-		raise Exception('must be POST')
+		raise pExcept('must be POST')
 	feedurl = request.POST['feedurl']
 	if not len(feedurl) > 1:
-		raise Exception('must include blog url!')
+		raise pExcept('must include blog url!')
 
 	# See if we can find the blog already
 	try:
@@ -48,7 +46,7 @@ def new(request):
 		# Found a match, so we're going to register this blog
 		# For safety reasons, we're going to require approval before we do it as well :-P
 		if not settings.NOTIFYADDR:
-			raise Exception('Notify address not specified, cannot complete')
+			raise pExcept('Notify address not specified, cannot complete')
 		blog.userid = request.user.username
 		blog.approved = False
 		AuditEntry(request.user.username, 'Requested blog attachment for %s' % blog.feedurl).save()
@@ -80,7 +78,7 @@ So, head off to the admin interface and approve or reject this!
 		return HttpResponse('Attempt to download blog feed returned status %s.' % (status))
 	
 	if not settings.NOTIFYADDR:
-		raise Exception('Notify address not specified, cannot complete')
+		raise pExcept('Notify address not specified, cannot complete')
 
 	blog = Blog()
 	blog.name = request.user.first_name
@@ -201,10 +199,7 @@ def __getvalidblogpost(request, blogid, postid):
 	return post
 
 def __setposthide(request, blogid, postid, status):
-	try:
-		post = __getvalidblogpost(request, blogid, postid)
-	except pExcept, e:
-		return HttpResponse(e)
+	post = __getvalidblogpost(request, blogid, postid)
 	post.hidden = status
 	post.save()
 	AuditEntry(request.user.username, 'Set post %s on blog %s visibility to %s' % (postid, blogid, status)).save()
@@ -223,10 +218,7 @@ def blogpost_unhide(request, blogid, postid):
 @login_required
 @transaction.commit_on_success
 def blogpost_delete(request, blogid, postid):
-	try:
-		post = __getvalidblogpost(request, blogid, postid)
-	except pExcept, e:
-		return HttpResponse(e)
+	post = __getvalidblogpost(request, blogid, postid)
 
 	post.delete()
 	AuditEntry(request.user.username, 'Deleted post %s from blog %s' % (postid, blogid)).save()
