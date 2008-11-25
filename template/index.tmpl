@@ -21,12 +21,17 @@
     <div id="planetLeft">
 {% for post in posts %}
      <div class="planetPost">
-      <div class="planetPostTitle"><a href="{{post.link}}">{{post.title}}</a></div>
-      <div class="planetPostAuthor">
-       <div class="ppa_top">&nbsp;</div>
-       <p>Posted by {%if post.blogurl%}<a href="{{post.blogurl}}">{{post.author}}</a>{%else%}{{post.author}}{%endif%} on <span class="date">{{post.datetime}}</span></p>
-       <div class="ppa_bottom">&nbsp;</div>
-      </div>
+      <div class="planetPostHeaderWrap">
+       <div class="planetPostHeader">
+        <div class="planetPostTitle"><a href="{{post.link}}">{{post.title}}</a></div>
+        <b class="blf"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+        <div class="planetPostAuthor">
+         Posted by {%if post.blogurl%}<a href="{{post.blogurl}}">{{post.author}}</a>{%else%}{{post.author}}{%endif%} on <span class="date">{{post.datetime}}</span>
+        </div><!-- end planetPostHeader -->
+        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+        <div class="cl"></div>
+       </div><!-- end planetPostHeaderWrap -->
+      </div><!-- end planet Post -->
       <div class="planetPostContent">{{post.contents|safe}}</div>
       <div class="cl"></div>
      </div>
