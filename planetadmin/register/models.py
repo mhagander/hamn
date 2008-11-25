@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from datetime import datetime
 
 class Blog(models.Model):
@@ -17,6 +18,11 @@ class Blog(models.Model):
 		if self.approved:
 			return "Yes"
 		return "No"
+
+	@property
+	def email(self):
+		u = User.objects.get(username=self.userid)
+		return u.email
 
 	class Meta:
 		db_table = 'planet\".\"feeds'
