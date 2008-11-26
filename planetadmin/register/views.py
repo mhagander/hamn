@@ -108,6 +108,10 @@ def delete(request, id):
 	if not request.user.is_superuser:
 		if not blog.userid == request.user.username:
 			return HttpResponse("You can only delete your own feeds! Don't try to hack!")
+	send_mail('Blog deleted', """
+The user '%s' has deleted the blog at
+%s (name %s)
+""" % (blog.userid, blog.feedurl, blog.name), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 	blog.delete()
 	AuditEntry(request.user.username, 'Deleted blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
