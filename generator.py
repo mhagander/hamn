@@ -76,7 +76,7 @@ class Generator:
 				description=desc))
 			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc))
 
-		c.execute("SELECT name,blogurl,feedurl FROM planet.feeds ORDER BY name")
+		c.execute("SELECT name,blogurl,feedurl FROM planet.feeds WHERE approved ORDER BY name")
 		for feed in c.fetchall():
 			self.feeds.append(PlanetFeed(feed[0], feed[1], feed[2]))
 
