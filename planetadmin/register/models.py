@@ -14,12 +14,6 @@ class Blog(models.Model):
 		return self.feedurl
 
 	@property
-	def approved_(self):
-		if self.approved:
-			return "Yes"
-		return "No"
-
-	@property
 	def email(self):
 		u = User.objects.get(username=self.userid)
 		return u.email
@@ -43,11 +37,6 @@ class Post(models.Model):
 
 	def __str__(self):
 		return self.title
-
-	def visible(self):
-		if self.hidden:
-			return "Hidden"
-		return "Visible"
 
 	class Meta:
 		db_table = 'planet\".\"posts'

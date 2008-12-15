@@ -27,7 +27,7 @@ Return to <a href="../..">blog list</a>.
 <tr valign="top">
  <td>{{post.dat}}</td>
  <td>{{post.title}}</td>
- <td>{{post.visible}}</td>
+ <td>{{post.hidden|yesno:"Hidden,Visible"}}</td>
  <td>
   {%if post.hidden%}<a href="unhide/{{post.id}}/">Unhide</a>{%else%}<a href="hide/{{post.id}}/">Hide</a>{%endif%}<br/>
   <a href="#" onClick="confirmDelete('{{post.title}}',{{post.id}})">Delete</a>
