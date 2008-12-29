@@ -30,7 +30,10 @@ CREATE TABLE feeds (
     feedurl text,
     name text,
     blogurl text DEFAULT ''::text NOT NULL,
-    lastget timestamp with time zone DEFAULT '2000-01-01 00:00:00+00'::timestamp with time zone NOT NULL
+    lastget timestamp with time zone DEFAULT '2000-01-01 00:00:00+00'::timestamp with time zone NOT NULL,
+    userid text,
+    approved boolean DEFAULT false NOT NULL,
+    authorfilter text DEFAULT ''::text NOT NULL
 );
 
 
@@ -46,7 +49,8 @@ CREATE TABLE posts (
     txt text,
     dat timestamp with time zone NOT NULL,
     title text NOT NULL,
-    guidisperma boolean NOT NULL
+    guidisperma boolean NOT NULL,
+    hidden boolean DEFAULT false NOT NULL
 );
 
 
@@ -117,17 +121,17 @@ ALTER TABLE ONLY posts
 
 
 --
--- Name: feeds_feedurl; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+-- Name: feeds_feddurl; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX feeds_feedurl ON feeds USING btree (feedurl);
+CREATE INDEX feeds_feddurl ON feeds USING btree (feedurl);
 
 
 --
--- Name: feeds_nam; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+-- Name: feeds_name; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX feeds_nam ON feeds USING btree (name);
+CREATE INDEX feeds_name ON feeds USING btree (name);
 
 
 --
