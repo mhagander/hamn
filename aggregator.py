@@ -17,11 +17,12 @@ class Aggregator:
 	def __init__(self, db):
 		self.db = db
 		self.stored = 0
+		self.authorfilter = None
 		socket.setdefaulttimeout(20)
 		
 	def Update(self):
 		feeds = self.db.cursor()
-		feeds.execute('SELECT id,feedurl,name,lastget FROM planet.feeds')
+		feeds.execute('SELECT id,feedurl,name,lastget,authorfilter FROM planet.feeds')
 		for feed in feeds.fetchall():
 			try:
 				self.ParseFeed(feed)
@@ -43,7 +44,12 @@ class Aggregator:
 			print "Feed %s status %s" % (feedinfo[1], feed.status)
 			return
 
+		self.authorfilter = feedinfo[4]
+
 		for entry in feed.entries:
+			if not self.matches_filter(entry):
+				continue
+				
 			# Grab the entry. At least atom feeds from wordpress store what we
 			# want in entry.content[0].value and *also* has a summary that's
 			# much shorter. Other blog software store what we want in the summary
@@ -65,6 +71,20 @@ class Aggregator:
 			self.StoreEntry(feedinfo[0], entry.id, entry.date, entry.link, guidisperma, entry.title, txt)
 		self.db.cursor().execute("UPDATE planet.feeds SET lastget=COALESCE((SELECT max(dat) FROM planet.posts WHERE planet.posts.feed=planet.feeds.id),'2000-01-01') WHERE planet.feeds.id=%(feed)s", {'feed': feedinfo[0]})
 		#self.db.cursor().execute('UPDATE planet.feeds SET lastget=%(lg)s WHERE id=%(feed)s', {'lg':parsestart, 'feed': feedinfo[0]})
+
+	def matches_filter(self, entry):
+		# For now, we only match against self.authorfilter. In the future,
+		# there may be more filters.
+		if self.authorfilter:
+			# Match against an author filter
+			
+			if entry.has_key('author_detail'):
+				return entry.author_detail.name == self.authorfilter
+			else: 
+				return False
+
+		# No filters, always return true
+		return True
 
 	def StoreEntry(self, feedid, guid, date, link, guidisperma, title, txt):
 		c = self.db.cursor()

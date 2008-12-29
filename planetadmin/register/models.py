@@ -9,6 +9,7 @@ class Blog(models.Model):
 	lastget = models.DateTimeField(default='2000-01-01')
 	userid = models.CharField(max_length=255, blank=False)
 	approved = models.BooleanField()
+	authorfilter = models.CharField(max_length=255,default='')
 
 	def __str__(self):
 		return self.feedurl
@@ -58,7 +59,6 @@ class AuditEntry(models.Model):
 
 	def __str__(self):
 		return "%s (%s): %s" % (self.logtime, self.user, self.logtxt)
-
 
 	class Meta:
 		db_table = 'planetadmin\".\"auditlog'

@@ -34,7 +34,18 @@ We have the following blog(s) registered:
 {%endif%}
  </td>
  <td>{{blog.approved|yesno:"Yes,No"}}</td>
- <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a></td>
+ <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a><br/>
+OPTIONAL Author Filter:
+{%if user.is_superuser %}
+ <form method="post" action="modifyauthorfilter/{{blog.id}}/">
+ <input type="text" name="authorfilter" value="{{blog.authorfilter}}">
+ <input type="submit" value="Save Author Filter">
+ </form>
+{%else%}
+{{blog.authorfilter}}
+{%endif%}
+ </td>
+
  <td>{% if blog.approved  or user.is_superuser%}
   <a href="blogposts/{{blog.id}}/">Posts</a><br/>
 {%else%}
@@ -63,6 +74,7 @@ attachment is correct.
 </p>
 <form method="post" action="new/">
 <input type="text" name="feedurl"><br/>
+Filter by author (OPTIONAL): <input type="text" name="authorfilter"><br/>
 <input type="submit" value="New blog">
 </form>
 {%endif%}
@@ -73,6 +85,7 @@ way to do it :-P</p>
 <form method="post" action="new/">
 Blog url: <input type="text" name="feedurl"><br/>
 Userid (blank for yourself): <input type="text" name="userid"><br/>
+Filter by author (OPTIONAL): <input type="text" name="authorfilter"><br/>
 <input type="submit" value="New blog">
 </form>
 {%endif%}
