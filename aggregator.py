@@ -28,8 +28,8 @@ class Aggregator:
 				self.ParseFeed(feed)
 			except Exception, e:
 				print "Exception when parsing feed '%s': %s" % (feed[1], e)
-
-		self.db.commit()
+				self.db.rollback()
+			self.db.commit()
 
 	def ParseFeed(self, feedinfo):
 		#print "Loading feed %s" % (feedinfo[1])
