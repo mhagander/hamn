@@ -212,6 +212,18 @@ def detach(request, id):
 	return HttpResponseRedirect('../..')
 
 @login_required
+def logview(request, id):
+	blog = get_object_or_404(Blog, id=id)
+	if not blog.userid == request.user.username and not request.user.is_superuser:
+		return HttpResponse("You can't view the log for somebody elses blog!")
+		
+	logentries = AggregatorLog.objects.filter(feed=blog)[:50]
+	
+	return render_to_response('aggregatorlog.html', {
+		'entries': logentries,
+	}, context_instance=RequestContext(request))
+
+@login_required
 @transaction.commit_on_success
 def blogposts(request, id):
 	blog = get_object_or_404(Blog, id=id)

@@ -46,7 +46,8 @@ OPTIONAL Author Filter:
 {%endif%}
  </td>
 
- <td>{% if blog.approved  or user.is_superuser%}
+ <td><a href="log/{{blog.id}}/">View log</a><br/>
+{% if blog.approved  or user.is_superuser%}
   <a href="blogposts/{{blog.id}}/">Posts</a><br/>
 {%else%}
 Not approved yet.<br/>

@@ -22,6 +22,19 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: aggregatorlog; Type: TABLE; Schema: planet; Owner: -; Tablespace: 
+--
+
+CREATE TABLE aggregatorlog (
+    id integer NOT NULL,
+    ts timestamp with time zone DEFAULT now() NOT NULL,
+    feed integer NOT NULL,
+    success boolean NOT NULL,
+    info text NOT NULL
+);
+
+
+--
 -- Name: feeds; Type: TABLE; Schema: planet; Owner: -; Tablespace: 
 --
 
@@ -52,6 +65,24 @@ CREATE TABLE posts (
     guidisperma boolean NOT NULL,
     hidden boolean DEFAULT false NOT NULL
 );
+
+
+--
+-- Name: aggregatorlog_id_seq; Type: SEQUENCE; Schema: planet; Owner: -
+--
+
+CREATE SEQUENCE aggregatorlog_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: aggregatorlog_id_seq; Type: SEQUENCE OWNED BY; Schema: planet; Owner: -
+--
+
+ALTER SEQUENCE aggregatorlog_id_seq OWNED BY aggregatorlog.id;
 
 
 --
@@ -94,6 +125,13 @@ ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
 -- Name: id; Type: DEFAULT; Schema: planet; Owner: -
 --
 
+ALTER TABLE aggregatorlog ALTER COLUMN id SET DEFAULT nextval('aggregatorlog_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: planet; Owner: -
+--
+
 ALTER TABLE feeds ALTER COLUMN id SET DEFAULT nextval('feeds_id_seq'::regclass);
 
 
@@ -102,6 +140,14 @@ ALTER TABLE feeds ALTER COLUMN id SET DEFAULT nextval('feeds_id_seq'::regclass);
 --
 
 ALTER TABLE posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
+
+
+--
+-- Name: aggregatorlog_pkey; Type: CONSTRAINT; Schema: planet; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY aggregatorlog
+    ADD CONSTRAINT aggregatorlog_pkey PRIMARY KEY (id);
 
 
 --
@@ -121,6 +167,20 @@ ALTER TABLE ONLY posts
 
 
 --
+-- Name: aggregatorlog_feed_idx; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+--
+
+CREATE INDEX aggregatorlog_feed_idx ON aggregatorlog USING btree (feed);
+
+
+--
+-- Name: aggregatorlog_feed_ts_idx; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+--
+
+CREATE INDEX aggregatorlog_feed_ts_idx ON aggregatorlog USING btree (feed, ts);
+
+
+--
 -- Name: feeds_feddurl; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
 --
 
@@ -132,6 +192,14 @@ CREATE INDEX feeds_feddurl ON feeds USING btree (feedurl);
 --
 
 CREATE INDEX feeds_name ON feeds USING btree (name);
+
+
+--
+-- Name: aggregatorlog_feed_fkey; Type: FK CONSTRAINT; Schema: planet; Owner: -
+--
+
+ALTER TABLE ONLY aggregatorlog
+    ADD CONSTRAINT aggregatorlog_feed_fkey FOREIGN KEY (feed) REFERENCES feeds(id);
 
 
 --

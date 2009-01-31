@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# vim: ai ts=4 sts=4 sw=4
 """PostgreSQL Planet Aggregator
 
 This file contains the functions to suck down RSS/Atom feeds 
 (using feedparser) and store the results in a PostgreSQL database.
 
-Copyright (C) 2008 PostgreSQL Global Development Group
+Copyright (C) 2008-2009 PostgreSQL Global Development Group
 """
 
 import psycopg2
@@ -25,24 +26,33 @@ class Aggregator:
 		feeds.execute('SELECT id,feedurl,name,lastget,authorfilter FROM planet.feeds')
 		for feed in feeds.fetchall():
 			try:
-				self.ParseFeed(feed)
+				n = self.ParseFeed(feed)
+				if n > 0:
+					c = self.db.cursor()
+					c.execute("INSERT INTO planet.aggregatorlog (feed, success, info) VALUES (%(feed)s, 't', %(info)s)", {
+						'feed': feed[0],
+						'info': 'Fetched %s posts.' % n,
+					})
 			except Exception, e:
 				print "Exception when parsing feed '%s': %s" % (feed[1], e)
 				self.db.rollback()
+				c = self.db.cursor()
+				c.execute("INSERT INTO planet.aggregatorlog (feed, success, info) VALUES (%(feed)s, 'f', %(info)s)", {
+					'feed': feed[0],
+					'info': 'Error: "%s"' % e,
+				})
 			self.db.commit()
 
 	def ParseFeed(self, feedinfo):
-		#print "Loading feed %s" % (feedinfo[1])
+		numadded = 0
 		parsestart = datetime.datetime.now()
 		feed = feedparser.parse(feedinfo[1], modified=feedinfo[3].timetuple())
 
 		if feed.status == 304:
 			# not changed
-			return
+			return 0
 		if feed.status != 200:
-			# not ok!
-			print "Feed %s status %s" % (feedinfo[1], feed.status)
-			return
+			raise Exception('Feed returned status %s' % feed.status)
 
 		self.authorfilter = feedinfo[4]
 
@@ -61,6 +71,7 @@ class Aggregator:
 			if txt == '' and entry.has_key('summary'):
 				txt = entry.summary
 			if txt == '':
+				# Not a critical error, we just ignore empty posts
 				print "Failed to get text for entry at %s" % entry.link
 				continue
 
@@ -68,9 +79,11 @@ class Aggregator:
 				guidisperma = entry.guidislink
 			else:
 				guidisperma = True
-			self.StoreEntry(feedinfo[0], entry.id, entry.date, entry.link, guidisperma, entry.title, txt)
-		self.db.cursor().execute("UPDATE planet.feeds SET lastget=COALESCE((SELECT max(dat) FROM planet.posts WHERE planet.posts.feed=planet.feeds.id),'2000-01-01') WHERE planet.feeds.id=%(feed)s", {'feed': feedinfo[0]})
-		#self.db.cursor().execute('UPDATE planet.feeds SET lastget=%(lg)s WHERE id=%(feed)s', {'lg':parsestart, 'feed': feedinfo[0]})
+			if self.StoreEntry(feedinfo[0], entry.id, entry.date, entry.link, guidisperma, entry.title, txt) > 0:
+				numadded += 1
+		if numadded > 0:
+			self.db.cursor().execute("UPDATE planet.feeds SET lastget=COALESCE((SELECT max(dat) FROM planet.posts WHERE planet.posts.feed=planet.feeds.id),'2000-01-01') WHERE planet.feeds.id=%(feed)s", {'feed': feedinfo[0]})
+		return numadded
 
 	def matches_filter(self, entry):
 		# For now, we only match against self.authorfilter. In the future,
@@ -90,7 +103,7 @@ class Aggregator:
 		c = self.db.cursor()
 		c.execute("SELECT id FROM planet.posts WHERE feed=%(feed)s AND guid=%(guid)s", {'feed':feedid, 'guid':guid})
 		if c.rowcount > 0:
-			return
+			return 0
 		print "Store entry %s from feed %s" % (guid, feedid)
 		c.execute("INSERT INTO planet.posts (feed,guid,link,guidisperma,dat,title,txt) VALUES (%(feed)s,%(guid)s,%(link)s,%(guidisperma)s,%(date)s,%(title)s,%(txt)s)",
 			{'feed': feedid,
@@ -101,6 +114,7 @@ class Aggregator:
 			 'title': title,
 			 'txt': txt})
 		self.stored += 1
+		return 1
 
 if __name__=="__main__":
 	c = ConfigParser.ConfigParser()

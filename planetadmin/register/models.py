@@ -63,3 +63,14 @@ class AuditEntry(models.Model):
 	class Meta:
 		db_table = 'planetadmin\".\"auditlog'
 		ordering = ['logtime']
+		
+class AggregatorLog(models.Model):
+	ts = models.DateTimeField()
+	feed = models.ForeignKey(Blog, db_column='feed')
+	success = models.BooleanField()
+	info = models.TextField()
+	
+	class Meta:
+		db_table = 'planet\".\"aggregatorlog'
+		ordering = ['-ts']
+

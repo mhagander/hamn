@@ -8,3 +8,6 @@ server=localhost
 listname=planet-subscribers
 password=yeahthatssecret
 
+[notify]
+mailfrom=webmaster@postgresql.org
+mailto=planet@postgresql.org

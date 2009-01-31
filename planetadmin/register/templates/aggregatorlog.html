@@ -1,0 +1,26 @@
+{% extends "regbase.html" %}
+{%block regcontent %}
+<p>
+This is a log of the most recent activity on your feed. Note that only
+operations that had some effect are logged. The normal fetches that are
+made every 15 minutes don't log anything unless they found new posts or
+some error occurred.
+</p>
+<p>
+Return to <a href="../..">blog list</a>.
+</p>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr>
+ <th>Time</th>
+ <th>Status</th>
+ <th>Info</th>
+</tr>
+{% for entry in entries %}
+<tr valign="top">
+ <td>{{entry.ts}}</td>
+ <td>{{entry.success|yesno:"Success,Failure"}}</td>
+ <td>{{entry.info}}</td>
+</tr>
+{%endfor%}
+</table>
+{% endblock %}

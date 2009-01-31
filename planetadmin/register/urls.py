@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     (r'^modify/(\d+)/$', 'planetadmin.register.views.modify'),
     (r'^modifyauthorfilter/(\d+)/$', 'planetadmin.register.views.modifyauthorfilter'),
 
+    (r'^log/(\d+)/$','planetadmin.register.views.logview'),
     (r'^blogposts/(\d+)/$', 'planetadmin.register.views.blogposts'),
     (r'^blogposts/(\d+)/hide/(\d+)/$', 'planetadmin.register.views.blogpost_hide'),
     (r'^blogposts/(\d+)/unhide/(\d+)/$', 'planetadmin.register.views.blogpost_unhide'),
