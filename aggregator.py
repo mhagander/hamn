@@ -47,6 +47,13 @@ class Aggregator:
 		numadded = 0
 		parsestart = datetime.datetime.now()
 		feed = feedparser.parse(feedinfo[1], modified=feedinfo[3].timetuple())
+		
+		if not hasattr(feed, 'status'):
+			# bozo_excpetion can seemingly be set when there is no error as well,
+			# so make sure we only check if we didn't get a status.
+			if hasattr(feed,'bozo_exception'):
+				raise Exception('Feed load error %s' % feed.bozo_exception)
+			raise Exception('Feed load error with not exception!')
 
 		if feed.status == 304:
 			# not changed
