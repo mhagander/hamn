@@ -23,10 +23,15 @@ class LogChecker(object):
 		
 	def Check(self):
 		c = self.db.cursor()
-		c.execute("""SELECT ts,name,info FROM planet.aggregatorlog
+		c.execute("""
+	SELECT name,info,count(*) as num FROM planet.aggregatorlog
 	INNER JOIN planet.feeds ON feed=feeds.id 
 	WHERE success='f' AND ts > CURRENT_TIMESTAMP-'24 hours'::interval
-	ORDER BY name,ts""")
+	GROUP BY name,info
+	HAVING count(*) > %s
+	ORDER BY num,name;
+""" % self.cfg.get('notify','minerrors'))
+
 		if c.rowcount > 0:
 			s = """
 One or more of the blogs fetched in the past 24 hours caused an error
@@ -34,11 +39,8 @@ as listed below.
 
 """
 			last = ""
-			for r in c:
-				if not last == r[1]:
-					last = r[1]
-					s += "\n"
-				s += "%s  %-20s  %s\n" % (r[0].strftime("%Y%m%d %H:%M:%S"), r[1][:20], r[2])
+			for name,info,num in c:
+				s += "(%3s times) %s (%s)\n" % (num, name, info)
 			
 			s += "\n\n"
 
