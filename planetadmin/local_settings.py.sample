@@ -7,3 +7,4 @@ DEBUG = True
 
 NOTIFYADDR='some@where.com'
 
+AUTH_CONNECTION_STRING='put community login connection string here'
