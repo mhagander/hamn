@@ -35,7 +35,7 @@ class Generator:
 					)
 		self.items = []
 		self.feeds = []
-		self.staticfiles = ['policy']
+		self.staticfiles = ['policy','add']
 
 		settings.configure(
 			TEMPLATE_DIRS=('template',),
