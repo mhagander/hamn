@@ -1,7 +1,7 @@
 # Add any settings here to override the default ones
 
 DATABASE_NAME = 'planetbeta'
-DATABASE_USER = 'planetadmin'
+DATABASE_USER = 'admin'
 
 DEBUG = True
 

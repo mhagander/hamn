@@ -61,7 +61,7 @@ class AuditEntry(models.Model):
 		return "%s (%s): %s" % (self.logtime, self.user, self.logtxt)
 
 	class Meta:
-		db_table = 'planetadmin\".\"auditlog'
+		db_table = 'admin\".\"auditlog'
 		ordering = ['logtime']
 		
 class AggregatorLog(models.Model):

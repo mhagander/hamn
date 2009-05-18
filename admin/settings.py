@@ -1,4 +1,4 @@
-# Django settings for planetadmin project.
+# Django settings for admin project.
 
 DEBUG = False
 
@@ -10,7 +10,7 @@ MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'postgresql_psycopg2'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'planetbeta'             # Or path to database file if using sqlite3.
-DATABASE_USER = 'planetadmin'             # Not used with sqlite3.
+DATABASE_USER = 'admin'             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = '/tmp'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
@@ -38,10 +38,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'planetadmin.exceptions.PlanetExceptionMiddleware',
+    'admin.exceptions.PlanetExceptionMiddleware',
 )
 
-ROOT_URLCONF = 'planetadmin.urls'
+ROOT_URLCONF = 'admin.urls'
 
 TEMPLATE_DIRS = (
     # Refer back to main planet templates
@@ -53,11 +53,11 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'planetadmin.register',
+    'admin.register',
 )
 
 AUTHENTICATION_BACKENDS = (
-    'planetadmin.auth.AuthBackend',
+    'admin.auth.AuthBackend',
 )
 
 LOGIN_URL = '/register/login'
