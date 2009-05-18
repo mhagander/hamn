@@ -2,6 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
+class Team(models.Model):
+	teamurl = models.CharField(max_length=255, blank=False)
+	name = models.CharField(max_length=255, blank=False)
+
+	def __str__(self):
+		return self.teamurl
+
+	class Meta:
+		db_table = 'planet\".\"teams'
+
+	class Admin:
+		pass
+
 class Blog(models.Model):
 	feedurl = models.CharField(max_length=255, blank=False)
 	name = models.CharField(max_length=255, blank=False)
@@ -10,6 +23,7 @@ class Blog(models.Model):
 	userid = models.CharField(max_length=255, blank=False)
 	approved = models.BooleanField()
 	authorfilter = models.CharField(max_length=255,default='')
+	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
 
 	def __str__(self):
 		return self.feedurl
