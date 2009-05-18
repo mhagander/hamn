@@ -38,10 +38,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'admin.exceptions.PlanetExceptionMiddleware',
+    'hamnadmin.exceptions.PlanetExceptionMiddleware',
 )
 
-ROOT_URLCONF = 'admin.urls'
+ROOT_URLCONF = 'hamnadmin.urls'
 
 TEMPLATE_DIRS = (
     # Refer back to main planet templates
@@ -53,11 +53,11 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'admin.register',
+    'hamnadmin.register',
 )
 
 AUTHENTICATION_BACKENDS = (
-    'admin.auth.AuthBackend',
+    'hamnadmin.auth.AuthBackend',
 )
 
 LOGIN_URL = '/register/login'

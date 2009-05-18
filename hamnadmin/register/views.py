@@ -6,8 +6,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db import transaction
 
-from admin.register.models import *
-from admin.exceptions import pExcept
+from hamnadmin.register.models import *
+from hamnadmin.exceptions import pExcept
 
 import socket
 import feedparser

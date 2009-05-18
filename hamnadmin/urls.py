@@ -6,5 +6,5 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     # Example:
-    (r'^register/', include('admin.register.urls')),
+    (r'^register/', include('hamnadmin.register.urls')),
 )
