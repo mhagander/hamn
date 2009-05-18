@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'hamnadmin.register',
+    'django.contrib.admin',
 )
 
 AUTHENTICATION_BACKENDS = (

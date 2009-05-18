@@ -2,8 +2,8 @@ from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout, logout_then_login
 
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# hamnadmin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^$', 'hamnadmin.register.views.root'),
@@ -25,4 +25,6 @@ urlpatterns = patterns('',
 
     (r'^login/$', login),
     (r'^logout/$', logout_then_login, {'login_url':'/'}),
+
+    (r'^admin/(.*)', admin.site.root),
 )
