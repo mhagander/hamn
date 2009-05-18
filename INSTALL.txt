@@ -12,7 +12,12 @@ Needed:
 == CONFIGURATION ==
 
 * Copy planet.ini.sample to planet.ini and add your conninfo string
-* Create database using schema.sql
+
+Setting up the admin portion: (which uses Django)
+* create schemas planet and admin: 
+	psql -U postgres planetbeta -c 'create schema planet; create schema admin;'
+* cd admin; ./manage.py syncdb (this loads the rest of the schema as well)
+
 * Adapt planet_run.sh to your needs
 * Run planet_run.sh (probably from cron?)
 
