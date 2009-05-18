@@ -59,7 +59,7 @@ class Generator:
 		self.db.set_client_encoding('UTF8')
 		c = self.db.cursor()
 		c.execute("SET TIMEZONE=GMT")
-		c.execute("SELECT guid,link,dat,title,txt,name,blogurl,guidisperma FROM planet.posts INNER JOIN planet.feeds ON planet.feeds.id=planet.posts.feed WHERE planet.feeds.approved AND NOT planet.posts.hidden ORDER BY dat DESC LIMIT 30")
+		c.execute("SELECT guid,link,dat,title,txt,planet.feeds.name,blogurl,guidisperma,planet.teams.name,planet.teams.teamurl FROM planet.posts INNER JOIN planet.feeds ON planet.feeds.id=planet.posts.feed LEFT JOIN planet.teams ON planet.feeds.team = planet.teams.id WHERE planet.feeds.approved AND NOT planet.posts.hidden ORDER BY dat DESC LIMIT 30")
 		for post in c.fetchall():
 			desc = self.TruncateAndCleanDescription(post[4])
 			rss.items.append(PyRSS2Gen.RSSItem(
@@ -74,7 +74,7 @@ class Generator:
 				guid=PyRSS2Gen.Guid(post[0],post[7]),
 				pubDate=post[2],
 				description=desc))
-			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc))
+			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc, post[8], post[9]))
 
 		c.execute("SELECT name,blogurl,feedurl FROM planet.feeds WHERE approved ORDER BY name")
 		for feed in c.fetchall():

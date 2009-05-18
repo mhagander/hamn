@@ -19,10 +19,10 @@ class Blog(models.Model):
 	feedurl = models.CharField(max_length=255, blank=False)
 	name = models.CharField(max_length=255, blank=False)
 	blogurl = models.CharField(max_length=255, blank=False)
-	lastget = models.DateTimeField(default='2000-01-01')
+	lastget = models.DateTimeField(default=datetime(2000,1,1))
 	userid = models.CharField(max_length=255, blank=False)
 	approved = models.BooleanField()
-	authorfilter = models.CharField(max_length=255,default='')
+	authorfilter = models.CharField(max_length=255,default='',blank=True)
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
 
 	def __str__(self):

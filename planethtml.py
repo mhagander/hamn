@@ -17,7 +17,7 @@ def quoteurl(str):
 	return str.replace('&','&amp;')
 
 class PlanetPost:
-	def __init__(self, guid,link,dat,title,author,blogurl,txt):
+	def __init__(self, guid,link,dat,title,author,blogurl,txt,teamname,teamurl):
 		self.guid = guid
 		self.link = link
 		self.dat = dat
@@ -25,11 +25,17 @@ class PlanetPost:
 		self.author = author
 		self._blogurl = blogurl
 		self.txt = txt
+		self.teamname = teamname
+		self._teamurl = teamurl
 
 
 	def _get_blogurl(self):
 		return quoteurl(self._blogurl)
 	blogurl = property(_get_blogurl)
+
+	def _get_teamurl(self):
+		return quoteurl(self._teamurl)
+	teamurl = property(_get_teamurl)
 
 	def _get_datetime(self):
 		return self.dat.strftime("%Y-%m-%d at %H:%M:%S")
