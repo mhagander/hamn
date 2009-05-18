@@ -44,7 +44,7 @@ class Post(models.Model):
 	feed = models.ForeignKey(Blog,db_column='feed')
 	guid = models.CharField(max_length=255)
 	link = models.CharField(max_length=255)
-	txt = models.CharField(max_length=255)
+	txt = models.TextField()
 	dat = models.DateTimeField()
 	title = models.CharField(max_length=255)
 	guidisperma = models.BooleanField()
@@ -79,7 +79,7 @@ class AuditEntry(models.Model):
 		ordering = ['logtime']
 		
 class AggregatorLog(models.Model):
-	ts = models.DateTimeField()
+	ts = models.DateTimeField(auto_now=True)
 	feed = models.ForeignKey(Blog, db_column='feed')
 	success = models.BooleanField()
 	info = models.TextField()
