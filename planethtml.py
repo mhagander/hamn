@@ -52,10 +52,11 @@ class PlanetPost:
 	title = property(_get_title)
 
 class PlanetFeed:
-	def __init__(self,name,blogurl,feedurl):
-		self.name = name
-		self._blogurl = blogurl
-		self._feedurl = feedurl
+	def __init__(self,row):
+		self.name = row[0]
+		self._blogurl = row[1]
+		self._feedurl = row[2]
+		self.numposts = row[3]
 
 	def _get_blogurl(self):
 		return quoteurl(self._blogurl)

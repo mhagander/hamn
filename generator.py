@@ -34,7 +34,8 @@ class Generator:
 					char_encoding='utf8',
 					)
 		self.items = []
-		self.feeds = []
+		self.topposters = []
+		self.topteams = []
 		self.staticfiles = ['policy','add']
 
 		settings.configure(
@@ -76,9 +77,15 @@ class Generator:
 				description=desc))
 			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc, post[8], post[9]))
 
-		c.execute("SELECT name,blogurl,feedurl FROM planet.feeds WHERE approved ORDER BY name")
+		c.execute("SELECT name,blogurl,feedurl,count(*) FROM planet.feeds INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed WHERE age(dat) < '1 month' AND team IS NULL GROUP BY name,blogurl,feedurl")
 		for feed in c.fetchall():
-			self.feeds.append(PlanetFeed(feed[0], feed[1], feed[2]))
+			self.topposters.append(PlanetFeed(feed))
+		if len(self.topposters) < 2: self.topposters = []
+
+		c.execute("SELECT teams.name,teams.teamurl,NULL,count(*) FROM planet.teams INNER JOIN planet.feeds ON planet.feeds.team=planet.teams.id INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed WHERE age(dat) < '1 month' GROUP BY teams.name,teams.teamurl")
+		for feed in c.fetchall():
+			self.topteams.append(PlanetFeed(feed))
+		if len(self.topteams) < 2: self.topteams = []
 
 		rss.write_xml(open("www/rss20.xml","w"), encoding='utf-8')
 		rssshort.write_xml(open("www/rss20_short.xml","w"), encoding='utf-8')
@@ -91,7 +98,8 @@ class Generator:
 		tmpl = get_template(templatename)
 		f = open(outputname, "w")
 		f.write(tmpl.render(Context({
-			'feeds': self.feeds,
+			'topposters': self.topposters,
+			'topteams': self.topteams,
 			'posts': self.items,
 		})).encode('utf-8'))
 		f.close()

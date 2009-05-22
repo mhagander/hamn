@@ -1,12 +1,22 @@
 {% extends "base.tmpl" %}
 {% block content %}
     <div id="planetRight">
-     <div class="planetRightTitle">Subscriptions</div>
+{% if topposters %}
+     <div class="planetRightTitle">Top posters</div>
      <ul>
-{% for feed in feeds %}
-      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+{% for feed in topposters %}
+      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} ({{feed.numposts}})</li>
 {% endfor %}
      </ul>
+{% endif %}
+{% if topteams %}
+     <div class="planetRightTitle">Top teams</div>
+     <ul>
+{% for feed in topteams %}
+      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} ({{feed.numposts}})</li>
+{% endfor %}
+     </ul>
+{% endif %}
      <div class="planetRightTitle">Feeds</div>
      <ul>
       <li><a href="rss20.xml"><img src="img/feed-icon-14x14.png" alt="rss" /></a> <a href="rss20.xml">All feeds (full entries)</a></li>
