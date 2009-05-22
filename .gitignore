@@ -1,0 +1,4 @@
+*.pyc
+planet.ini
+www/*.html
+www/*.xml
