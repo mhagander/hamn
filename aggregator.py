@@ -72,11 +72,13 @@ class Aggregator:
 			# much shorter. Other blog software store what we want in the summary
 			# attribute. So let's just try one after another until we hit something.
 			try:
-				txt = entry.content[0].value
+				# Fix for broken wordpress.com blogs
+				if entry.content[0].has_key('base'):
+					txt = entry.content[0].value
+				else:
+					txt = entry.summary
 			except:
 				txt = ''
-			if txt == '' and entry.has_key('summary'):
-				txt = entry.summary
 			if txt == '':
 				# Not a critical error, we just ignore empty posts
 				print "Failed to get text for entry at %s" % entry.link
