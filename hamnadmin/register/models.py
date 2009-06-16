@@ -7,7 +7,7 @@ class Team(models.Model):
 	name = models.CharField(max_length=255, blank=False)
 
 	def __str__(self):
-		return self.teamurl
+		return "%s (%s)" % (self.name, self.teamurl)
 
 	class Meta:
 		db_table = 'planet\".\"teams'
@@ -26,7 +26,7 @@ class Blog(models.Model):
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
 
 	def __str__(self):
-		return self.feedurl
+		return "%s (%s)" % (self.name, self.feedurl)
 
 	@property
 	def email(self):
