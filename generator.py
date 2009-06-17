@@ -77,12 +77,12 @@ class Generator:
 				description=desc))
 			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc, post[8], post[9]))
 
-		c.execute("SELECT name,blogurl,feedurl,count(*) FROM planet.feeds INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed WHERE age(dat) < '1 month' AND team IS NULL GROUP BY name,blogurl,feedurl ORDER BY 4 DESC,1 LIMIT 20")
+		c.execute("SELECT name,blogurl,feedurl,count(*) FROM planet.feeds INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed WHERE age(dat) < '1 month' AND team IS NULL AND approved AND NOT hidden GROUP BY name,blogurl,feedurl ORDER BY 4 DESC,1 LIMIT 20")
 		for feed in c.fetchall():
 			self.topposters.append(PlanetFeed(feed))
 		if len(self.topposters) < 2: self.topposters = []
 
-		c.execute("SELECT teams.name,teams.teamurl,NULL,count(*) FROM planet.teams INNER JOIN planet.feeds ON planet.feeds.team=planet.teams.id INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed WHERE age(dat) < '1 month' GROUP BY teams.name,teams.teamurl ORDER BY 4 DESC,1 LIMIT 10")
+		c.execute("SELECT teams.name,teams.teamurl,NULL,count(*) FROM planet.teams INNER JOIN planet.feeds ON planet.feeds.team=planet.teams.id INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed WHERE age(dat) < '1 month' AND approved AND NOT hidden GROUP BY teams.name,teams.teamurl ORDER BY 4 DESC,1 LIMIT 10")
 		for feed in c.fetchall():
 			self.topteams.append(PlanetFeed(feed))
 		if len(self.topteams) < 2: self.topteams = []
