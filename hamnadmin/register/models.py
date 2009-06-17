@@ -6,7 +6,7 @@ class Team(models.Model):
 	teamurl = models.CharField(max_length=255, blank=False)
 	name = models.CharField(max_length=255, blank=False)
 
-	def __str__(self):
+	def __unicode__(self):
 		return "%s (%s)" % (self.name, self.teamurl)
 
 	class Meta:
@@ -25,7 +25,7 @@ class Blog(models.Model):
 	authorfilter = models.CharField(max_length=255,default='',blank=True)
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
 
-	def __str__(self):
+	def __unicode__(self):
 		return "%s (%s)" % (self.name, self.feedurl)
 
 	@property
@@ -50,7 +50,7 @@ class Post(models.Model):
 	guidisperma = models.BooleanField()
 	hidden = models.BooleanField()
 
-	def __str__(self):
+	def __unicode__(self):
 		return self.title
 
 	class Meta:
@@ -71,7 +71,7 @@ class AuditEntry(models.Model):
 		self.user = userid
 		self.logtxt = txt
 
-	def __str__(self):
+	def __unicode__(self):
 		return "%s (%s): %s" % (self.logtime, self.user, self.logtxt)
 
 	class Meta:
