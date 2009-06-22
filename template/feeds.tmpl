@@ -1,0 +1,31 @@
+{% extends "base.tmpl" %}
+{% block content %}
+<h1>Feeds</h1>
+<p>
+The following list contains all feeds aggregated at this site.
+</p>
+
+<ul>
+{% for feed in allposters %}
+ <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+{% endfor %}
+</ul>
+
+<h2>Teams</h2>
+<ul>
+{% for feed in allteams %}
+
+ {% ifchanged feed.teamname %}
+  {% if not forloop.first %}
+  </ul>
+ </li>
+  {% endif %}
+ <li><a href="{{feed.teamurl}}">{{feed.teamname}}</a>
+  <ul>
+ {% endifchanged %}
+   <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+{% endfor %}
+  </ul>
+ </li>
+</ul>
+{% endblock %}
