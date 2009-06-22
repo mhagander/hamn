@@ -36,6 +36,8 @@ class Generator:
 		self.items = []
 		self.topposters = []
 		self.topteams = []
+		self.allposters = []
+		self.allteams = []
 		self.staticfiles = ['policy','add']
 
 		settings.configure(
@@ -107,10 +109,23 @@ ORDER BY teamcount DESC, teamname, feedcount DESC, feedname;
 			self.topteams.append(PlanetFeed(feed))
 		if len(self.topteams) < 2: self.topteams = []
 
+		c.execute("""
+SELECT name,blogurl,feedurl,NULL,NULL,NULL,NULL FROM planet.feeds
+WHERE approved AND team IS NULL ORDER BY name,blogurl
+""")
+		self.allposters = [PlanetFeed(feed) for feed in c.fetchall()]
+		c.execute("""
+SELECT feeds.name AS feedname,blogurl,feedurl,NULL,teams.name,teamurl,NULL
+FROM planet.feeds INNER JOIN planet.teams ON planet.feeds.team=planet.teams.id
+WHERE approved ORDER BY teams.name,feeds.name,blogurl
+""")
+		self.allteams = [PlanetFeed(feed) for feed in c.fetchall()]
+
 		rss.write_xml(open("www/rss20.xml","w"), encoding='utf-8')
 		rssshort.write_xml(open("www/rss20_short.xml","w"), encoding='utf-8')
 
 		self.WriteFromTemplate('index.tmpl', 'www/index.html')
+		self.WriteFromTemplate('feeds.tmpl', 'www/feeds.html')
 		for staticfile in self.staticfiles:
 			self.UpdateStaticFile(staticfile)
 
@@ -120,6 +135,8 @@ ORDER BY teamcount DESC, teamname, feedcount DESC, feedname;
 		f.write(tmpl.render(Context({
 			'topposters': self.topposters,
 			'topteams': self.topteams,
+			'allposters': self.allposters,
+			'allteams': self.allteams,
 			'posts': self.items,
 		})).encode('utf-8'))
 		f.close()
