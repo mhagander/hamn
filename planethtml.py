@@ -57,6 +57,9 @@ class PlanetFeed:
 		self._blogurl = row[1]
 		self._feedurl = row[2]
 		self.numposts = row[3]
+		self.teamname = row[4]
+		self._teamurl = row[5]
+		self.teamcount = row[6]
 
 	def _get_blogurl(self):
 		return quoteurl(self._blogurl)
@@ -66,3 +69,6 @@ class PlanetFeed:
 		return quoteurl(self._feedurl)
 	feedurl = property(_get_feedurl)
 
+	def _get_teamurl(self):
+		return quoteurl(self._teamurl)
+	teamurl = property(_get_teamurl)

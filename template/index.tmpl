@@ -13,8 +13,18 @@
      <div class="planetRightTitle">Top teams</div>
      <ul>
 {% for feed in topteams %}
-      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} ({{feed.numposts}})</li>
+ {% ifchanged feed.teamname %}
+ {% if not forloop.first %}
+       </ul>
+      </li>
+ {% endif %}
+      <li><a href="{{feed.teamurl}}">{{feed.teamname}}</a> ({{feed.teamcount}})
+       <ul>
+ {%endifchanged%}
+        <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} ({{feed.numposts}})</li>
 {% endfor %}
+       </ul>
+      </li>
      </ul>
 {% endif %}
      <div class="planetRightTitle">Feeds</div>
