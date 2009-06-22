@@ -85,8 +85,7 @@ INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
 WHERE age(dat) < '1 month' AND team IS NULL AND approved AND NOT hidden GROUP BY name,blogurl,feedurl ORDER BY 4 DESC,1 LIMIT 20
 """)
 
-		for feed in c.fetchall():
-			self.topposters.append(PlanetFeed(feed))
+		self.topposters = [PlanetFeed(feed) for feed in c.fetchall()]
 		if len(self.topposters) < 2: self.topposters = []
 
 		c.execute("""
@@ -105,8 +104,7 @@ ON q_feeds.team=q_teams.team
 ORDER BY teamcount DESC, teamname, feedcount DESC, feedname;
 """)
 
-		for feed in c.fetchall():
-			self.topteams.append(PlanetFeed(feed))
+		self.topteams = [PlanetFeed(feed) for feed in c.fetchall()]
 		if len(self.topteams) < 2: self.topteams = []
 
 		c.execute("""
