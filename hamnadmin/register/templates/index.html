@@ -17,9 +17,6 @@ We have the following blog(s) registered:
  <th>Approved</th>
  <th>Feed URL/Blog URL</th>
  <th>Operations</th>
-{% if user.is_superuser %}
- <th>Admin</th>
-{%endif%}
 </tr>
 {%for blog in blogs%}
 <tr valign="top">
@@ -38,10 +35,9 @@ Author Filter:
 Not approved yet.<br/>
 {%endif%}
   <a href="#" onClick="confirmDelete('{{blog.feedurl}}',{{blog.id}})">Delete blog</a>
-</td>
 {%if user.is_superuser %}
-<td>
-  <a href="discover/{{blog.id}}/">Discover metadata</a><br/>
+  <br/>
+  <nobr><a href="discover/{{blog.id}}/">Fetch metadata</a></nobr><br/>
 </td>
 {%endif%}
 </tr>
