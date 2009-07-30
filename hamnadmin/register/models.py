@@ -88,3 +88,5 @@ class AggregatorLog(models.Model):
 		db_table = 'planet\".\"aggregatorlog'
 		ordering = ['-ts']
 
+	def __unicode__(self):
+		return "Log entry (%s)" % self.ts
