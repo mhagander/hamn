@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db import transaction
+from django.db.models import Q
 
 from hamnadmin.register.models import *
 from hamnadmin.exceptions import pExcept
@@ -31,42 +32,21 @@ def new(request):
 	if not request.method== 'POST':
 		raise pExcept('must be POST')
 	feedurl = request.POST['feedurl']
-	try: 
-		user = request.POST['userid']
-	except: 
-		user = request.user.username
+	user = request.user.username
 	authorfilter  = request.POST['authorfilter']
 	if not len(feedurl) > 1:
 		raise pExcept('must include blog url!')
 
-	# See if we can find the blog already
+	# See if this blog is already registered
 	try:
-		blog = Blog.objects.get(userid=userid)
-	except:
-		blog = None
-
-	if blog:
-		if blog.userid:
-			raise pExcept("User %s has already registered blog %s." % (blog.userid, blog.feedurl))
-		# Rest of this is not really useful, but will be modified so that a single user can have multiple blogs in the future
-		# Found a match, so we're going to register this blog
-		# For safety reasons, we're going to require approval before we do it as well :-P
-		if not settings.NOTIFYADDR:
-			raise pExcept('Notify address not specified, cannot complete')
-		blog.userid = request.user.username
-		blog.feedurl = feedurl
-		blog.authorfilter = authorfilter
-		blog.approved = False
-		AuditEntry(request.user.username, 'Requested blog attachment for %s' % blog.feedurl).save()
-		send_mail('New blog assignment', """
-The user '%s' has requested the attachment of the blog at
-%s
-to his/her account. 
-
-So, head off to the admin interface and approve or reject this!
-""" % (blog.userid, blog.feedurl), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
-		blog.save()
-		return HttpResponse('The blog has been attached to your account. For security reasons, it has been disapproved until a moderator has approved this connection.')
+		blog = Blog.objects.get(
+			Q(feedurl=feedurl),
+			Q(authorfilter=authorfilter)
+		)
+		raise pExcept('This blog is already registered.')
+	except Blog.DoesNotExist:
+		# This is what we expect to happen.. :-)
+		pass
 
 	# TODO: add support for 'feed://' urls
 	if not feedurl.startswith('http://'):
