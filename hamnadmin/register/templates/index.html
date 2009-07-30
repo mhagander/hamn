@@ -56,17 +56,39 @@ Not approved yet.<br/>
 {%endfor%}
 </table>
 {%else%}
-<p>We have no blogs registered to your account. To register
-a new blog or associate an existing one, please enter the
+<p>We have no blogs registered to your account.</p>
+{%endif%}
+<hr/>
+<p>
+To register a new blog , please enter the
 URL to your RSS feed (PostgreSQL category only!) below.
-Note that if you attach an existing blog, it will temporarily
-be removed from planet while a moderator verifies that the
-attachment is correct.
+</p>
+<p>
+Note that your blog will have to be approved before it appears
+on the planet.
 </p>
 <form method="post" action="new/">
-<input type="text" name="feedurl"><br/>
-Filter by author (OPTIONAL): <input type="text" name="authorfilter"><br/>
+<table border="0" cellspacing="1" cellpadding="0">
+<tr>
+ <td>Feed URL</td>
+ <td><input type="text" name="feedurl"></td>
+</tr>
+<tr>
+ <td>Filter by author (OPTIONAL, advanced):</td>
+ <td><input type="text" name="authorfilter"></td>
+</tr>
+<tr>
+ <td>Part of team:</td>
+ <td><select name="team">
+  <option value="-1">* No team</option>
+  {% for team in teams %}
+  <option value="{{team.id}}">{{team.name}}</option>
+  {%endfor%}
+ </select>
+ <input type="checkbox" name="ok_team" value="yesitsfine">Check this box to indicate that the owner
+ of this team is aware of your registration.
+ </td>
+</table>
 <input type="submit" value="New blog">
 </form>
-{%endif%}
 {%endblock%}

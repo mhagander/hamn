@@ -24,6 +24,7 @@ def root(request):
 		blogs = Blog.objects.filter(userid=request.user.username)
 	return render_to_response('index.html',{
 		'blogs': blogs,
+		'teams': Team.objects.all(),
 	}, context_instance=RequestContext(request))
 
 @login_required
@@ -37,6 +38,10 @@ def new(request):
 	if not len(feedurl) > 1:
 		raise pExcept('must include blog url!')
 
+	# TODO: add support for 'feed://' urls
+	if not feedurl.startswith('http://'):
+		raise pExcept('Only http served blogs are accepted!')
+
 	# See if this blog is already registered
 	try:
 		blog = Blog.objects.get(
@@ -48,9 +53,17 @@ def new(request):
 		# This is what we expect to happen.. :-)
 		pass
 
-	# TODO: add support for 'feed://' urls
-	if not feedurl.startswith('http://'):
-		raise pExcept('Only http served blogs are accepted!')
+	# Attempting to join a team?
+	if int(request.POST['team']) != -1:
+		print "team: %s" % request.POST['team']
+		if not (request.POST.has_key('ok_team') and request.POST['ok_team'] == 'yesitsfine'):
+			raise pExcept('You must confirm that the owner of the team knows about you joining it.')
+		try:
+			team = Team.objects.get(pk=int(request.POST['team']))
+		except:
+			raise pExcept('Failed to get team information!')
+	else:
+		team = None
 
 	# Attempting to register a new blog. First let's see that we can download it
 	socket.setdefaulttimeout(20)
@@ -61,6 +74,7 @@ def new(request):
 		l = len(feed.entries)
 		if l < 1:
 			raise pExcept('Blog feed contains no entries.')
+
 	except Exception, e:
 		raise pExcept('Failed to download blog feed')
 	if not status == 200:
@@ -77,6 +91,8 @@ def new(request):
 	blog.authorfilter = authorfilter
 	blog.blogurl = lnk
 	blog.approved = False
+	if team:
+		blog.team = team
 	send_mail('New blog assignment', """
 The user '%s' has requested the blog at
 %s (name %s)
