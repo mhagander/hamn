@@ -12,7 +12,6 @@ We have the following blog(s) registered:
 </p>
 <table border="1" cellspacing="0" cellpadding="1">
 <tr>
- <th>Userid</th>
  <th>Name</th>
  <th>Approved</th>
  <th>Feed URL/Blog URL</th>
@@ -20,7 +19,6 @@ We have the following blog(s) registered:
 </tr>
 {%for blog in blogs%}
 <tr valign="top">
- <td>{{blog.userid}}<br/>{{blog.email}}</td>
  <td>{{blog.name}}</td>
  <td>{{blog.approved|yesno:"Yes,No"}}</td>
  <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a><br/>
