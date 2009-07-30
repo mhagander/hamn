@@ -22,17 +22,9 @@ We have the following blog(s) registered:
 {%endif%}
 </tr>
 {%for blog in blogs%}
-<tr valign="top" {%if user.is_superuser and not blog.approved%}bgcolor="red"{%endif%}>
- <td{%if not blog.userid %} bgcolor="red"{%endif%}>{{blog.userid}}<br/>{{blog.email}}</td>
- <td>{%if user.is_superuser %}
-<form method="post" action="modify/{{blog.id}}/">
-<input type="text" name="blogname" value="{{blog.name}}">
-<input type="submit" value="Save">
-</form>
-{%else%}
-{{blog.name}}
-{%endif%}
- </td>
+<tr valign="top">
+ <td>{{blog.userid}}<br/>{{blog.email}}</td>
+ <td>{{blog.name}}</td>
  <td>{{blog.approved|yesno:"Yes,No"}}</td>
  <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a><br/>
 Author Filter:
