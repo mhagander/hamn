@@ -1,9 +1,32 @@
 from django.contrib import admin
+from django import forms
+from django.core.mail import send_mail
+from django.conf import settings
+
 from hamnadmin.register.models import *
 
+class BlogAdminForm(forms.ModelForm):
+	class Meta:
+		model = Blog
+
+	def clean_approved(self):
+		if self.cleaned_data['approved'] != self.instance.approved:
+			# Approved flag has changed, send an email
+			send_mail('A planet blog has been %s' % (
+				self.cleaned_data['approved'] and 'approved' or 'de-approved',
+				),
+				"The blog %s (for user %s, userid %s) has been %s." % (
+					self.cleaned_data['feedurl'],
+					self.cleaned_data['name'],
+					self.cleaned_data['userid'],
+					self.cleaned_data['approved'] and 'approved' or 'de-approved',
+				), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
+		return self.cleaned_data['approved']
+
 class BlogAdmin(admin.ModelAdmin):
-	list_display = ['approved', 'userid', 'name', 'feedurl', 'authorfilter', ]
+	list_display = ['userid', 'approved', 'name', 'feedurl', 'authorfilter', ]
 	ordering = ['approved', 'name', ] #meh, multiple ordering not supported
+	form = BlogAdminForm
 
 admin.site.register(Team)
 admin.site.register(Blog, BlogAdmin)

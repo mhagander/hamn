@@ -103,6 +103,7 @@ The user '%s' has requested the blog at
 is added to Planet PostgreSQL!
 
 So, head off to the admin interface and approve or reject this!
+http://planet.postgresql.org/register/admin/register/blog/
 """ % (blog.userid, blog.feedurl, blog.name), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 
 	blog.save()
