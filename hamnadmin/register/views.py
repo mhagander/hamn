@@ -90,19 +90,8 @@ So, head off to the admin interface and approve or reject this!
 		raise pExcept('Notify address not specified, cannot complete')
 
 	blog = Blog()
-	if issuperuser(request.user):
-		blog.userid = request.POST['userid'] or request.user.username
-		# Try to guess who's name should go on this blog, default to the current
-		# users name if we can't find it in the feed.
-		blog.name = request.user.first_name
-		try:
-			e = feed.entries[0]
-			blog.name = e.author_detail.name or request.user.first_name
-		except:
-			pass
-	else:
-		blog.userid = request.user.username
-		blog.name = request.user.first_name
+	blog.userid = request.user.username
+	blog.name = request.user.first_name
 
 	blog.feedurl = feedurl
 	blog.authorfilter = authorfilter
@@ -124,54 +113,14 @@ So, head off to the admin interface and approve or reject this!
 @transaction.commit_on_success
 def delete(request, id):
 	blog = get_object_or_404(Blog, id=id)
-	if not request.user.is_superuser:
-		if not blog.userid == request.user.username:
-			raise pError("You can only delete your own feeds! Don't try to hack!")
+	if not blog.userid == request.user.username:
+		raise pError("You can only delete your own feeds! Don't try to hack!")
 	send_mail('Blog deleted', """
 The user '%s' has deleted the blog at
 %s (name %s)
 """ % (blog.userid, blog.feedurl, blog.name), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 	blog.delete()
 	AuditEntry(request.user.username, 'Deleted blog %s' % blog.feedurl).save()
-	return HttpResponseRedirect('../..')
-
-@login_required
-@transaction.commit_on_success
-def modifyauthorfilter(request, id):
-	blog = get_object_or_404(Blog, id=id)
-	if not request.user.is_superuser:
-		if not blog.userid == request.user.username:
-			raise Exception("You can only update your own author filter! Don't try to hack!")
-	blog.authorfilter = request.POST['authorfilter']
-	blog.save()
-	AuditEntry(request.user.username, 'Changed author filter of blog %s' % blog.feedurl).save()
-	return HttpResponseRedirect('../..')
-
-@user_passes_test(issuperuser)
-@transaction.commit_on_success
-def modify(request, id):
-	blog = get_object_or_404(Blog, id=id)
-	blog.name = request.POST['blogname']
-	blog.save()
-	AuditEntry(request.user.username, 'Changed name of blog %s' % blog.feedurl).save()
-	return HttpResponseRedirect('../..')
-	
-@user_passes_test(issuperuser)
-@transaction.commit_on_success
-def approve(request, id):
-	blog = get_object_or_404(Blog, id=id)
-	blog.approved = True
-	blog.save()
-	AuditEntry(request.user.username, 'Approved blog %s' % blog.feedurl).save()
-	return HttpResponseRedirect('../..')
-
-@user_passes_test(issuperuser)
-@transaction.commit_on_success
-def unapprove(request, id):
-	blog = get_object_or_404(Blog, id=id)
-	blog.approved = False
-	blog.save()
-	AuditEntry(request.user.username, 'Unapproved blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)
@@ -190,25 +139,6 @@ def discover(request, id):
 	except Exception, e:
 		return HttpResponse('Failed to discover metadata: %s' % (e))
 
-	return HttpResponseRedirect('../..')
-
-@user_passes_test(issuperuser)
-@transaction.commit_on_success
-def undiscover(request, id):
-	blog = get_object_or_404(Blog, id=id)
-	blog.blogurl = ''
-	blog.save()
-	AuditEntry(request.user.username, 'Undiscovered blog %s' % blog.feedurl).save()
-	return HttpResponseRedirect('../..')
-
-@user_passes_test(issuperuser)
-@transaction.commit_on_success
-def detach(request, id):
-	blog = get_object_or_404(Blog, id=id)
-	olduid = blog.userid
-	blog.userid = None
-	blog.save()
-	AuditEntry(request.user.username, 'Detached blog %s from %s' % (blog.feedurl, olduid)).save()
 	return HttpResponseRedirect('../..')
 
 @login_required

@@ -5,7 +5,8 @@
 {%endif%}
 <h1>Welcome to planet administration</h1>
 {%if user.is_superuser %}
-<h2>You are registered as an administrator. BE CAREFUL!</h2>
+<h2>You are registered as an administrator.</h2>
+<p>The full administration interface can be found <a href="admin/">here</a>.</p>
 {% endif %}
 {%block regcontent%}{%endblock%}
 {%endblock%}

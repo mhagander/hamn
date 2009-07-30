@@ -35,15 +35,8 @@ We have the following blog(s) registered:
  </td>
  <td>{{blog.approved|yesno:"Yes,No"}}</td>
  <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a><br/>
-OPTIONAL Author Filter:
-{%if user.is_superuser %}
- <form method="post" action="modifyauthorfilter/{{blog.id}}/">
- <input type="text" name="authorfilter" value="{{blog.authorfilter}}">
- <input type="submit" value="Save Author Filter">
- </form>
-{%else%}
+Author Filter:
 {{blog.authorfilter}}
-{%endif%}
  </td>
 
  <td><a href="log/{{blog.id}}/">View log</a><br/>
@@ -56,10 +49,7 @@ Not approved yet.<br/>
 </td>
 {%if user.is_superuser %}
 <td>
-{%if blog.approved %}<a href="unapprove/{{blog.id}}/">Unapprove</a>{%else%}<a href="approve/{{blog.id}}/">Approve</a>{%endif%}<br/>
-{%if blog.userid %}<a href="detach/{{blog.id}}/">Detach from user</a><br/>{%endif%}
   <a href="discover/{{blog.id}}/">Discover metadata</a><br/>
-{%if blog.blogurl %}<a href="undiscover/{{blog.id}}/">Undiscover metadata</a><br/>{%endif%}
 </td>
 {%endif%}
 </tr>
@@ -75,17 +65,6 @@ attachment is correct.
 </p>
 <form method="post" action="new/">
 <input type="text" name="feedurl"><br/>
-Filter by author (OPTIONAL): <input type="text" name="authorfilter"><br/>
-<input type="submit" value="New blog">
-</form>
-{%endif%}
-{%if user.is_superuser %}
-<p>As superuser, you can add a new blog. Note that normally the user requests the addition and you
-then update it! Leave the userid blank to let the user attach it later, but that's a really ugly
-way to do it :-P</p>
-<form method="post" action="new/">
-Blog url: <input type="text" name="feedurl"><br/>
-Userid (blank for yourself): <input type="text" name="userid"><br/>
 Filter by author (OPTIONAL): <input type="text" name="authorfilter"><br/>
 <input type="submit" value="New blog">
 </form>
