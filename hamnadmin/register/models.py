@@ -41,7 +41,7 @@ class Blog(models.Model):
 		pass
 
 class Post(models.Model):
-	feed = models.ForeignKey(Blog,db_column='feed')
+	feed = models.ForeignKey(Blog,db_column='feed',related_name='posts')
 	guid = models.CharField(max_length=255)
 	link = models.CharField(max_length=255)
 	txt = models.TextField()

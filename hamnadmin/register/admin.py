@@ -28,6 +28,13 @@ class BlogAdmin(admin.ModelAdmin):
 	ordering = ['approved', 'name', ] #meh, multiple ordering not supported
 	form = BlogAdminForm
 
+	def change_view(self, request, object_id, extra_context=None):
+		blog = Blog(pk=object_id)
+		my_context = {
+			'posts': blog.posts.all()[:10],
+		}
+		return super(BlogAdmin, self).change_view(request, object_id, extra_context=my_context)
+
 admin.site.register(Team)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(Post)
