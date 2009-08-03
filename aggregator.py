@@ -100,6 +100,8 @@ class Aggregator:
 			
 			if entry.has_key('author_detail'):
 				return entry.author_detail.name == self.authorfilter
+			elif entry.has_key('author'):
+				return entry.author == self.authorfilter
 			else: 
 				return False
 
