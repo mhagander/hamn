@@ -69,14 +69,19 @@ class Aggregator:
 				
 			# Grab the entry. At least atom feeds from wordpress store what we
 			# want in entry.content[0].value and *also* has a summary that's
-			# much shorter. Other blog software store what we want in the summary
-			# attribute. So let's just try one after another until we hit something.
+			# much shorter.
+			# We therefor check all available texts, and just pick the one that
+			# is longest.
+			txtalts = []
 			try:
-				txt = entry.content[0].value
+				txtalts.append(entry.content[0].value)
 			except:
-				txt = ''
-			if txt == '' and entry.has_key('summary'):
-				txt = entry.summary
+				pass
+			if entry.has_key('summary'):
+				txtalts.append(entry.summary)
+
+			# Select the longest text
+			txt = max(txtalts, key=len)
 			if txt == '':
 				# Not a critical error, we just ignore empty posts
 				print "Failed to get text for entry at %s" % entry.link
