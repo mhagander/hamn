@@ -133,10 +133,10 @@ def discover(request, id):
 			blog.blogurl = feed.feed.link
 			blog.save()
 			AuditEntry(request.user.username, 'Discovered metadata for %s' % blog.feedurl).save()
+			return HttpResponse('Metadata (currently: Blog URL) successfully updated.')
+		return HttpResponse('Metadata was not changed.')
 	except Exception, e:
 		return HttpResponse('Failed to discover metadata: %s' % (e))
-
-	return HttpResponseRedirect('../..')
 
 @login_required
 def logview(request, id):
