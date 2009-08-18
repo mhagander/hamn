@@ -2,13 +2,6 @@
 
 # python rss reader -> twitter post
 import feedparser, pickle, os, sys, twitter, urllib, simplejson as json
-import psycopg2
-import feedparser
-import datetime
-import socket
-import ConfigParser
-
-
 
 class RSS2Twitter:
 	def __init__(self, filename, url, username, passwd):
@@ -17,11 +10,6 @@ class RSS2Twitter:
 		self.username=username
 		self.passwd=passwd
 		self.twApi=twitter.Api(username=self.username, password=self.passwd)
-
-		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-		self.db.set_client_encoding('UTF8')
-		c = self.db.cursor()
-		c.execute("SET TIMEZONE=GMT")
 
 		if os.path.exists(self.filename):
 			self.itemsDB = pickle.load(file(filename, 'r+b'))
