@@ -77,6 +77,7 @@ if __name__ == "__main__":
 	# run it like python rss2twitter.py oi.dat (oi.dat is the posted item db)
 	# update username and passwd with your twitter account data, surrounding them with quotes.
 	url="http://planet.postgresql.org/rss20_short.xml"
-	r2t=RSS2Twitter(sys.argv[1], url, 'planetpostgres', 'pl4n3t.pg')
+	## Third and fourth args are username and password for twitter
+	r2t=RSS2Twitter(sys.argv[1], url, '', '')
 	its=r2t.getLatestFeedItems()
 	r2t.twitIt(its)
