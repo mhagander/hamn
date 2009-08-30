@@ -49,6 +49,8 @@ class Post(models.Model):
 	title = models.CharField(max_length=255)
 	guidisperma = models.BooleanField()
 	hidden = models.BooleanField()
+	twittered = models.BooleanField()
+	shortlink = models.TextField()
 
 	def __unicode__(self):
 		return self.title

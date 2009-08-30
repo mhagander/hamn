@@ -63,7 +63,9 @@ CREATE TABLE posts (
     dat timestamp with time zone NOT NULL,
     title text NOT NULL,
     guidisperma boolean NOT NULL,
-    hidden boolean DEFAULT false NOT NULL
+    hidden boolean DEFAULT false NOT NULL,
+    twittered boolean DEFAULT false NOT NULL,
+    shortlink text
 );
 
 

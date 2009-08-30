@@ -1,83 +1,117 @@
 #!/usr/bin/env python
 
-# python rss reader -> twitter post
-import feedparser, pickle, os, sys, twitter, urllib, simplejson as json
+# Post links to articles on twitter
 
-class RSS2Twitter:
-	def __init__(self, filename, url, username, passwd):
-		self.filename=filename
-		self.url=url
-		self.username=username
-		self.passwd=passwd
-		self.twApi=twitter.Api(username=self.username, password=self.passwd)
+import psycopg2
+import twitter
+import urllib
+import simplejson as json
+import ConfigParser
 
-		if os.path.exists(self.filename):
-			self.itemsDB = pickle.load(file(filename, 'r+b'))
-		else:
-			self.itemsDB = {} 
 
-	def getLatestFeedItems(self, items = 10):
-		feed=feedparser.parse(self.url);
-		it=feed["items"]
-		it_ret=it[0:items]
-		return it_ret
+class PostToTwitter:
+	def __init__(self, cfg):
+		self.username=cfg.get('twitter','account')
+		self.passwd=cfg.get('twitter','password')
 
-	def twitIt(self, items):
-		oldItems=pItems=0
-		items.sort(reverse=True)
-		for it in items:
-			if self.itemPublished(it) == None:
-				trim = json.loads(self.trim(it["link"]))
-				txt=it["title"] +" "+trim["url"]
-				# print txt
-				try: 
-					status = self.twApi.PostUpdate(txt)
-				except IOError, e:
-					raise e
-				pItems=pItems+1
-		# print "Total items: ", len(items)
-		# print "published: ",pItems
-		# print "old stuff: ",len(items) - pItems
+		if cfg.has_option('tr.im','account'):
+			self.trimuser = cfg.get('tr.im','account')
+			self.trimpassword = cfg.get('tr.im','password')
 
-	def itemPublished (self, item):
-		if self.itemsDB.has_key(item["link"]) == True:
-			return True
-		else:
-			self.itemsDB[item["link"]]=item["title"]
-			pickle.dump(self.itemsDB, file(self.filename, 'w+b'))
-		return None
+		self.db = psycopg2.connect(c.get('planet','db'))
 
-	def trim(self, url):
+		# Only set up the connection to twitter when we know we're going to
+		# post something.
+		self._twitter = None
+
+	@property
+	def twitter(self):
+		if not self._twitter:
+			self._twitter=twitter.Api(username=self.username, password=self.passwd)
+		return self._twitter
+
+
+	def Run(self):
+		c = self.db.cursor()
+		c.execute("""SELECT posts.id, posts.title, posts.link, posts.shortlink, feeds.name
+			     FROM planet.posts INNER JOIN planet.feeds ON planet.posts.feed=planet.feeds.id
+			     WHERE approved AND NOT (twittered OR hidden) ORDER BY dat""")
+		for post in c.fetchall():
+			if post[3] and len(post[3])>1:
+				short = post[3]
+			else:
+				# No short-link exists, so create one. We need the short-link
+				# to twitter, and we store it separately in the database
+				# in case it's needed.
+				try:
+					short = self.shortlink(post[2])
+				except Exception, e:
+					print "Failed to shorten URL %s: %s" % (post[2], e)
+					continue
+
+				c.execute("UPDATE planet.posts SET shortlink=%(short)s WHERE id=%(id)s", {
+					'short': short,
+					'id': post[0],
+				})
+				self.db.commit()
+
+			# Set up the string to twitter
+			msg = "%s: %s %s" % (
+				post[4],
+				self.trimpost(post[1],len(post[4])+len(short)+3),
+				short,
+			)
+
+			# Now post it to twitter
+			try:
+				status = self.twitter.PostUpdate(msg)
+			except Exception, e:
+				print "Error posting to twitter: %s" % e
+				# We'll just try again with the next one
+				continue
+
+			# Flag this item as posted
+			c.execute("UPDATE planet.posts SET twittered='t' WHERE id=%(id)s", { 'id': post[0] })
+			self.db.commit()
+
+			print "Twittered: %s" % msg
+
+
+	# Trim a post to the length required by twitter, so we don't fail to post
+	# if a title is really long. Assume other parts of the string to be
+	# posted are <otherlen> characters.
+	def trimpost(self, txt, otherlen):
+		if len(txt) + otherlen < 140:
+			return txt
+		return "%s..." % (txt[:(140-otherlen-3)])
+
+
+	# Trim an URL using http://tr.im
+	def shortlink(self, url):
 		try:
-			data = urllib.urlencode(dict(url=url, source="RSS2Twit"))
-			encodedurl="http://tr.im/api/trim_url.json?"+data
+			if self.trimuser:
+				data = urllib.urlencode(dict(url=url, username=self.trimuser, password=self.trimpassword))
+			else:
+				data = urllib.urlencode(dict(url=url, ))
+			encodedurl="http://api.tr.im/v1/trim_url.json?"+data
 			instream=urllib.urlopen(encodedurl)
 			ret=instream.read()
 			instream.close()
-			if len(ret)==0:
-				return url
-			return ret
-		except IOError, e:
-			raise "urllib error."
+		except Exception, e:
+			raise "Failed in call to tr.im API: %s" % e
 
-	def tiny(self, url):
+		if len(ret)==0:
+			raise "tr.im returned blank!"
+
 		try:
-			data = urllib.urlencode(dict(url=url, source="RSS2Twit"))
-			encodedurl="http://www.tinyurl.com/api-create.php?"+data
-			instream=urllib.urlopen(encodedurl)
-			ret=instream.read()
-			instream.close()
-			if len(ret)==0:
-				return url
-			return ret
-		except IOError, e:
-			raise "urllib error."
+			trim = json.loads(ret)
+			return trim['url']
+		except Exception, e:
+			raise "Failed to JSON parse tr.im response: %s" % e
 
-if __name__ == "__main__":
-	# run it like python rss2twitter.py oi.dat (oi.dat is the posted item db)
-	# update username and passwd with your twitter account data, surrounding them with quotes.
-	url="http://planet.postgresql.org/rss20_short.xml"
-	## Third and fourth args are username and password for twitter
-	r2t=RSS2Twitter(sys.argv[1], url, '', '')
-	its=r2t.getLatestFeedItems()
-	r2t.twitIt(its)
+
+if __name__=="__main__":
+	c = ConfigParser.ConfigParser()
+	c.read('planet.ini')
+	PostToTwitter(c).Run()
+

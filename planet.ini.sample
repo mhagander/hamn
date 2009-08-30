@@ -12,3 +12,12 @@ password=yeahthatssecret
 mailfrom=webmaster@postgresql.org
 mailto=planet@postgresql.org
 minerrors=3
+
+[twitter]
+account=planetpostgres
+password=topsecret
+
+[tr.im]
+account=planetpostgres
+password=topsecret
+
