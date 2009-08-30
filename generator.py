@@ -23,8 +23,8 @@ from HTMLParser import HTMLParser
 from planethtml import *
 
 class Generator:
-	def __init__(self,db):
-		self.db = db
+	def __init__(self,cfg):
+		self.db = psycopg2.connect(cfg.get('planet','db'))
 		self.tidyopts = dict(   drop_proprietary_attributes=1,
 					alt_text='',
 					hide_comments=1,
@@ -39,6 +39,10 @@ class Generator:
 		self.allposters = []
 		self.allteams = []
 		self.staticfiles = ['policy','add']
+		if cfg.has_option('twitter','account'):
+			self.twittername = cfg.get('twitter','account')
+		else:
+			self.twittername = None
 
 		settings.configure(
 			TEMPLATE_DIRS=('template',),
@@ -136,6 +140,7 @@ WHERE approved ORDER BY teams.name,feeds.name,blogurl
 			'allposters': self.allposters,
 			'allteams': self.allteams,
 			'posts': self.items,
+			'twittername': self.twittername,
 		})).encode('utf-8'))
 		f.close()
 
@@ -232,4 +237,4 @@ class HtmlTruncator(HTMLParser):
 if __name__=="__main__":
 	c = ConfigParser.ConfigParser()
 	c.read('planet.ini')
-	Generator(psycopg2.connect(c.get('planet','db'))).Generate()
+	Generator(c).Generate()

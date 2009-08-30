@@ -32,6 +32,12 @@
       <li><a href="rss20.xml"><img src="img/feed-icon-14x14.png" alt="rss" /></a> <a href="rss20.xml">All feeds (full entries)</a></li>
       <li><a href="rss20_short.xml"><img src="img/feed-icon-14x14.png" alt="rss" /></a> <a href="rss20_short.xml">All feeds (short entries)</a></li>
      </ul>
+{%if twittername %}
+     <div class="planetRightTitle">Twitter</div>
+     <ul>
+      <li>Follow @<a href="http://twitter.com/{{twittername}}">{{twittername}}</a> on Twitter for the latest updates!</li>
+     </ul>
+{%endif%}
      <div class="planetRightTitle">Planet</div>
      <ul>
       <li><a href="policy.html">Policy</a> for being listed on Planet PostgreSQL.</li>
