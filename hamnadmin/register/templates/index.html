@@ -22,8 +22,8 @@ We have the following blog(s) registered:
  <td>{{blog.name}}</td>
  <td>{{blog.approved|yesno:"Yes,No"}}</td>
  <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a><br/>
-Author Filter:
-{{blog.authorfilter}}
+Author Filter: {{blog.authorfilter}}<br/>
+Twitter name: {%if blog.twitteruser%}@<a href="http://twitter.com/{{blog.twitteruser}}">{{blog.twitteruser}}</a>{%endif%}
  </td>
 
  <td><a href="log/{{blog.id}}/">View log</a><br/>
