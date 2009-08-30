@@ -4,7 +4,7 @@
 This file contains the functions to generate output RSS and
 HTML data from what's currently in the database.
 
-Copyright (C) 2008 PostgreSQL Global Development Group
+Copyright (C) 2008-2009 PostgreSQL Global Development Group
 """
 
 import psycopg2

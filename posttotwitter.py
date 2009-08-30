@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+# vim: ai ts=4 sts=4 sw=4
+"""PostgreSQL Planet Aggregator
+
+This file contains the functions to generate short
+URLs and tweets from what's currently in the database.
+
+Copyright (C) 2009 PostgreSQL Global Development Group
+"""
 
 # Post links to articles on twitter
 
