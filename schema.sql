@@ -46,7 +46,8 @@ CREATE TABLE feeds (
     lastget timestamp with time zone DEFAULT '2000-01-01 00:00:00+00'::timestamp with time zone NOT NULL,
     userid text,
     approved boolean DEFAULT false NOT NULL,
-    authorfilter text DEFAULT ''::text NOT NULL
+    authorfilter text DEFAULT ''::text NOT NULL,
+    twitteruser text DEFAULT ''::text NOT NULL
 );
 
 

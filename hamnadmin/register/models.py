@@ -24,6 +24,7 @@ class Blog(models.Model):
 	approved = models.BooleanField()
 	authorfilter = models.CharField(max_length=255,default='',blank=True)
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
+	twitteruser = models.CharField(max_length=255, default='', blank=True)
 
 	def __unicode__(self):
 		return "%s (%s)" % (self.name, self.feedurl)

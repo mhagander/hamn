@@ -41,7 +41,7 @@ class PostToTwitter:
 
 	def Run(self):
 		c = self.db.cursor()
-		c.execute("""SELECT posts.id, posts.title, posts.link, posts.shortlink, feeds.name
+		c.execute("""SELECT posts.id, posts.title, posts.link, posts.shortlink, feeds.name, feeds.twitteruser
 			     FROM planet.posts INNER JOIN planet.feeds ON planet.posts.feed=planet.feeds.id
 			     WHERE approved AND NOT (twittered OR hidden) ORDER BY dat""")
 		for post in c.fetchall():
@@ -64,11 +64,20 @@ class PostToTwitter:
 				self.db.commit()
 
 			# Set up the string to twitter
-			msg = "%s: %s %s" % (
-				post[4],
-				self.trimpost(post[1],len(post[4])+len(short)+3),
-				short,
-			)
+			if post[5] and len(post[5])>1:
+				# Twitter username registered
+				msg = "%s (@%s): %s %s" % (
+					post[4],
+					post[5],
+					self.trimpost(post[1],len(post[4])+len(post[5])+len(short)+7),
+					short,
+				)
+			else:
+				msg = "%s: %s %s" % (
+					post[4],
+					self.trimpost(post[1],len(post[4])+len(short)+3),
+					short,
+				)
 
 			# Now post it to twitter
 			try:
