@@ -83,7 +83,7 @@ class PostToTwitter:
 			try:
 				status = self.twitter.PostUpdate(msg)
 			except Exception, e:
-				print "Error posting to twitter: %s" % e
+				print "Error posting to twitter (post %s): %s" % (post[0], e)
 				# We'll just try again with the next one
 				continue
 
@@ -115,7 +115,7 @@ class PostToTwitter:
 			ret=instream.read()
 			instream.close()
 		except Exception, e:
-			raise "Failed in call to tr.im API: %s" % e
+			raise Exception("Failed in call to tr.im API: %s" % e)
 
 		if len(ret)==0:
 			raise "tr.im returned blank!"
@@ -124,7 +124,7 @@ class PostToTwitter:
 			trim = json.loads(ret)
 			return trim['url']
 		except Exception, e:
-			raise "Failed to JSON parse tr.im response: %s" % e
+			raise Exception("Failed to JSON parse tr.im response: %s" % e)
 
 
 if __name__=="__main__":
