@@ -11,6 +11,7 @@ Copyright (C) 2009 PostgreSQL Global Development Group
 # Post links to articles on twitter
 
 import psycopg2
+import psycopg2.extensions
 import twitter
 import urllib
 import simplejson as json
@@ -26,6 +27,7 @@ class PostToTwitter:
 			self.trimuser = cfg.get('tr.im','account')
 			self.trimpassword = cfg.get('tr.im','password')
 
+		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 		self.db = psycopg2.connect(c.get('planet','db'))
 
 		# Only set up the connection to twitter when we know we're going to
@@ -66,14 +68,14 @@ class PostToTwitter:
 			# Set up the string to twitter
 			if post[5] and len(post[5])>1:
 				# Twitter username registered
-				msg = "%s (@%s): %s %s" % (
+				msg = unicode("%s (@%s): %s %s") % (
 					post[4],
 					post[5],
 					self.trimpost(post[1],len(post[4])+len(post[5])+len(short)+7),
 					short,
 				)
 			else:
-				msg = "%s: %s %s" % (
+				msg = unicode("%s: %s %s") % (
 					post[4],
 					self.trimpost(post[1],len(post[4])+len(short)+3),
 					short,
