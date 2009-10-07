@@ -93,7 +93,7 @@ class PostToTwitter:
 			c.execute("UPDATE planet.posts SET twittered='t' WHERE id=%(id)s", { 'id': post[0] })
 			self.db.commit()
 
-			print "Twittered: %s" % msg
+			print unicode("Twittered: %s" % msg).encode('utf8')
 
 
 	# Trim a post to the length required by twitter, so we don't fail to post
