@@ -118,6 +118,11 @@ div#planetRight div.planetRightTitle {
    padding-left: 10px;
 }
 
+div#planetRight div.planetRightDescription {
+   font-size: 0.7em;
+   padding-left: 15px;
+}
+
 div#planetRight ul {
    list-style: none;
    padding-left: 15px;
