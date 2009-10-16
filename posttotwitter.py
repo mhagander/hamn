@@ -45,7 +45,7 @@ class PostToTwitter:
 		c = self.db.cursor()
 		c.execute("""SELECT posts.id, posts.title, posts.link, posts.shortlink, feeds.name, feeds.twitteruser
 			     FROM planet.posts INNER JOIN planet.feeds ON planet.posts.feed=planet.feeds.id
-			     WHERE approved AND NOT (twittered OR hidden) ORDER BY dat""")
+			     WHERE approved AND age(dat) < '7 days' AND NOT (twittered OR hidden) ORDER BY dat""")
 		for post in c.fetchall():
 			if post[3] and len(post[3])>1:
 				short = post[3]
