@@ -55,7 +55,6 @@ def new(request):
 
 	# Attempting to join a team?
 	if int(request.POST['team']) != -1:
-		print "team: %s" % request.POST['team']
 		if not (request.POST.has_key('ok_team') and request.POST['ok_team'] == 'yesitsfine'):
 			raise pExcept('You must confirm that the owner of the team knows about you joining it.')
 		try:
