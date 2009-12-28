@@ -53,7 +53,7 @@ class Aggregator:
 			# so make sure we only check if we didn't get a status.
 			if hasattr(feed,'bozo_exception'):
 				raise Exception('Feed load error %s' % feed.bozo_exception)
-			raise Exception('Feed load error with not exception!')
+			raise Exception('Feed load error with no exception!')
 
 		if feed.status == 304:
 			# not changed
