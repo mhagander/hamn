@@ -73,7 +73,8 @@ def new(request):
 		l = len(feed.entries)
 		if l < 1:
 			raise pExcept('Blog feed contains no entries.')
-
+	except pExcept:
+		raise
 	except Exception, e:
 		raise pExcept('Failed to download blog feed')
 	if not status == 200:
