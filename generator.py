@@ -156,7 +156,7 @@ WHERE approved ORDER BY teams.name,feeds.name,blogurl
 		txt = unicode(str(tidy.parseString(txt.encode('utf-8'), **self.tidyopts)),'utf8')
 
 		# Then truncate as necessary
-		ht = HtmlTruncator(4096)
+		ht = HtmlTruncator(2048)
 		ht.feed(txt)
 		out = ht.GetText()
 
