@@ -21,3 +21,6 @@ password=topsecret
 account=planetpostgres
 password=topsecret
 
+[bit.ly]
+account=planetpostgres
+apikey=topsecret

@@ -23,9 +23,9 @@ class PostToTwitter:
 		self.username=cfg.get('twitter','account')
 		self.passwd=cfg.get('twitter','password')
 
-		if cfg.has_option('tr.im','account'):
-			self.trimuser = cfg.get('tr.im','account')
-			self.trimpassword = cfg.get('tr.im','password')
+		if cfg.has_option('bit.ly','account'):
+			self.bitlyuser = cfg.get('bit.ly','account')
+			self.bitlykey = cfg.get('bit.ly','apikey')
 
 		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 		self.db = psycopg2.connect(c.get('planet','db'))
@@ -105,26 +105,28 @@ class PostToTwitter:
 		return "%s..." % (txt[:(140-otherlen-3)])
 
 
-	# Trim an URL using http://tr.im
+	# Trim an URL using http://bit.ly
 	def shortlink(self, url):
 		try:
-			if self.trimuser:
-				data = urllib.urlencode(dict(url=url, username=self.trimuser, password=self.trimpassword))
+			if self.bitlyuser:
+				data = urllib.urlencode(dict(longUrl=url, domain='bit.ly', login=self.bitlyuser, apiKey=self.bitlykey))
 			else:
-				data = urllib.urlencode(dict(url=url, ))
-			encodedurl="http://api.tr.im/v1/trim_url.json?"+data
+				data = urllib.urlencode(dict(longUrl=url, ))
+			encodedurl="http://api.bit.ly/v3/shorten?format=json&"+data
 			instream=urllib.urlopen(encodedurl)
 			ret=instream.read()
 			instream.close()
 		except Exception, e:
-			raise Exception("Failed in call to tr.im API: %s" % e)
+			raise Exception("Failed in call to bit.ly API: %s" % e)
 
 		if len(ret)==0:
-			raise "tr.im returned blank!"
+			raise "bit.ly returned blank!"
 
 		try:
 			trim = json.loads(ret)
-			return trim['url']
+			if not trim['status_txt'] == "OK":
+				raise Exception("bit.ly status: %s" % trim['status_txt'])
+			return trim['data']['url']
 		except Exception, e:
 			raise Exception("Failed to JSON parse tr.im response: %s" % e)
 
