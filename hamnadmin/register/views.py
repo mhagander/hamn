@@ -76,7 +76,7 @@ def new(request):
 	except pExcept:
 		raise
 	except Exception, e:
-		raise pExcept('Failed to download blog feed')
+		raise pExcept('Failed to download blog feed: %s' % e)
 	if not status == 200:
 		raise pExcept('Attempt to download blog feed returned status %s.' % (status))
 	
