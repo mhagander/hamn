@@ -25,6 +25,7 @@ class Blog(models.Model):
 	authorfilter = models.CharField(max_length=255,default='',blank=True)
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
 	twitteruser = models.CharField(max_length=255, default='', blank=True)
+	excludestats = models.BooleanField(null=False, blank=False, default=False)
 
 	def __unicode__(self):
 		return "%s (%s)" % (self.name, self.feedurl)

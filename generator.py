@@ -87,7 +87,9 @@ class Generator:
 SELECT planet.feeds.name,blogurl,feedurl,count(*),planet.teams.name,planet.teams.teamurl,NULL FROM planet.feeds
 INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
 LEFT JOIN planet.teams ON planet.teams.id=planet.feeds.team
-WHERE age(dat) < '1 month' AND approved AND NOT hidden GROUP BY planet.feeds.name,blogurl,feedurl,planet.teams.name,teamurl ORDER BY 4 DESC,1 LIMIT 20
+WHERE age(dat) < '1 month' AND approved AND NOT hidden
+AND NOT excludestats
+GROUP BY planet.feeds.name,blogurl,feedurl,planet.teams.name,teamurl ORDER BY 4 DESC,1 LIMIT 20
 """)
 
 		self.topposters = [PlanetFeed(feed) for feed in c.fetchall()]
@@ -98,7 +100,9 @@ SELECT NULL,NULL,NULL,NULL,planet.teams.name, teamurl, count(*) FROM
 planet.feeds
 INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
 INNER JOIN planet.teams ON planet.teams.id=planet.feeds.team
-WHERE age(dat) < '1 month' AND approved AND NOT hidden GROUP BY planet.teams.name, teamurl ORDER BY 7 DESC, 1 LIMIT 10""")
+WHERE age(dat) < '1 month' AND approved AND NOT hidden
+AND NOT excludestats
+GROUP BY planet.teams.name, teamurl ORDER BY 7 DESC, 1 LIMIT 10""")
 
 		self.topteams = [PlanetFeed(feed) for feed in c.fetchall()]
 		if len(self.topteams) < 2: self.topteams = []
