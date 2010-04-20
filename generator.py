@@ -84,29 +84,21 @@ class Generator:
 			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc, post[8], post[9]))
 
 		c.execute("""
-SELECT name,blogurl,feedurl,count(*),NULL,NULL,NULL FROM planet.feeds
+SELECT planet.feeds.name,blogurl,feedurl,count(*),planet.teams.name,planet.teams.teamurl,NULL FROM planet.feeds
 INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
-WHERE age(dat) < '1 month' AND team IS NULL AND approved AND NOT hidden GROUP BY name,blogurl,feedurl ORDER BY 4 DESC,1 LIMIT 20
+LEFT JOIN planet.teams ON planet.teams.id=planet.feeds.team
+WHERE age(dat) < '1 month' AND approved AND NOT hidden GROUP BY planet.feeds.name,blogurl,feedurl,planet.teams.name,teamurl ORDER BY 4 DESC,1 LIMIT 20
 """)
 
 		self.topposters = [PlanetFeed(feed) for feed in c.fetchall()]
 		if len(self.topposters) < 2: self.topposters = []
 
 		c.execute("""
-SELECT feedname,blogurl,feedurl,feedcount,teamname,teamurl,teamcount FROM
-  (SELECT team,name AS feedname,blogurl,feedurl,count(*) AS feedcount FROM planet.feeds
-   INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
-   WHERE age(dat) < '1 month' AND approved AND NOT hidden GROUP BY team,name,blogurl,feedurl
-  ) AS q_feeds
- INNER JOIN
-  (SELECT teams.id AS team,teams.name AS teamname,teams.teamurl,count(*) AS teamcount FROM planet.teams
-   INNER JOIN planet.feeds ON planet.feeds.team=planet.teams.id
-   INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
-   WHERE age(dat) < '1 month' AND approved AND NOT hidden GROUP BY teams.id, teams.name, teams.teamurl ORDER BY 4 DESC,1 LIMIT 10
-  ) AS q_teams
-ON q_feeds.team=q_teams.team
-ORDER BY teamcount DESC, teamname, feedcount DESC, feedname;
-""")
+SELECT NULL,NULL,NULL,NULL,planet.teams.name, teamurl, count(*) FROM
+planet.feeds
+INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
+INNER JOIN planet.teams ON planet.teams.id=planet.feeds.team
+WHERE age(dat) < '1 month' AND approved AND NOT hidden GROUP BY planet.teams.name, teamurl ORDER BY 7 DESC, 1 LIMIT 10""")
 
 		self.topteams = [PlanetFeed(feed) for feed in c.fetchall()]
 		if len(self.topteams) < 2: self.topteams = []
