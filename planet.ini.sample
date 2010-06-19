@@ -14,8 +14,10 @@ mailto=planet@postgresql.org
 minerrors=3
 
 [twitter]
-account=planetpostgres
-password=topsecret
+consumer=somethingsecret
+consumersecret=evenmoresecret
+token=getwith-setuptwitter.py
+secret=getwith-setuptwitter.py
 
 [tr.im]
 account=planetpostgres
