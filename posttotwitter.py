@@ -5,23 +5,24 @@
 This file contains the functions to generate short
 URLs and tweets from what's currently in the database.
 
-Copyright (C) 2009 PostgreSQL Global Development Group
+Copyright (C) 2009-2010 PostgreSQL Global Development Group
 """
 
 # Post links to articles on twitter
 
 import psycopg2
 import psycopg2.extensions
-import twitter
 import urllib
 import simplejson as json
 import ConfigParser
+import time
+import oauth2 as oauth
 
 
 class PostToTwitter:
 	def __init__(self, cfg):
-		self.username=cfg.get('twitter','account')
-		self.passwd=cfg.get('twitter','password')
+		self.oauth_token = oauth.Token(cfg.get('twitter', 'token'), cfg.get('twitter', 'secret'))
+		self.oauth_consumer = oauth.Consumer(cfg.get('twitter', 'consumer'), cfg.get('twitter', 'consumersecret'))
 
 		if cfg.has_option('bit.ly','account'):
 			self.bitlyuser = cfg.get('bit.ly','account')
@@ -30,16 +31,37 @@ class PostToTwitter:
 		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 		self.db = psycopg2.connect(c.get('planet','db'))
 
-		# Only set up the connection to twitter when we know we're going to
-		# post something.
-		self._twitter = None
 
-	@property
-	def twitter(self):
-		if not self._twitter:
-			self._twitter=twitter.Api(username=self.username, password=self.passwd)
-		return self._twitter
+	def do_post(self, msg):
+		"""
+		Actually make a post to twitter!
 
+		Authentication is done through OAuth, which controls the user to whom this is posted.
+		"""
+		params = {
+			'oauth_version': "1.0",
+			'oauth_nonce': oauth.generate_nonce(),
+			'oauth_timestamp': int(time.time()),
+			'oauth_token': self.oauth_token.key,
+			'oauth_consumer_key': self.oauth_consumer.key,
+			'status': msg,
+			}
+
+		req = oauth.Request(method="POST",
+							url="https://api.twitter.com/1/statuses/update.json",
+							parameters=params)
+		req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.oauth_consumer, self.oauth_token)
+
+		# Make the actual call to twitter
+		instream=urllib.urlopen("https://api.twitter.com/1/statuses/update.json", req.to_postdata())
+		ret=instream.read()
+		instream.close()
+		ret_dict = json.loads(ret)
+		if ret_dict.has_key('created_at'):
+			return
+		if ret_dict.has_key('error'):
+			raise Exception("Could not post to twitter: %s" % ret_dict['error'])
+		raise Exception("Unparseable response from twitter: %s" % ret)
 
 	def Run(self):
 		c = self.db.cursor()
@@ -83,7 +105,7 @@ class PostToTwitter:
 
 			# Now post it to twitter
 			try:
-				status = self.twitter.PostUpdate(msg)
+				self.do_post(msg)
 			except Exception, e:
 				print "Error posting to twitter (post %s): %s" % (post[0], e)
 				# We'll just try again with the next one
