@@ -29,18 +29,18 @@ if resp['status'] != '200':
 	print "request_token call failed!"
 	print resp
 	sys.exit(1)
-req_token_cred = dict(urlparse.parse_qsl(content))
+req_token_cred = urlparse.parse_qs(content)
 
 print "Received request token."
-print "Token secret (keep this for the next step): %s" % req_token_cred['oauth_token_secret']
+print "Token secret (keep this for the next step): %s" % req_token_cred['oauth_token_secret'][0]
 print ""
 print "Now, go to the following URL:"
-print "https://api.twitter.com/oauth/authorize?oauth_token=%s" % req_token_cred['oauth_token']
+print "https://api.twitter.com/oauth/authorize?oauth_token=%s" % req_token_cred['oauth_token'][0]
 print ""
 
 pin = raw_input('Enter the PIN here:')
 
-token = oauth.Token(req_token_cred['oauth_token'], req_token_cred['oauth_token_secret'])
+token = oauth.Token(req_token_cred['oauth_token'][0], req_token_cred['oauth_token_secret'][0])
 client = oauth.Client(consumer, token)
 # Put the PIN on the URL, because it seems to not work to use token.set_verifier()
 resp, content = client.request('https://api.twitter.com/oauth/access_token?oauth_verifier=%s' % pin, "POST")
@@ -50,10 +50,10 @@ if resp['status'] != '200':
 	print content
 	sys.exit(1)
 
-r = dict(urlparse.parse_qsl(content))
+r = urlparse.parse_qs(content)
 print "Access token received."
-print "Token: %s" % r['oauth_token']
-print "Secret: %s" % r['oauth_token_secret']
+print "Token: %s" % r['oauth_token'][0]
+print "Secret: %s" % r['oauth_token_secret'][0]
 print "Record these two values in planet.ini, and you're good to go!"
 
 
