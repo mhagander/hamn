@@ -93,8 +93,20 @@ class Aggregator:
 				guidisperma = True
 			if self.StoreEntry(feedinfo[0], entry.id, entry.date, entry.link, guidisperma, entry.title, txt) > 0:
 				numadded += 1
-		if numadded > 0:
-			self.db.cursor().execute("UPDATE planet.feeds SET lastget=COALESCE((SELECT max(dat) FROM planet.posts WHERE planet.posts.feed=planet.feeds.id),'2000-01-01') WHERE planet.feeds.id=%(feed)s", {'feed': feedinfo[0]})
+
+		# Check if we got back a Last-Modified time
+		if hasattr(feed, 'modified') and feed['modified']:
+			# Last-Modified header retreived. If we did receive it, we will
+			# trust the content (assuming we can parse it)
+			self.db.cursor().execute("UPDATE planet.feeds SET lastget=%(date)s WHERE id=%(feed)s AND NOT lastget=%(date)s", { 'date': datetime.datetime(*feed['modified'][:6]), 'feed': feedinfo[0]})
+		else:
+			# We didn't get a Last-Modified time, so set it to the entry date
+			# for the latest entry in this feed. Only do this if we have more
+			# than one entry.
+			if numadded > 0:
+				self.db.cursor().execute("UPDATE planet.feeds SET lastget=COALESCE((SELECT max(dat) FROM planet.posts WHERE planet.posts.feed=planet.feeds.id),'2000-01-01') WHERE planet.feeds.id=%(feed)s", {'feed': feedinfo[0]})
+
+		# Return the number of feeds we actually added
 		return numadded
 
 	def matches_filter(self, entry):
