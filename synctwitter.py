@@ -27,7 +27,7 @@ class SyncTwitter(TwitterClient):
 		expected = set([r[0] for r in curs.fetchall()])
 
 		# Get list of current screen names the list is following
-		response = self.twitter_request('subscribers/members.json')
+		response = self.twitter_request('%s/subscribers/members.json' % self.twittername)
 		current = set([x['screen_name'] for x in response['users']])
 
 		# Start by deleting, then adding the new ones

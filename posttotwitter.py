@@ -15,14 +15,12 @@ import psycopg2.extensions
 import urllib
 import simplejson as json
 import ConfigParser
-import time
-import oauth2 as oauth
+from twitterclient import TwitterClient
 
 
-class PostToTwitter:
+class PostToTwitter(TwitterClient):
 	def __init__(self, cfg):
-		self.oauth_token = oauth.Token(cfg.get('twitter', 'token'), cfg.get('twitter', 'secret'))
-		self.oauth_consumer = oauth.Consumer(cfg.get('twitter', 'consumer'), cfg.get('twitter', 'consumersecret'))
+		TwitterClient.__init__(self, cfg)
 
 		if cfg.has_option('bit.ly','account'):
 			self.bitlyuser = cfg.get('bit.ly','account')
@@ -35,28 +33,11 @@ class PostToTwitter:
 	def do_post(self, msg):
 		"""
 		Actually make a post to twitter!
-
-		Authentication is done through OAuth, which controls the user to whom this is posted.
 		"""
-		params = {
-			'oauth_version': "1.0",
-			'oauth_nonce': oauth.generate_nonce(),
-			'oauth_timestamp': int(time.time()),
-			'oauth_token': self.oauth_token.key,
-			'oauth_consumer_key': self.oauth_consumer.key,
-			'status': msg,
-			}
+		ret_dict =self.twitter_request('statuses/update.json', 'POST', {
+				'status': msg,
+				})
 
-		req = oauth.Request(method="POST",
-							url="https://api.twitter.com/1/statuses/update.json",
-							parameters=params)
-		req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.oauth_consumer, self.oauth_token)
-
-		# Make the actual call to twitter
-		instream=urllib.urlopen("https://api.twitter.com/1/statuses/update.json", req.to_postdata())
-		ret=instream.read()
-		instream.close()
-		ret_dict = json.loads(ret)
 		if ret_dict.has_key('created_at'):
 			return
 		if ret_dict.has_key('error'):

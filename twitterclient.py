@@ -40,7 +40,7 @@ class TwitterClient(object):
 		if ext_params:
 			params.update(ext_params)
 
-		url = "https://api.twitter.com/1/%s/%s" % (self.twittername, apicall)
+		url = "https://api.twitter.com/1/%s" % apicall
 
 		req = oauth.Request(method=method,
 							url=url,
@@ -58,13 +58,13 @@ class TwitterClient(object):
 
 	def remove_subscriber(self, name):
 		print "Removing twitter user %s from list." % name
-		self.twitter_request('subscribers/members.json', 'POST', {
+		self.twitter_request('%s/subscribers/members.json' % self.twittername,'POST', {
 				'id': name,
 				'_method': 'DELETE',
 				})
 
 	def add_subscriber(self, name):
 		print "Adding twitter user %s to list." % name
-		self.twitter_request('subscribers/members.json', 'POST', {
+		self.twitter_request('%s/subscribers/members.json' % self.twittername, 'POST', {
 				'id': name,
 				})
