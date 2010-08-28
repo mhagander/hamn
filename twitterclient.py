@@ -56,6 +56,10 @@ class TwitterClient(object):
 		instream.close()
 		return json.loads(ret)
 
+	def list_subscribers(self):
+		response = self.twitter_request('%s/subscribers/members.json' % self.twittername)
+		return [x['screen_name'] for x in response['users']]
+
 	def remove_subscriber(self, name):
 		print "Removing twitter user %s from list." % name
 		self.twitter_request('%s/subscribers/members.json' % self.twittername,'POST', {
