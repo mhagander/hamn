@@ -26,6 +26,7 @@ class TwitterClient(object):
 		that has loaded the planet.ini file.
 		"""
 		self.twittername = cfg.get('twitter', 'account')
+		self.twitterlist = cfg.get('twitter', 'listname')
 		self.oauth_token = oauth.Token(cfg.get('twitter', 'token'), cfg.get('twitter', 'secret'))
 		self.oauth_consumer = oauth.Consumer(cfg.get('twitter', 'consumer'), cfg.get('twitter', 'consumersecret'))
 
@@ -57,18 +58,18 @@ class TwitterClient(object):
 		return json.loads(ret)
 
 	def list_subscribers(self):
-		response = self.twitter_request('%s/subscribers/members.json' % self.twittername)
+		response = self.twitter_request('%s/%s/members.json' % (self.twittername, self.twitterlist))
 		return [x['screen_name'] for x in response['users']]
 
 	def remove_subscriber(self, name):
 		print "Removing twitter user %s from list." % name
-		self.twitter_request('%s/subscribers/members.json' % self.twittername,'POST', {
+		self.twitter_request('%s/%s/members.json' % (self.twittername, self.twitterlist), 'POST', {
 				'id': name,
 				'_method': 'DELETE',
 				})
 
 	def add_subscriber(self, name):
 		print "Adding twitter user %s to list." % name
-		self.twitter_request('%s/subscribers/members.json' % self.twittername, 'POST', {
+		self.twitter_request('%s/%s/members.json' % (self.twittername, self.twitterlist), 'POST', {
 				'id': name,
 				})
