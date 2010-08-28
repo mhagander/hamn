@@ -58,8 +58,18 @@ class TwitterClient(object):
 		return json.loads(ret)
 
 	def list_subscribers(self):
-		response = self.twitter_request('%s/%s/members.json' % (self.twittername, self.twitterlist))
-		return [x['screen_name'] for x in response['users']]
+		# Eek. It seems subscribers are paged even if we don't ask for it
+		# Thus, we need to loop with multiple requests
+		cursor=-1
+		handles = []
+		while cursor != 0:
+			response = self.twitter_request('%s/%s/members.json' % (self.twittername, self.twitterlist), 'GET', {
+					'cursor': cursor,
+					})
+			handles.extend([x['screen_name'] for x in response['users']])
+			cursor = response['next_cursor']
+
+		return handles
 
 	def remove_subscriber(self, name):
 		print "Removing twitter user %s from list." % name
