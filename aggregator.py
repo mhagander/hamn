@@ -5,7 +5,7 @@
 This file contains the functions to suck down RSS/Atom feeds 
 (using feedparser) and store the results in a PostgreSQL database.
 
-Copyright (C) 2008-2009 PostgreSQL Global Development Group
+Copyright (C) 2008-2010 PostgreSQL Global Development Group
 """
 
 import psycopg2
@@ -98,7 +98,14 @@ class Aggregator:
 		if hasattr(feed, 'modified') and feed['modified']:
 			# Last-Modified header retreived. If we did receive it, we will
 			# trust the content (assuming we can parse it)
-			self.db.cursor().execute("UPDATE planet.feeds SET lastget=%(date)s WHERE id=%(feed)s AND NOT lastget=%(date)s", { 'date': datetime.datetime(*feed['modified'][:6]), 'feed': feedinfo[0]})
+			d = datetime.datetime(*feed['modified'][:6])
+			if (d-datetime.datetime.now()).days > 5:
+				# Except if it's ridiculously long in the future, we'll set it
+				# to right now instead, to deal with buggy blog software. We
+				# currently define rediculously long as 5 days
+				d = datetime.datetime.now()
+
+			self.db.cursor().execute("UPDATE planet.feeds SET lastget=%(date)s WHERE id=%(feed)s AND NOT lastget=%(date)s", { 'date': d, 'feed': feedinfo[0]})
 		else:
 			# We didn't get a Last-Modified time, so set it to the entry date
 			# for the latest entry in this feed. Only do this if we have more
