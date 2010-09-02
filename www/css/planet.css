@@ -175,3 +175,21 @@ pre {
    white-space: -o-pre-wrap; /* Opera 7 */
    word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
+
+/* Add pretty boxes for code */
+
+div.planetPostContent code {
+   background-color: #ECF1EF;
+   border-width: 5px;
+   border-radius: 5px;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px
+}
+
+div.planetPostContent pre {
+   background-color: #ECF1EF;
+   border-width: 5px;
+   border-radius: 5px;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px
+}
