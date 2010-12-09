@@ -111,7 +111,7 @@ http://planet.postgresql.org/register/admin/register/blog/
 def delete(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	if not blog.userid == request.user.username:
-		raise pError("You can only delete your own feeds! Don't try to hack!")
+		raise pExcept("You can only delete your own feeds! Don't try to hack!")
 	send_mail('Blog deleted', """
 The user '%s' has deleted the blog at
 %s (name %s)
