@@ -11,6 +11,7 @@ from hamnadmin.register.models import *
 from hamnadmin.exceptions import pExcept
 
 import socket
+import datetime
 import feedparser
 
 def issuperuser(user):
@@ -118,6 +119,17 @@ The user '%s' has deleted the blog at
 """ % (blog.userid, blog.feedurl, blog.name), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 	blog.delete()
 	AuditEntry(request.user.username, 'Deleted blog %s' % blog.feedurl).save()
+	return HttpResponseRedirect('../..')
+
+@login_required
+@transaction.commit_on_success
+def reset(request, id):
+	blog = get_object_or_404(Blog, id=id)
+	if not blog.userid == request.user.username:
+		raise pExcept("You can only reset your own feeds! Don't try to hack!")
+	blog.lastget = datetime.datetime(2000,01,01)
+	blog.save()
+	AuditEntry(request.user.username, 'Reset blog %s' % blog.feedurl).save()
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)

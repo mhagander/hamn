@@ -23,7 +23,8 @@ We have the following blog(s) registered:
  <td>{{blog.approved|yesno:"Yes,No"}}</td>
  <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a><br/>
 Author Filter: {{blog.authorfilter}}<br/>
-Twitter name: {%if blog.twitteruser%}@<a href="http://twitter.com/{{blog.twitteruser}}">{{blog.twitteruser}}</a>{%endif%}
+Twitter name: {%if blog.twitteruser%}@<a href="http://twitter.com/{{blog.twitteruser}}">{{blog.twitteruser}}</a>{%endif%}<br/>
+Last http get: {{blog.lastget}}<br/>
  </td>
 
  <td><a href="log/{{blog.id}}/">View log</a><br/>
@@ -36,6 +37,7 @@ Not approved yet.<br/>
 {%if user.is_superuser %}
   <br/>
   <nobr><a href="discover/{{blog.id}}/">Fetch metadata</a></nobr><br/>
+  <nobr><a href="reset/{{blog.id}}/">Reset http time</a></nobr><br/>
 </td>
 {%endif%}
 </tr>

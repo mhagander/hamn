@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     (r'^new/$', 'hamnadmin.register.views.new'),
     (r'^discover/(\d+)/$', 'hamnadmin.register.views.discover'),
     (r'^delete/(\d+)/$', 'hamnadmin.register.views.delete'),
+    (r'^reset/(\d+)/$', 'hamnadmin.register.views.reset'),
 
     (r'^log/(\d+)/$','hamnadmin.register.views.logview'),
     (r'^blogposts/(\d+)/$', 'hamnadmin.register.views.blogposts'),
