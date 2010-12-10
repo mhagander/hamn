@@ -33,13 +33,12 @@ Last http get: {{blog.lastget}}<br/>
 {%else%}
 Not approved yet.<br/>
 {%endif%}
-  <a href="#" onClick="confirmDelete('{{blog.feedurl}}',{{blog.id}})">Delete blog</a>
+  <a href="#" onClick="confirmDelete('{{blog.feedurl}}',{{blog.id}})">Delete blog</a><br/>
 {%if user.is_superuser %}
-  <br/>
   <nobr><a href="discover/{{blog.id}}/">Fetch metadata</a></nobr><br/>
+{%endif%}
   <nobr><a href="reset/{{blog.id}}/">Reset http time</a></nobr><br/>
 </td>
-{%endif%}
 </tr>
 {%endfor%}
 </table>
