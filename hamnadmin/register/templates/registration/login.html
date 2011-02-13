@@ -11,7 +11,7 @@ You need to log in to access your settings. This is done using a
 PostgreSQL community account. If you do not have one, go to the main
 website and <a href="http://www.postgresql.org/community/signup">sign up</a>.
   </p>
-  <form action='.' method='post'>
+  <form action='.' method='post'>{% csrf_token %}
     <label for="username">User name:</label>
     <input type="text" name="username" value="" id="username">
     <label for="password">Password:</label>
