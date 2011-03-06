@@ -70,6 +70,8 @@ def new(request):
 	try:
 		feed = feedparser.parse(feedurl)
 		status = feed.status
+		if not status == 200:
+			raise pExcept('Attempt to download blog feed returned status %s.' % (status))
 		lnk = feed.feed.link
 		l = len(feed.entries)
 		if l < 1:
@@ -78,8 +80,6 @@ def new(request):
 		raise
 	except Exception, e:
 		raise pExcept('Failed to download blog feed: %s' % e)
-	if not status == 200:
-		raise pExcept('Attempt to download blog feed returned status %s.' % (status))
 	
 	if not settings.NOTIFYADDR:
 		raise pExcept('Notify address not specified, cannot complete')
