@@ -35,7 +35,7 @@ class PostToTwitter(TwitterClient):
 		Actually make a post to twitter!
 		"""
 		ret_dict =self.twitter_request('statuses/update.json', 'POST', {
-				'status': msg,
+				'status': msg.encode('utf-8'),
 				})
 
 		if ret_dict.has_key('created_at'):
