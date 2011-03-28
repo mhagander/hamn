@@ -5,7 +5,7 @@
 This file contains the functions to generate short
 URLs and tweets from what's currently in the database.
 
-Copyright (C) 2009-2010 PostgreSQL Global Development Group
+Copyright (C) 2009-2011 PostgreSQL Global Development Group
 """
 
 # Post links to articles on twitter
@@ -17,6 +17,9 @@ import simplejson as json
 import ConfigParser
 from twitterclient import TwitterClient
 
+
+# Simple map used to shorten id values to URLs
+_urlvalmap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '-', '_']
 
 class PostToTwitter(TwitterClient):
 	def __init__(self, cfg):
@@ -107,6 +110,14 @@ class PostToTwitter(TwitterClient):
 			return txt
 		return "%s..." % (txt[:(140-otherlen-3)])
 
+
+	# Trim an URL using http://postgr.es
+	def shortid(self, url):
+		s = ""
+		while id > 0:
+			s = _idvalmap[id % 64] + s
+			id /= 64
+		return "http://postgr.es/p/%s" % s
 
 	# Trim an URL using http://bit.ly
 	def shortlink(self, url):
