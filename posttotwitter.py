@@ -112,10 +112,10 @@ class PostToTwitter(TwitterClient):
 
 
 	# Trim an URL using http://postgr.es
-	def shortid(self, url):
+	def shortid(self, id):
 		s = ""
 		while id > 0:
-			s = _idvalmap[id % 64] + s
+			s = _urlvalmap[id % 64] + s
 			id /= 64
 		return "http://postgr.es/p/%s" % s
 
