@@ -60,7 +60,7 @@ class PostToTwitter(TwitterClient):
 				# to twitter, and we store it separately in the database
 				# in case it's needed.
 				try:
-					short = self.shortlink(post[2])
+					short = self.shortid(post[1])
 				except Exception, e:
 					print "Failed to shorten URL %s: %s" % (post[2], e)
 					continue
