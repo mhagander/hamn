@@ -12,12 +12,16 @@ class BlogAdminForm(forms.ModelForm):
 	def clean_approved(self):
 		if self.cleaned_data['approved'] != self.instance.approved:
 			# Approved flag has changed, send an email
+			if self.cleaned_data.has_key('name'):
+				name = self.cleaned_data['name']
+			else:
+				name = "<empty>"
 			send_mail('A planet blog has been %s' % (
 				self.cleaned_data['approved'] and 'approved' or 'de-approved',
 				),
 				"The blog %s (for user %s, userid %s) has been %s." % (
 					self.cleaned_data['feedurl'],
-					self.cleaned_data['name'],
+					name,
 					self.cleaned_data['userid'],
 					self.cleaned_data['approved'] and 'approved' or 'de-approved',
 				), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
