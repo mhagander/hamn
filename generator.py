@@ -38,7 +38,7 @@ class Generator:
 		self.topteams = []
 		self.allposters = []
 		self.allteams = []
-		self.staticfiles = ['policy','add']
+		self.staticfiles = ['add', ]
 		if cfg.has_option('twitter','account'):
 			self.twittername = cfg.get('twitter','account')
 		else:
