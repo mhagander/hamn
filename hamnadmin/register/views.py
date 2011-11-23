@@ -40,7 +40,7 @@ def new(request):
 		raise pExcept('must include blog url!')
 
 	# TODO: add support for 'feed://' urls
-	if not feedurl.startswith('http://'):
+    if not feedurl.startswith('http://') and not feedurl.startswith('https://'):
 		raise pExcept('Only http served blogs are accepted!')
 
 	# See if this blog is already registered
