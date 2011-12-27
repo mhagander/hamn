@@ -1,5 +1,4 @@
 from django.conf.urls.defaults import *
-from django.contrib.auth.views import logout, logout_then_login
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -20,7 +19,7 @@ urlpatterns = patterns('',
 
     (r'^login/$', 'hamnadmin.auth.login'),
     (r'^auth_receive/$', 'hamnadmin.auth.auth_receive'),
-    (r'^logout/$', logout_then_login, {'login_url':'/'}),
+    (r'^logout/$', 'hamnadmin.auth.logout'),
 
     (r'^admin/', include(admin.site.urls)),
 )
