@@ -86,7 +86,7 @@ def new(request):
 
 	blog = Blog()
 	blog.userid = request.user.username
-	blog.name = request.user.first_name
+	blog.name = "%s %s" % (request.user.first_name, request.user.last_name)
 
 	blog.feedurl = feedurl
 	blog.authorfilter = authorfilter
