@@ -30,7 +30,7 @@ class MajordomoInterface:
 		and screenscrape the result of the 'who-short' command.
 		"""
 
-		f = urlopen("http://%s/mj/mj_wwwadm?passw=%s&list=%s&func=who-short" % 
+		f = urlopen("https://%s/mj/mj_wwwadm?passw=%s&list=%s&func=who-short" %
 			(self.mjhost, self.listpwd, self.listname))
 		s = f.read()
 		f.close()
@@ -81,8 +81,8 @@ class MajordomoInterface:
 			'passw': self.listpwd
 		})
 		body = urlencode(var)
-		
-		h = httplib.HTTP(self.mjhost)
+
+		h = httplib.HTTPS(self.mjhost)
 		h.putrequest('POST', '/mj/mj_wwwadm')
 		h.putheader('host', self.mjhost)
 		h.putheader('content-type','application/x-www-form-urlencoded')
