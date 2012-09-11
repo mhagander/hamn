@@ -23,7 +23,7 @@ class SyncTwitter(TwitterClient):
 	def Run(self):
 		# Get list of handles that should be on the list
 		curs = self.db.cursor()
-		curs.execute("SELECT DISTINCT twitteruser FROM planet.feeds WHERE NOT (twitteruser IS NULL OR twitteruser='') ORDER BY twitteruser");
+		curs.execute("SELECT DISTINCT lower(twitteruser) FROM planet.feeds WHERE NOT (twitteruser IS NULL OR twitteruser='') ORDER BY twitteruser");
 		expected = set([r[0].replace('@','') for r in curs.fetchall()])
 
 		# Get list of current screen names the list is following

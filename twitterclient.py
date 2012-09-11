@@ -66,7 +66,7 @@ class TwitterClient(object):
 			response = self.twitter_request('%s/%s/members.json' % (self.twittername, self.twitterlist), 'GET', {
 					'cursor': cursor,
 					})
-			handles.extend([x['screen_name'] for x in response['users']])
+			handles.extend([x['screen_name'].lower() for x in response['users']])
 			cursor = response['next_cursor']
 
 		return handles
