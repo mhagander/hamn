@@ -91,14 +91,23 @@ class Aggregator:
 				guidisperma = entry.guidislink
 			else:
 				guidisperma = True
-			if self.StoreEntry(feedinfo[0], entry.id, entry.date, entry.link, guidisperma, entry.title, txt) > 0:
+			dat = None
+			if hasattr(entry, 'published_parsed'):
+				dat = datetime.datetime(*(entry.published_parsed[0:6]))
+			elif hasattr(entry, 'updated_parsed'):
+				dat = datetime.datetime(*(entry.updated_parsed[0:6]))
+			else:
+				print "Failed to get date for entry at %s (keys %s)" % (entry.link, entry.keys())
+				continue
+
+			if self.StoreEntry(feedinfo[0], entry.id, dat, entry.link, guidisperma, entry.title, txt) > 0:
 				numadded += 1
 
 		# Check if we got back a Last-Modified time
-		if hasattr(feed, 'modified') and feed['modified']:
+		if hasattr(feed, 'modified_parsed') and feed['modified_parsed']:
 			# Last-Modified header retreived. If we did receive it, we will
 			# trust the content (assuming we can parse it)
-			d = datetime.datetime(*feed['modified'][:6])
+			d = datetime.datetime(*feed['modified_parsed'][:6])
 			if (d-datetime.datetime.now()).days > 5:
 				# Except if it's ridiculously long in the future, we'll set it
 				# to right now instead, to deal with buggy blog software. We
