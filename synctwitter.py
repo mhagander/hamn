@@ -18,7 +18,7 @@ class SyncTwitter(TwitterClient):
 		TwitterClient.__init__(self, cfg)
 
 		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-		self.db = psycopg2.connect(c.get('planet','db'))
+		self.db = psycopg2.connect(cfg.get('planet','db'))
 
 	def Run(self):
 		# Get list of handles that should be on the list
