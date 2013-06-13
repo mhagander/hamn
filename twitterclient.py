@@ -55,7 +55,12 @@ class TwitterClient(object):
 		# Make the actual call to twitter
 		ret=instream.read()
 		instream.close()
-		return json.loads(ret)
+		try:
+			return json.loads(ret)
+		except json.decoder.JSONDecodeError:
+			print "Received non-JSON response to a JSON request!"
+			print ret
+			raise
 
 	def list_subscribers(self):
 		# Eek. It seems subscribers are paged even if we don't ask for it
