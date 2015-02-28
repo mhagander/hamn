@@ -84,12 +84,12 @@ class Generator:
 			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc, post[8], post[9]))
 
 		c.execute("""
-SELECT planet.feeds.name,blogurl,feedurl,count(*),planet.teams.name,planet.teams.teamurl,NULL FROM planet.feeds
+SELECT planet.feeds.name,blogurl,feedurl,count(*),planet.teams.name,planet.teams.teamurl,NULL,max(planet.posts.dat) FROM planet.feeds
 INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
 LEFT JOIN planet.teams ON planet.teams.id=planet.feeds.team
 WHERE age(dat) < '1 month' AND approved AND NOT hidden
 AND NOT excludestats
-GROUP BY planet.feeds.name,blogurl,feedurl,planet.teams.name,teamurl ORDER BY 4 DESC,1 LIMIT 20
+GROUP BY planet.feeds.name,blogurl,feedurl,planet.teams.name,teamurl ORDER BY 4 DESC, 8 DESC, 1 LIMIT 20
 """)
 
 		self.topposters = [PlanetFeed(feed) for feed in c.fetchall()]
