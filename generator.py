@@ -183,6 +183,9 @@ class HtmlTruncator(HTMLParser):
 	
 	def quoteurl(self, str):
 		p = str.split(":",2)
+		if len(p) < 2:
+			# Don't crash on invalid URLs
+			return ""
 		return p[0] + ":" + urllib.quote(p[1])
 
 	def cleanhref(self, attrs):
