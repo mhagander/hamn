@@ -66,6 +66,8 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_URL = '/register/login'
 
+ALLOWED_HOSTS=['*']
+
 # If there is a local_settings.py, let it override our settings
 try:
 	from local_settings import *

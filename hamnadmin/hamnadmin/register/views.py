@@ -29,7 +29,7 @@ def root(request):
 	}, context_instance=RequestContext(request))
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def new(request):
 	if not request.method== 'POST':
 		raise pExcept('must be POST')
@@ -108,7 +108,7 @@ http://planet.postgresql.org/register/admin/register/blog/
 	return HttpResponseRedirect('..')
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def delete(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	if not blog.userid == request.user.username:
@@ -122,7 +122,7 @@ The user '%s' has deleted the blog at
 	return HttpResponseRedirect('../..')
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def reset(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	if not blog.userid == request.user.username:
@@ -133,7 +133,7 @@ def reset(request, id):
 	return HttpResponseRedirect('../..')
 
 @user_passes_test(issuperuser)
-@transaction.commit_on_success
+@transaction.atomic
 def discover(request, id):
 	blog = get_object_or_404(Blog, id=id)
 
@@ -163,7 +163,7 @@ def logview(request, id):
 	}, context_instance=RequestContext(request))
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def blogposts(request, id):
 	blog = get_object_or_404(Blog, id=id)
 	if not blog.userid == request.user.username and not request.user.is_superuser:
@@ -192,17 +192,17 @@ def __setposthide(request, blogid, postid, status):
 	return HttpResponseRedirect('../..')
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def blogpost_hide(request, blogid, postid):
 	return __setposthide(request, blogid, postid, True)
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def blogpost_unhide(request, blogid, postid):
 	return __setposthide(request, blogid, postid, False)
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def blogpost_delete(request, blogid, postid):
 	post = __getvalidblogpost(request, blogid, postid)
 

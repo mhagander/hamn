@@ -8,6 +8,7 @@ from hamnadmin.register.models import *
 class BlogAdminForm(forms.ModelForm):
 	class Meta:
 		model = Blog
+		exclude = []
 
 	def clean_approved(self):
 		if self.cleaned_data['approved'] != self.instance.approved:
