@@ -10,7 +10,7 @@ class Team(models.Model):
 		return "%s (%s)" % (self.name, self.teamurl)
 
 	class Meta:
-		db_table = 'planet\".\"teams'
+		db_table = 'teams'
 
 	class Admin:
 		pass
@@ -36,7 +36,7 @@ class Blog(models.Model):
 		return u.email
 
 	class Meta:
-		db_table = 'planet\".\"feeds'
+		db_table = 'feeds'
 		ordering = ['approved','name']
 
 	class Admin:
@@ -58,7 +58,7 @@ class Post(models.Model):
 		return self.title
 
 	class Meta:
-		db_table = 'planet\".\"posts'
+		db_table = 'posts'
 		ordering = ['-dat']
 
 	class Admin:
@@ -79,7 +79,7 @@ class AuditEntry(models.Model):
 		return "%s (%s): %s" % (self.logtime, self.user, self.logtxt)
 
 	class Meta:
-		db_table = 'admin\".\"auditlog'
+		db_table = 'auditlog'
 		ordering = ['logtime']
 		
 class AggregatorLog(models.Model):
@@ -89,7 +89,7 @@ class AggregatorLog(models.Model):
 	info = models.TextField()
 	
 	class Meta:
-		db_table = 'planet\".\"aggregatorlog'
+		db_table = 'aggregatorlog'
 		ordering = ['-ts']
 
 	def __unicode__(self):

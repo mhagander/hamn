@@ -24,8 +24,8 @@ class LogChecker(object):
 	def Check(self):
 		c = self.db.cursor()
 		c.execute("""
-	SELECT name,info,count(*) as num FROM planet.aggregatorlog
-	INNER JOIN planet.feeds ON feed=feeds.id 
+	SELECT name,info,count(*) as num FROM aggregatorlog
+	INNER JOIN feeds ON feed=feeds.id 
 	WHERE success='f' AND ts > CURRENT_TIMESTAMP-'24 hours'::interval
 	GROUP BY name,info
 	HAVING count(*) > %s

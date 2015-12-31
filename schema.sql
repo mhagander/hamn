@@ -12,17 +12,14 @@ SET escape_string_warning = off;
 -- Name: planet; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA planet;
-
-
-SET search_path = planet, pg_catalog;
+SET search_path = pg_catalog;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: aggregatorlog; Type: TABLE; Schema: planet; Owner: -; Tablespace: 
+-- Name: aggregatorlog; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE aggregatorlog (
@@ -35,7 +32,7 @@ CREATE TABLE aggregatorlog (
 
 
 --
--- Name: feeds; Type: TABLE; Schema: planet; Owner: -; Tablespace: 
+-- Name: feeds; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE feeds (
@@ -52,7 +49,7 @@ CREATE TABLE feeds (
 
 
 --
--- Name: posts; Type: TABLE; Schema: planet; Owner: -; Tablespace: 
+-- Name: posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE posts (
@@ -71,7 +68,7 @@ CREATE TABLE posts (
 
 
 --
--- Name: aggregatorlog_id_seq; Type: SEQUENCE; Schema: planet; Owner: -
+-- Name: aggregatorlog_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE aggregatorlog_id_seq
@@ -82,14 +79,14 @@ CREATE SEQUENCE aggregatorlog_id_seq
 
 
 --
--- Name: aggregatorlog_id_seq; Type: SEQUENCE OWNED BY; Schema: planet; Owner: -
+-- Name: aggregatorlog_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE aggregatorlog_id_seq OWNED BY aggregatorlog.id;
 
 
 --
--- Name: feeds_id_seq; Type: SEQUENCE; Schema: planet; Owner: -
+-- Name: feeds_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE feeds_id_seq
@@ -100,14 +97,14 @@ CREATE SEQUENCE feeds_id_seq
 
 
 --
--- Name: feeds_id_seq; Type: SEQUENCE OWNED BY; Schema: planet; Owner: -
+-- Name: feeds_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE feeds_id_seq OWNED BY feeds.id;
 
 
 --
--- Name: posts_id_seq; Type: SEQUENCE; Schema: planet; Owner: -
+-- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE posts_id_seq
@@ -118,35 +115,35 @@ CREATE SEQUENCE posts_id_seq
 
 
 --
--- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: planet; Owner: -
+-- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: planet; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE aggregatorlog ALTER COLUMN id SET DEFAULT nextval('aggregatorlog_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: planet; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE feeds ALTER COLUMN id SET DEFAULT nextval('feeds_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: planet; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
 
 
 --
--- Name: aggregatorlog_pkey; Type: CONSTRAINT; Schema: planet; Owner: -; Tablespace: 
+-- Name: aggregatorlog_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY aggregatorlog
@@ -154,7 +151,7 @@ ALTER TABLE ONLY aggregatorlog
 
 
 --
--- Name: feeds_pkey; Type: CONSTRAINT; Schema: planet; Owner: -; Tablespace: 
+-- Name: feeds_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY feeds
@@ -162,7 +159,7 @@ ALTER TABLE ONLY feeds
 
 
 --
--- Name: posts_pkey; Type: CONSTRAINT; Schema: planet; Owner: -; Tablespace: 
+-- Name: posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY posts
@@ -170,35 +167,35 @@ ALTER TABLE ONLY posts
 
 
 --
--- Name: aggregatorlog_feed_idx; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+-- Name: aggregatorlog_feed_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX aggregatorlog_feed_idx ON aggregatorlog USING btree (feed);
 
 
 --
--- Name: aggregatorlog_feed_ts_idx; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+-- Name: aggregatorlog_feed_ts_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX aggregatorlog_feed_ts_idx ON aggregatorlog USING btree (feed, ts);
 
 
 --
--- Name: feeds_feddurl; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+-- Name: feeds_feddurl; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX feeds_feddurl ON feeds USING btree (feedurl);
 
 
 --
--- Name: feeds_name; Type: INDEX; Schema: planet; Owner: -; Tablespace: 
+-- Name: feeds_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX feeds_name ON feeds USING btree (name);
 
 
 --
--- Name: aggregatorlog_feed_fkey; Type: FK CONSTRAINT; Schema: planet; Owner: -
+-- Name: aggregatorlog_feed_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY aggregatorlog
@@ -206,7 +203,7 @@ ALTER TABLE ONLY aggregatorlog
 
 
 --
--- Name: posts_feed_fkey; Type: FK CONSTRAINT; Schema: planet; Owner: -
+-- Name: posts_feed_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY posts

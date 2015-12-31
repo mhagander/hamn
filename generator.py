@@ -66,7 +66,7 @@ class Generator:
 		self.db.set_client_encoding('UTF8')
 		c = self.db.cursor()
 		c.execute("SET TIMEZONE=GMT")
-		c.execute("SELECT guid,link,dat,title,txt,planet.feeds.name,blogurl,guidisperma,planet.teams.name,planet.teams.teamurl FROM planet.posts INNER JOIN planet.feeds ON planet.feeds.id=planet.posts.feed LEFT JOIN planet.teams ON planet.feeds.team = planet.teams.id WHERE planet.feeds.approved AND NOT planet.posts.hidden ORDER BY dat DESC LIMIT 30")
+		c.execute("SELECT guid,link,dat,title,txt,feeds.name,blogurl,guidisperma,teams.name,teams.teamurl FROM posts INNER JOIN feeds ON feeds.id=posts.feed LEFT JOIN teams ON feeds.team = teams.id WHERE feeds.approved AND NOT posts.hidden ORDER BY dat DESC LIMIT 30")
 		for post in c.fetchall():
 			desc = self.TruncateAndCleanDescription(post[4])
 			rss.items.append(PyRSS2Gen.RSSItem(
@@ -84,37 +84,37 @@ class Generator:
 			self.items.append(PlanetPost(post[0], post[1], post[2], post[3], post[5], post[6], desc, post[8], post[9]))
 
 		c.execute("""
-SELECT planet.feeds.name,blogurl,feedurl,count(*),planet.teams.name,planet.teams.teamurl,NULL,max(planet.posts.dat) FROM planet.feeds
-INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
-LEFT JOIN planet.teams ON planet.teams.id=planet.feeds.team
+SELECT feeds.name,blogurl,feedurl,count(*),teams.name,teams.teamurl,NULL,max(posts.dat) FROM feeds
+INNER JOIN posts ON feeds.id=posts.feed
+LEFT JOIN teams ON teams.id=feeds.team
 WHERE age(dat) < '1 month' AND approved AND NOT hidden
 AND NOT excludestats
-GROUP BY planet.feeds.name,blogurl,feedurl,planet.teams.name,teamurl ORDER BY 4 DESC, 8 DESC, 1 LIMIT 20
+GROUP BY feeds.name,blogurl,feedurl,teams.name,teamurl ORDER BY 4 DESC, 8 DESC, 1 LIMIT 20
 """)
 
 		self.topposters = [PlanetFeed(feed) for feed in c.fetchall()]
 		if len(self.topposters) < 2: self.topposters = []
 
 		c.execute("""
-SELECT NULL,NULL,NULL,NULL,planet.teams.name, teamurl, count(*) FROM
-planet.feeds
-INNER JOIN planet.posts ON planet.feeds.id=planet.posts.feed
-INNER JOIN planet.teams ON planet.teams.id=planet.feeds.team
+SELECT NULL,NULL,NULL,NULL,teams.name, teamurl, count(*) FROM
+feeds
+INNER JOIN posts ON feeds.id=posts.feed
+INNER JOIN teams ON teams.id=feeds.team
 WHERE age(dat) < '1 month' AND approved AND NOT hidden
 AND NOT excludestats
-GROUP BY planet.teams.name, teamurl ORDER BY 7 DESC, 1 LIMIT 10""")
+GROUP BY teams.name, teamurl ORDER BY 7 DESC, 1 LIMIT 10""")
 
 		self.topteams = [PlanetFeed(feed) for feed in c.fetchall()]
 		if len(self.topteams) < 2: self.topteams = []
 
 		c.execute("""
-SELECT name,blogurl,feedurl,NULL,NULL,NULL,NULL FROM planet.feeds
+SELECT name,blogurl,feedurl,NULL,NULL,NULL,NULL FROM feeds
 WHERE approved AND team IS NULL ORDER BY name,blogurl
 """)
 		self.allposters = [PlanetFeed(feed) for feed in c.fetchall()]
 		c.execute("""
 SELECT feeds.name AS feedname,blogurl,feedurl,NULL,teams.name,teamurl,NULL
-FROM planet.feeds INNER JOIN planet.teams ON planet.feeds.team=planet.teams.id
+FROM feeds INNER JOIN teams ON feeds.team=teams.id
 WHERE approved ORDER BY teams.name,feeds.name,blogurl
 """)
 		self.allteams = [PlanetFeed(feed) for feed in c.fetchall()]

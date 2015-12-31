@@ -50,7 +50,7 @@ class PostToTwitter(TwitterClient):
 	def Run(self):
 		c = self.db.cursor()
 		c.execute("""SELECT posts.id, posts.title, posts.link, posts.shortlink, feeds.name, feeds.twitteruser
-			     FROM planet.posts INNER JOIN planet.feeds ON planet.posts.feed=planet.feeds.id
+			     FROM posts INNER JOIN feeds ON posts.feed=feeds.id
 			     WHERE approved AND age(dat) < '7 days' AND NOT (twittered OR hidden) ORDER BY dat""")
 		for post in c.fetchall():
 			if post[3] and len(post[3])>1:
@@ -65,7 +65,7 @@ class PostToTwitter(TwitterClient):
 					print "Failed to shorten URL %s: %s" % (post[2], e)
 					continue
 
-				c.execute("UPDATE planet.posts SET shortlink=%(short)s WHERE id=%(id)s", {
+				c.execute("UPDATE posts SET shortlink=%(short)s WHERE id=%(id)s", {
 					'short': short,
 					'id': post[0],
 				})
@@ -96,7 +96,7 @@ class PostToTwitter(TwitterClient):
 				continue
 
 			# Flag this item as posted
-			c.execute("UPDATE planet.posts SET twittered='t' WHERE id=%(id)s", { 'id': post[0] })
+			c.execute("UPDATE posts SET twittered='t' WHERE id=%(id)s", { 'id': post[0] })
 			self.db.commit()
 
 			print unicode("Twittered: %s" % msg).encode('utf8')

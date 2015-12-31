@@ -22,7 +22,7 @@ class Aggregator:
 		
 	def Update(self):
 		feeds = self.db.cursor()
-		feeds.execute("SELECT id,feedurl,name,blogurl FROM planet.feeds WHERE blogurl='' AND feedurl NOT LIKE '%planet%'")
+		feeds.execute("SELECT id,feedurl,name,blogurl FROM feeds WHERE blogurl='' AND feedurl NOT LIKE '%planet%'")
 		for feed in feeds.fetchall():
 			self.DiscoverFeed(feed)
 		self.db.commit()
@@ -39,7 +39,7 @@ class Aggregator:
 			if feed.feed.link:
 				print "Setting feed for %s to %s" % (feedinfo[2], feed.feed.link)
 				c = self.db.cursor()
-				c.execute("UPDATE planet.feeds SET blogurl='%s' WHERE id=%i" % (feed.feed.link, feedinfo[0]))
+				c.execute("UPDATE feeds SET blogurl='%s' WHERE id=%i" % (feed.feed.link, feedinfo[0]))
 		except:
 			print "Exception when processing feed for %s" % (feedinfo[2])
 			print feed

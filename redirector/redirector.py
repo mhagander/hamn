@@ -35,7 +35,7 @@ def application(environ, start_response):
 		# bother with any connection pooling.
 		conn = psycopg2.connect(connstr)
 		c = conn.cursor()
-		c.execute("SELECT link FROM planet.posts WHERE id=%(id)s", {
+		c.execute("SELECT link FROM posts WHERE id=%(id)s", {
 				'id': id
 				})
 		r = c.fetchall()

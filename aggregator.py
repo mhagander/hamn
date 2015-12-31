@@ -23,13 +23,13 @@ class Aggregator:
 		
 	def Update(self):
 		feeds = self.db.cursor()
-		feeds.execute('SELECT id,feedurl,name,lastget,authorfilter FROM planet.feeds')
+		feeds.execute('SELECT id,feedurl,name,lastget,authorfilter FROM feeds')
 		for feed in feeds.fetchall():
 			try:
 				n = self.ParseFeed(feed)
 				if n > 0:
 					c = self.db.cursor()
-					c.execute("INSERT INTO planet.aggregatorlog (feed, success, info) VALUES (%(feed)s, 't', %(info)s)", {
+					c.execute("INSERT INTO aggregatorlog (feed, success, info) VALUES (%(feed)s, 't', %(info)s)", {
 						'feed': feed[0],
 						'info': 'Fetched %s posts.' % n,
 					})
@@ -37,7 +37,7 @@ class Aggregator:
 				print "Exception when parsing feed '%s': %s" % (feed[1], e)
 				self.db.rollback()
 				c = self.db.cursor()
-				c.execute("INSERT INTO planet.aggregatorlog (feed, success, info) VALUES (%(feed)s, 'f', %(info)s)", {
+				c.execute("INSERT INTO aggregatorlog (feed, success, info) VALUES (%(feed)s, 'f', %(info)s)", {
 					'feed': feed[0],
 					'info': 'Error: "%s"' % e,
 				})
@@ -114,13 +114,13 @@ class Aggregator:
 				# currently define rediculously long as 5 days
 				d = datetime.datetime.now()
 
-			self.db.cursor().execute("UPDATE planet.feeds SET lastget=%(date)s WHERE id=%(feed)s AND NOT lastget=%(date)s", { 'date': d, 'feed': feedinfo[0]})
+			self.db.cursor().execute("UPDATE feeds SET lastget=%(date)s WHERE id=%(feed)s AND NOT lastget=%(date)s", { 'date': d, 'feed': feedinfo[0]})
 		else:
 			# We didn't get a Last-Modified time, so set it to the entry date
 			# for the latest entry in this feed. Only do this if we have more
 			# than one entry.
 			if numadded > 0:
-				self.db.cursor().execute("UPDATE planet.feeds SET lastget=COALESCE((SELECT max(dat) FROM planet.posts WHERE planet.posts.feed=planet.feeds.id),'2000-01-01') WHERE planet.feeds.id=%(feed)s", {'feed': feedinfo[0]})
+				self.db.cursor().execute("UPDATE feeds SET lastget=COALESCE((SELECT max(dat) FROM posts WHERE posts.feed=feeds.id),'2000-01-01') WHERE feeds.id=%(feed)s", {'feed': feedinfo[0]})
 
 		# Return the number of feeds we actually added
 		return numadded
@@ -143,11 +143,11 @@ class Aggregator:
 
 	def StoreEntry(self, feedid, guid, date, link, guidisperma, title, txt):
 		c = self.db.cursor()
-		c.execute("SELECT id FROM planet.posts WHERE feed=%(feed)s AND guid=%(guid)s", {'feed':feedid, 'guid':guid})
+		c.execute("SELECT id FROM posts WHERE feed=%(feed)s AND guid=%(guid)s", {'feed':feedid, 'guid':guid})
 		if c.rowcount > 0:
 			return 0
 		print "Store entry %s from feed %s" % (guid, feedid)
-		c.execute("INSERT INTO planet.posts (feed,guid,link,guidisperma,dat,title,txt) VALUES (%(feed)s,%(guid)s,%(link)s,%(guidisperma)s,%(date)s,%(title)s,%(txt)s)",
+		c.execute("INSERT INTO posts (feed,guid,link,guidisperma,dat,title,txt) VALUES (%(feed)s,%(guid)s,%(link)s,%(guidisperma)s,%(date)s,%(title)s,%(txt)s)",
 			{'feed': feedid,
 			 'guid': guid,
 			 'link': link,
