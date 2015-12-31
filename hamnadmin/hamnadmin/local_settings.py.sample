@@ -1,10 +1,15 @@
 # Add any settings here to override the default ones
 
-DATABASE_NAME = 'planetbeta'
-DATABASE_USER = 'admin'
+DATABASES={
+	'default': {
+		'ENGINE': 'django.db.backends.postgresql_psycopg2',
+		'NAME': 'planetpg',
+}
 
 DEBUG = True
 
 NOTIFYADDR='some@where.com'
 
-AUTH_CONNECTION_STRING='put community login connection string here'
+PGAUTH_REDIRECT="..."
+PGAUTH_KEY="..."
+
