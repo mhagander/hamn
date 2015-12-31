@@ -11,7 +11,6 @@ Copyright (C) 2011 PostgreSQL Global Development Group
 
 import ConfigParser
 import psycopg2
-from flup.server.fcgi import WSGIServer
 
 # Simple map used to shorten id values to URLs
 _urlvalmap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '-', '_']
@@ -25,7 +24,7 @@ def iddecode(idstr):
 		idval += _urlvalmap.index(c)
 	return idval
 
-def redirapp(environ, start_response):
+def application(environ, start_response):
 	try:
 		# Start by getting the id from the request
 		id = iddecode(environ['PATH_INFO'].split('/')[-1])
@@ -71,8 +70,6 @@ def redirapp(environ, start_response):
 			]
 
 
-if __name__ == '__main__':
-	c = ConfigParser.ConfigParser()
-	c.read('redir.ini')
-	connstr = c.get('planet', 'db')
-	WSGIServer(redirapp).run()
+c = ConfigParser.ConfigParser()
+c.read('redir.ini')
+connstr = c.get('planet', 'db')
