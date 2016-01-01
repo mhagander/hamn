@@ -27,7 +27,7 @@ def iddecode(idstr):
 def application(environ, start_response):
 	try:
 		# Start by getting the id from the request
-		id = iddecode(environ['PATH_INFO'].split('/')[-1])
+		id = iddecode(environ['REQUEST_URI'].split('/')[-1])
 
 		# Let's figure out where this URL should be
 
