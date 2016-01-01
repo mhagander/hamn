@@ -14,6 +14,7 @@ import urllib
 # Hmm. We only quote the ampersand here, since it's a HTML escape that
 # shows up in URLs quote often.
 def quoteurl(str):
+	if str is None: return None
 	return str.replace('&','&amp;')
 
 class PlanetPost:
