@@ -24,6 +24,9 @@ class PostFeed(Feed):
 		return item.title
 
 	def item_link(self, item):
+		if not item.shortlink:
+			# If not cached, calculate one
+			return item._get_shortlink()
 		return item.shortlink
 
 	def item_pubdate(self, item):
