@@ -8,8 +8,6 @@ DATABASES={
 
 DEBUG = True
 
-NOTIFYADDR='some@where.com'
-
 PGAUTH_REDIRECT="..."
 PGAUTH_KEY="..."
 
