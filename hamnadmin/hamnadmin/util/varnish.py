@@ -8,7 +8,7 @@ def purge_url(url):
 	else:
 		try:
 			request = urllib2.Request(settings.VARNISH_URL, headers={
-				'^X-Purge': url,
+				'X-Purge': '^' + url,
 				})
 			response = urllib2.urlopen(request, timeout=2)
 			if response.getcode() != 200:
