@@ -20,11 +20,3 @@ consumer=somethingsecret
 consumersecret=evenmoresecret
 token=getwith-setuptwitter.py
 secret=getwith-setuptwitter.py
-
-[tr.im]
-account=planetpostgres
-password=topsecret
-
-[bit.ly]
-account=planetpostgres
-apikey=topsecret

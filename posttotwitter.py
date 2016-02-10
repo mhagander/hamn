@@ -25,10 +25,6 @@ class PostToTwitter(TwitterClient):
 	def __init__(self, cfg):
 		TwitterClient.__init__(self, cfg)
 
-		if cfg.has_option('bit.ly','account'):
-			self.bitlyuser = cfg.get('bit.ly','account')
-			self.bitlykey = cfg.get('bit.ly','apikey')
-
 		psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 		self.db = psycopg2.connect(c.get('planet','db'))
 
@@ -119,30 +115,6 @@ class PostToTwitter(TwitterClient):
 			id /= 64
 		return "http://postgr.es/p/%s" % s
 
-	# Trim an URL using http://bit.ly
-	def shortlink(self, url):
-		try:
-			if self.bitlyuser:
-				data = urllib.urlencode(dict(longUrl=url, domain='bit.ly', login=self.bitlyuser, apiKey=self.bitlykey))
-			else:
-				data = urllib.urlencode(dict(longUrl=url, ))
-			encodedurl="http://api.bit.ly/v3/shorten?format=json&"+data
-			instream=urllib.urlopen(encodedurl)
-			ret=instream.read()
-			instream.close()
-		except Exception, e:
-			raise Exception("Failed in call to bit.ly API: %s" % e)
-
-		if len(ret)==0:
-			raise "bit.ly returned blank!"
-
-		try:
-			trim = json.loads(ret)
-			if not trim['status_txt'] == "OK":
-				raise Exception("bit.ly status: %s" % trim['status_txt'])
-			return trim['data']['url']
-		except Exception, e:
-			raise Exception("Failed to JSON parse tr.im response: %s" % e)
 
 
 if __name__=="__main__":
