@@ -1,0 +1,76 @@
+{% extends "regbase.html" %}
+{%block content%}
+<h1>Blog moderation</h1>
+
+{%if messages%}
+<h3>Results</h3>
+<div class="alert alert-info">
+{%for m in messages%}
+{{m}}<br/>
+{%endfor%}
+</div>
+{%endif%}
+
+<p>The following blogs require moderator action</p>
+{%for blog in blogs%}
+<div class="panel panel-info">
+  <div class="panel-heading">{{blog.name|default:blog.feedurl}}</div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-1">User</div>
+      <div class="col-sm-10">Username: {{blog.userid}}<br/>Twitter: {{blog.twitteruser}}<br/>Team: {{blog.team.name}}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1">URLs</div>
+      <div class="col-sm-10">
+	Feed url: {{blog.feedurl}}<br/>
+	Blog url: {%if blog.blogurl%}<a href="{{blog.blogurl}}">{{blog.blogurl}}</a>{%else%}Blog not syndicated yet, so no URL available.{%endif%}
+	{%if blog.authorfilter%}<br/>Author filter: {{blog.authorfilter}}{%endif%}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1">Posts</div>
+      <div class="col-sm-10">
+	{%if blog.recent_entries%}
+	<table class="table table-condensed table-striped table-bordered">
+	  <tr><th>Time</th><th>Title</th></tr>
+	  {%for p in blog.recent_entries%}
+	  <tr>
+	    <td>{{p.dat|date:"Y-m-d H:i:s"}}</td>
+	    <td><a href="{{p.link}}">{{p.title}}</a></td>
+	  </tr>
+	  {%endfor%}
+	</table>
+	{%else%}
+	No entries have been syndicated from this blog yet.
+	{%endif%}
+	<br/>Fetching entries since {{blog.lastget|date:"Y-m-d H:i:s"}}.
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+	{%if blog.recent_entries%}<a class="btn btn-default" onClick="confirmApprove('approve/{{blog.id}}/')">Approve</a>{%endif%}
+	<a class="btn btn-default" href="/register/edit/{{blog.id}}/">Edit</a>
+	<a class="btn btn-default" href="reject/{{blog.id}}/">Reject</a>
+	<a class="btn btn-default" href="/register/admin/register/blog/{{blog.id}}/">Admin</a>
+      </div>
+    </div>
+  </div>
+</div>
+{%endfor%}
+
+<h2>Full admin</h2>
+<p>Normal moderation shouldn't need it, but just in case - here it is!</p>
+<a class="btn btn-default" href="/register/admin/">Full admin</a>
+
+
+{%endblock%}
+{%block extrahead%}
+<script language="javascript">
+  function confirmApprove(url) {
+    if (confirm('Are you sure you want to approve this blog?')) {
+      document.location.href = url;
+    }
+  }
+</script>
+{%endblock%}

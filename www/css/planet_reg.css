@@ -1,0 +1,9 @@
+div#planethdr {
+   padding-left: 0px;
+   padding-right: 0px;
+   background: url(http://www.postgresql.org/layout/images/hdr_fill.png);
+}
+
+input.form-control[type=checkbox] {
+width: 10px;
+}

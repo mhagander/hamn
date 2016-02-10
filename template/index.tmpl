@@ -1,4 +1,5 @@
 {% extends "base.tmpl" %}
+{% load hamn %}
 {% block content %}
     <div id="planetRight">
 {% if topposters %}
@@ -6,7 +7,7 @@
      <div class="planetRightDescription">Number of posts in the past month</div>
      <ul class="toplist">
 {% for feed in topposters %}
-      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} {%if feed.teamname%}({{feed.teamname}}) {%endif%}- {{feed.numposts}}</li>
+      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} {%if feed.team%}({{feed.team.name}}) {%endif%}- {{feed.numposts}}</li>
 {% endfor %}
      </ul>
 {% endif %}
@@ -14,8 +15,8 @@
      <div class="planetRightTitle">Top teams</div>
      <div class="planetRightDescription">Number of posts in the past month</div>
      <ul>
-{% for feed in topteams %}
-      <li><a href="{{feed.teamurl}}">{{feed.teamname}}</a> - {{feed.teamcount}}</li>
+{% for team in topteams %}
+      <li><a href="{{team.teamurl}}">{{team.name}}</a> - {{team.numposts}}</li>
 {%endfor%}
      </ul>
 {% endif %}
@@ -50,13 +51,13 @@
         <div class="planetPostTitle"><a href="{{post.link}}">{{post.title}}</a></div>
         <b class="blf"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
         <div class="planetPostAuthor">
-         Posted by {%if post.blogurl%}<a href="{{post.blogurl}}">{{post.author}}</a>{%else%}{{post.author}}{%endif%} {%if post.teamurl%} in <a href="{{post.teamurl}}">{{post.teamname}}</a>{%endif%} on <span class="date">{{post.datetime}}</span>
+         Posted by {%if post.feed.blogurl%}<a href="{{post.feed.blogurl}}">{{post.feed.name}}</a>{%else%}{{post.feed.name}}{%endif%} {%if post.feed.team%} in <a href="{{post.feed.team.teamurl}}">{{post.feed.team.name}}</a>{%endif%} on <span class="date">{{post.dat|date:"Y-m-d"}} at {{post.dat|date:"H:i"}}</span>
         </div><!-- end planetPostHeader -->
         <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
         <div class="cl"></div>
        </div><!-- end planetPostHeaderWrap -->
       </div><!-- end planet Post -->
-      <div class="planetPostContent">{{post.contents|safe}}</div>
+      <div class="planetPostContent">{{post.txt|postcontents}}</div>
       <div class="cl"></div>
      </div>
 {% endfor %}

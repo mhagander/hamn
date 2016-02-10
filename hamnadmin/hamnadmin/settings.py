@@ -38,9 +38,9 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'hamnadmin.exceptions.PlanetExceptionMiddleware',
 )
 
 ROOT_URLCONF = 'hamnadmin.urls'
@@ -54,7 +54,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
 	'django.contrib.staticfiles',
     'hamnadmin.register',
     'hamnadmin.mailqueue',
@@ -68,6 +67,12 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_URL = '/register/login'
 
 ALLOWED_HOSTS=['*']
+
+EMAIL_SENDER='planet@postgresql.org'
+NOTIFICATION_RECEIVER='planet@postgresql.org'
+
+# Set to None for testing
+VARNISH_URL="http://localhost/varnish-purge"
 
 # If there is a local_settings.py, let it override our settings
 try:

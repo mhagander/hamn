@@ -1,12 +1,24 @@
-{%extends "base.tmpl" %}
-{%block content%}
-{%if user.is_authenticated %}
-<div style="float:right;"><a href="/register/logout">Log out</a></div>
-{%endif%}
-<h1>Welcome to planet administration</h1>
-{%if user.is_superuser %}
-<h2>You are registered as an administrator.</h2>
-<p>The full administration interface can be found <a href="/register/admin/">here</a>.</p>
-{% endif %}
-{%block regcontent%}{%endblock%}
-{%endblock%}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>{%if title%}{{title}} - {%endif%}Planet PostgreSQL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen"></link>
+    <link href="/css/planet_reg.css" rel="stylesheet" media="screen"></link>
+    {% block extrahead %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+	<div class="col-sm-12" id="planethdr">
+	  <a href="/register/"><img src="http://www.postgresql.org/layout/images/hdr_left.png" alt="PostgreSQL" /></a>
+	  <img class="pull-right" src="http://www.postgresql.org/layout/images/hdr_right.png" alt="The world's most advanced open source database" />
+
+	</div>
+      </div>
+      {%block content%}{%endblock%}
+    </div>
+  </body>
+</html>

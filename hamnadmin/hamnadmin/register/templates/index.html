@@ -1,85 +1,68 @@
 {% extends "regbase.html" %}
-{%block regcontent%}
+{%block content%}
 {%if blogs %}
-<script language="javascript">
- function confirmDelete(name,id) {
-  if (confirm('Are you sure you want to delete the blog \'' + name + '\'?'))
-    location.href='delete/' + id + '/';
- }
-</script>
+<h1>Your blogs</h1>
+
+{%if messages%}
+<div class="alert alert-info">
+{%for m in messages%}
+{{m}}<br/>
+{%endfor%}
+</div>
+{%endif%}
+
 <p>
-We have the following blog(s) registered:
+You have the following blog(s) registered:
 </p>
-<table border="1" cellspacing="0" cellpadding="1">
+<table class="table table-condensed table-striped table-bordered">
 <tr>
  <th>Name</th>
  <th>Approved</th>
  <th>Feed URL/Blog URL</th>
+ <th>Status</th>
  <th>Operations</th>
 </tr>
 {%for blog in blogs%}
 <tr valign="top">
  <td>{{blog.name}}</td>
- <td>{{blog.approved|yesno:"Yes,No"}}</td>
+ <td><span class="label label-{{blog.approved|yesno:"success,warning"}}">{{blog.approved|yesno:"Yes,No"}}</span></td>
  <td>Feed: <a href="{{blog.feedurl}}">{{blog.feedurl}}</a><br/>Blog: <a href="{{blog.blogurl}}">{{blog.blogurl}}</a><br/>
-Author Filter: {{blog.authorfilter}}<br/>
-Twitter name: {%if blog.twitteruser%}@<a href="http://twitter.com/{{blog.twitteruser}}">{{blog.twitteruser}}</a>{%endif%}<br/>
-Last http get: {{blog.lastget}}<br/>
+Last http get: {{blog.lastget|date:"Y-m-d H:i:s"}}<br/>
  </td>
 
- <td><a href="log/{{blog.id}}/">View log</a><br/>
-{% if blog.approved  or user.is_superuser%}
-  <a href="blogposts/{{blog.id}}/">Posts</a><br/>
-{%else%}
-Not approved yet.<br/>
-{%endif%}
-  <a href="#" onClick="confirmDelete('{{blog.feedurl}}',{{blog.id}})">Delete blog</a><br/>
-{%if user.is_superuser %}
-  <nobr><a href="discover/{{blog.id}}/">Fetch metadata</a></nobr><br/>
-{%endif%}
-  <nobr><a href="reset/{{blog.id}}/">Reset http time</a></nobr><br/>
+ <td>
+   {%if blog.approved%}
+    {%if blog.recent_failures%}
+     {%if blog.recent_failures > 5%}
+      <a href="log/{{blog.id}}/"><span class="label label-danger">Multiple failures</span></a>
+     {%else%}
+      <a href="log/{{blog.id}}/"><span class="label label-warning">Sporadic errors</span></a>
+    {%endif%}
+   {%else%}
+    <span class="label label-success">Approved and working</span>
+   {%endif%}
+  {%else%}
+   {%if blog.has_entries%}
+    <span class="label label-info">Pending approval</span>
+   {%else%}
+    <span class="label label-danger">No entries found</span>
+   {%endif%}
+  {%endif%}
+ </td>
+ <td>
+   <a class="btn btn-default" role="button" href="edit/{{blog.id}}/">Edit</a>
 </td>
 </tr>
 {%endfor%}
 </table>
-<p>
-If you need any entries for your blog(s) changed that are not available as editable
-on this place, please contact <a href="mailto:planet@postgresql.org">planet@postgresql.org</a>.
-</p>
 {%else%}
 <p>We have no blogs registered to your account.</p>
 {%endif%}
 <hr/>
-<p>
-To register a new blog , please enter the
-URL to your RSS feed (PostgreSQL category only!) below.
-</p>
+<h2>Register blog</h2>
 <p>
 Note that your blog will have to be approved before it appears
 on the planet.
 </p>
-<form method="post" action="new/">
-<table border="0" cellspacing="1" cellpadding="0">
-<tr>
- <td>Feed URL</td>
- <td><input type="text" name="feedurl"></td>
-</tr>
-<tr>
- <td>Filter by author (OPTIONAL, advanced):</td>
- <td><input type="text" name="authorfilter"></td>
-</tr>
-<tr>
- <td>Part of team:</td>
- <td><select name="team">
-  <option value="-1">* No team</option>
-  {% for team in teams %}
-  <option value="{{team.id}}">{{team.name}}</option>
-  {%endfor%}
- </select>
- <input type="checkbox" name="ok_team" value="yesitsfine">Check this box to indicate that the owner
- of this team is aware of your registration.
- </td>
-</table>
-<input type="submit" value="New blog">
-</form>
+<a class="btn btn-default" href="new/">Register new blog</a>
 {%endblock%}

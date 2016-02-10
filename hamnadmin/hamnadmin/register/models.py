@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime
+from datetime import datetime, timedelta
+
+from hamnadmin.util.shortlink import urlvalmap
 
 class Team(models.Model):
 	teamurl = models.CharField(max_length=255, blank=False)
@@ -20,8 +22,8 @@ class Blog(models.Model):
 	name = models.CharField(max_length=255, blank=False)
 	blogurl = models.CharField(max_length=255, blank=False)
 	lastget = models.DateTimeField(default=datetime(2000,1,1))
-	userid = models.CharField(max_length=255, blank=False)
-	approved = models.BooleanField()
+	userid = models.CharField(max_length=255, blank=False, null=False)
+	approved = models.BooleanField(default=False)
 	authorfilter = models.CharField(max_length=255,default='',blank=True)
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
 	twitteruser = models.CharField(max_length=255, default='', blank=True)
@@ -34,6 +36,22 @@ class Blog(models.Model):
 	def email(self):
 		u = User.objects.get(username=self.userid)
 		return u.email
+
+	@property
+	def recent_failures(self):
+		return self.aggregatorlog_set.filter(success=False, ts__gt=datetime.now()-timedelta(days=1)).count()
+
+	@property
+	def has_entries(self):
+		return self.posts.filter(hidden=False).exists()
+
+	@property
+	def latestentry(self):
+		return self.posts.filter(hidden=False)[0]
+
+	@property
+	def recent_entries(self):
+		return self.posts.order_by('-dat')[:10]
 
 	class Meta:
 		db_table = 'feeds'
@@ -49,9 +67,9 @@ class Post(models.Model):
 	txt = models.TextField()
 	dat = models.DateTimeField()
 	title = models.CharField(max_length=255)
-	guidisperma = models.BooleanField()
-	hidden = models.BooleanField()
-	twittered = models.BooleanField()
+	guidisperma = models.BooleanField(default=False)
+	hidden = models.BooleanField(default=False)
+	twittered = models.BooleanField(default=False)
 	shortlink = models.CharField(max_length=255)
 
 	def __unicode__(self):
@@ -60,10 +78,24 @@ class Post(models.Model):
 	class Meta:
 		db_table = 'posts'
 		ordering = ['-dat']
+		unique_together = [
+			('id', 'guid'),
+		]
 
 	class Admin:
 		pass
 
+	def update_shortlink(self):
+		self.shortlink = self._get_shortlink()
+		self.save()
+
+	def _get_shortlink(self):
+		s = ""
+		i = self.id
+		while i > 0:
+			s = urlvalmap[i % 64] + s
+			i /= 64
+		return "http://postgr.es/p/%s" % s
 
 class AuditEntry(models.Model):
 	logtime = models.DateTimeField(default=datetime.now)
@@ -93,4 +125,4 @@ class AggregatorLog(models.Model):
 		ordering = ['-ts']
 
 	def __unicode__(self):
-		return "Log entry (%s)" % self.ts
+		return "Log entry for %s (%s)" % (self.feed.name, self.ts)

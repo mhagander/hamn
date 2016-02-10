@@ -1,0 +1,33 @@
+{% extends "regbase.html" %}
+{%block content%}
+<h1>Reject blog</h1>
+
+{%if form.errors%}
+<div class="alert alert-danger">Please correct the errors below, and re-submit the form.</div>
+{%endif%}
+
+{%if form.non_field_errors%}
+{%for e in form.non_field_errors%}
+<div class="alert alert-danger">{{e}}</div>
+{%endfor%}
+{%endif%}
+
+<form method="post" action="." class="form-horizontal">{%csrf_token%}
+  {%for field in form%}
+  <div class="form-group{%if field.errors%} has-error{%endif%}">
+    <label for="{{field.id}}" class="col-sm-2">{{field.label}}</label>
+    <div class="col-sm-7">
+      <div class="controls">
+	{{field}}
+	<span class="help-block">{{field.help_text}}</span>
+	{%if field.errors%}
+	<span class="help-block">{{field.errors}}</span>
+	{%endif%}
+      </div>
+    </div>
+  </div>
+  {%endfor%}
+  <input class="btn btn-default" type="submit" value="Reject blog">
+  <a class="btn btn-default" href="/register/moderate/">Cancel</a>
+</form>
+{%endblock%}

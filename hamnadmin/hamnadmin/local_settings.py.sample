@@ -13,3 +13,4 @@ NOTIFYADDR='some@where.com'
 PGAUTH_REDIRECT="..."
 PGAUTH_KEY="..."
 
+VARNISH_URL=None

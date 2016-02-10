@@ -6,26 +6,21 @@ The following list contains all feeds aggregated at this site.
 </p>
 
 <ul>
-{% for feed in allposters %}
+{% for feed in feeds %}
  <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
 {% endfor %}
 </ul>
 
 <h2>Teams</h2>
 <ul>
-{% for feed in allteams %}
-
- {% ifchanged feed.teamname %}
-  {% if not forloop.first %}
-  </ul>
- </li>
-  {% endif %}
- <li><a href="{{feed.teamurl}}">{{feed.teamname}}</a>
+{% for team in teams %}
+ <li><a href="{{team.teamurl}}">{{team.name}}</a>
   <ul>
- {% endifchanged %}
+{%for feed in team.blog_set.all%}
    <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
 {% endfor %}
   </ul>
  </li>
+{% endfor %}
 </ul>
 {% endblock %}
