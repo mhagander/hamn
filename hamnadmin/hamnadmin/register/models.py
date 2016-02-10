@@ -47,7 +47,10 @@ class Blog(models.Model):
 
 	@property
 	def latestentry(self):
-		return self.posts.filter(hidden=False)[0]
+		try:
+			return self.posts.filter(hidden=False)[0]
+		except:
+			return None
 
 	@property
 	def recent_entries(self):
