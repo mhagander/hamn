@@ -68,6 +68,7 @@ class Command(BaseCommand):
 						else:
 							had_entries = feed.has_entries
 						entries = 0
+						titles = []
 
 						for entry in results:
 							self.trace("Found entry at %s" % entry.link)
@@ -81,9 +82,23 @@ class Command(BaseCommand):
 											  success=True,
 											  info="Fetched entry at '%s'" % entry.link).save()
 								entries += 1
+								titles.append(entry.title)
 								total_entries += 1
 						# Save an update to when the feed was last scanned
 						feed.save()
+
+						if entries > 0 and feed.approved:
+							# Email a notification that they were picked up
+							send_simple_mail(settings.EMAIL_SENDER,
+											 feed.user.email,
+											 "Posts found at your blog at Planet PostgreSQL",
+											 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nIf these entries are correct, you don't have to do anything.\nIf any entry should not be there, head over to\n\nhttps://planet.postgresql.org/register/edit/{2}/\n\nand click the 'Hide' button for those entries as soon\nas possible.\n\nThank you!\n\n".format(
+												 feed.blogurl,
+												 "\n".join(["* " + t for t in titles]),
+												 feed.id),
+											 sendername="Planet PostgreSQL",
+											 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+											 )
 
 						if entries > 0 and not had_entries:
 							# Entries showed up on a blog that was previously empty

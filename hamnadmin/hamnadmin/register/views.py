@@ -167,6 +167,13 @@ def blogpost_unhide(request, blogid, postid):
 def blogpost_delete(request, blogid, postid):
 	post = __getvalidblogpost(request, blogid, postid)
 	title = post.title
+
+	# Update the feed last fetched date to be just before this entry, so that we end up
+	# re-fetching it if necessary.
+	post.feed.lastget = post.dat - timedelta(minutes=1)
+	post.feed.save()
+
+	# Now actually delete it
 	post.delete()
 	AuditEntry(request.user.username, 'Deleted post %s from blog %s' % (postid, blogid)).save()
 	messages.info(request, 'Deleted post "%s". It will be reloaded on the next scheduled crawl.' % title)
