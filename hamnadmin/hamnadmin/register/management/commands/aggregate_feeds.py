@@ -86,8 +86,6 @@ class Command(BaseCommand):
 								entries += 1
 								titles.append(entry.title)
 								total_entries += 1
-						# Save an update to when the feed was last scanned
-						feed.save()
 
 						if entries > 0 and feed.approved:
 							# Email a notification that they were picked up
