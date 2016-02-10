@@ -21,7 +21,7 @@ class PostFeed(Feed):
 		return qs[:30]
 
 	def item_title(self, item):
-		return item.title
+		return u"{0}: {1}".format(item.feed.name, item.title)
 
 	def item_link(self, item):
 		if not item.shortlink:
