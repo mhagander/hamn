@@ -40,6 +40,10 @@ class BlogAdmin(admin.ModelAdmin):
 		}
 		return super(BlogAdmin, self).change_view(request, object_id, extra_context=my_context)
 
+class PostAdmin(admin.ModelAdmin):
+	list_display = ['dat', 'title', 'hidden', 'feed']
+
 admin.site.register(Team)
 admin.site.register(Blog, BlogAdmin)
-admin.site.register(Post)
+admin.site.register(Post, PostAdmin)
+admin.site.register(AggregatorLog)
