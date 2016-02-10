@@ -22,7 +22,7 @@ class Blog(models.Model):
 	name = models.CharField(max_length=255, blank=False)
 	blogurl = models.CharField(max_length=255, blank=False)
 	lastget = models.DateTimeField(default=datetime(2000,1,1))
-	userid = models.CharField(max_length=255, blank=False, null=False)
+	user = models.ForeignKey(User, null=False, blank=False)
 	approved = models.BooleanField(default=False)
 	authorfilter = models.CharField(max_length=255,default='',blank=True)
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
@@ -34,8 +34,7 @@ class Blog(models.Model):
 
 	@property
 	def email(self):
-		u = User.objects.get(username=self.userid)
-		return u.email
+		return self.user.email
 
 	@property
 	def recent_failures(self):
@@ -102,9 +101,9 @@ class AuditEntry(models.Model):
 	user = models.CharField(max_length=32)
 	logtxt = models.CharField(max_length=1024)
 
-	def __init__(self, userid, txt):
+	def __init__(self, username, txt):
 		super(AuditEntry, self).__init__()
-		self.user = userid
+		self.user = username
 		self.logtxt = txt
 
 	def __unicode__(self):

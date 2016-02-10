@@ -90,7 +90,7 @@ class Command(BaseCommand):
 							send_simple_mail(settings.EMAIL_SENDER,
 											 settings.NOTIFICATION_RECEIVER,
 											 "A blog was added to Planet PostgreSQL",
-											 u"The blog at {0} by {1}\nwas added to Planet PostgreSQL, and has now received entries.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.userid),
+											 u"The blog at {0} by {1}\nwas added to Planet PostgreSQL, and has now received entries.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user),
 											 sendername="Planet PostgreSQL",
 											 receivername="Planet PostgreSQL Moderators",
 							)

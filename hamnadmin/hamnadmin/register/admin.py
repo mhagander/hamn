@@ -20,16 +20,16 @@ class BlogAdminForm(forms.ModelForm):
 			send_mail('A planet blog has been %s' % (
 				self.cleaned_data['approved'] and 'approved' or 'de-approved',
 				),
-				"The blog %s (for user %s, userid %s) has been %s." % (
+				"The blog %s (for user %s, user %s) has been %s." % (
 					self.cleaned_data['feedurl'],
 					name,
-					self.cleaned_data['userid'],
+					self.cleaned_data['user'],
 					self.cleaned_data['approved'] and 'approved' or 'de-approved',
 				), 'webmaster@postgresql.org', [settings.NOTIFYADDR])
 		return self.cleaned_data['approved']
 
 class BlogAdmin(admin.ModelAdmin):
-	list_display = ['userid', 'approved', 'name', 'feedurl', 'authorfilter', ]
+	list_display = ['user', 'approved', 'name', 'feedurl', 'authorfilter', ]
 	ordering = ['approved', 'name', ] #meh, multiple ordering not supported
 	form = BlogAdminForm
 

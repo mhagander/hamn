@@ -52,7 +52,7 @@ def root(request):
 	if request.user.is_superuser and request.GET.has_key('admin') and request.GET['admin'] == '1':
 		blogs = Blog.objects.all()
 	else:
-		blogs = Blog.objects.filter(userid=request.user.username)
+		blogs = Blog.objects.filter(user=request.user)
 	return render_to_response('index.html',{
 		'blogs': blogs,
 		'teams': Team.objects.all().order_by('name'),
@@ -65,9 +65,9 @@ def edit(request, id=None):
 		if request.user.is_superuser:
 			blog = get_object_or_404(Blog, id=id)
 		else:
-			blog = get_object_or_404(Blog, id=id, userid=request.user.username)
+			blog = get_object_or_404(Blog, id=id, user=request.user)
 	else:
-		blog = Blog(userid=request.user.username, name = u"{0} {1}".format(request.user.first_name, request.user.last_name))
+		blog = Blog(user=request.user, name = u"{0} {1}".format(request.user.first_name, request.user.last_name))
 
 	if request.method == 'POST':
 		saved_url = blog.feedurl
@@ -86,7 +86,7 @@ def edit(request, id=None):
 						send_simple_mail(settings.EMAIL_SENDER,
 										 settings.NOTIFICATION_RECEIVER,
 										 "A blog was edited on Planet PostgreSQL",
-										 u"The blog at {0}\nwas edited by {1} in a way that needs new moderation.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(blog.feedurl, blog.userid),
+										 u"The blog at {0}\nwas edited by {1} in a way that needs new moderation.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(blog.feedurl, blog.user),
 										 sendername="Planet PostgreSQL",
 										 receivername="Planet PostgreSQL Moderators",
 									 )
@@ -119,7 +119,7 @@ def delete(request, id):
 	if request.user.is_superuser:
 		blog = get_object_or_404(Blog, id=id)
 	else:
-		blog = get_object_or_404(Blog, id=id, userid=request.user.username)
+		blog = get_object_or_404(Blog, id=id, user=request.user)
 
 	send_simple_mail(settings.EMAIL_SENDER,
 					 settings.NOTIFICATION_RECEIVER,
@@ -137,7 +137,7 @@ def delete(request, id):
 def __getvalidblogpost(request, blogid, postid):
 	blog = get_object_or_404(Blog, id=blogid)
 	post = get_object_or_404(Post, id=postid)
-	if not blog.userid == request.user.username and not request.user.is_superuser:
+	if not blog.user == request.user and not request.user.is_superuser:
 		raise Exception("You can't view/edit somebody elses blog!")
 	if not post.feed.id == blog.id:
 		raise Exception("Blog does not match post")
@@ -191,24 +191,22 @@ def moderate_reject(request, blogid):
 		form = ModerateRejectForm(data=request.POST)
 		if form.is_valid():
 			# Ok, actually reject this blog.
-			u = get_object_or_404(User, username=blog.userid)
-
 			# Always send moderator mail
 			send_simple_mail(settings.EMAIL_SENDER,
 							 settings.NOTIFICATION_RECEIVER,
 							 "A blog was rejected on Planet PostgreSQL",
-							 u"The blog at {0} by {1} {2}\nwas marked as rejected by {3}. The message given was:\n\n{4}\n\n".format(blog.feedurl, u.first_name, u.last_name, request.user.username, form.cleaned_data['message']),
+							 u"The blog at {0} by {1} {2}\nwas marked as rejected by {3}. The message given was:\n\n{4}\n\n".format(blog.feedurl, blog.user.first_name, blog.user.last_name, request.user.username, form.cleaned_data['message']),
 							 sendername="Planet PostgreSQL",
 							 receivername="Planet PostgreSQL Moderators",
 							 )
 			messages.info(request, u"Blog {0} rejected, notification sent to moderators".format(blog.feedurl))
 			if not form.cleaned_data['modsonly']:
 				send_simple_mail(settings.EMAIL_SENDER,
-								 u.email,
+								 blog.user.email,
 								 "Your blog submission to Planet PostgreSQL",
 								 u"The blog at {0} that you submitted to Planet PostgreSQL has\nunfortunately been rejected. The reason given was:\n\n{1}\n\n".format(blog.feedurl, form.cleaned_data['message']),
 								 sendername="Planet PostgreSQL",
-								 receivername = u"{0} {1}".format(u.first_name, u.last_name),
+								 receivername = u"{0} {1}".format(blog.user.first_name, blog.user.last_name),
 								 )
 				messages.info(request, u"Blog {0} rejected, notification sent to blog owner".format(blog.feedurl))
 
@@ -227,22 +225,21 @@ def moderate_reject(request, blogid):
 @transaction.atomic
 def moderate_approve(request, blogid):
 	blog = get_object_or_404(Blog, id=blogid)
-	u = get_object_or_404(User, username=blog.userid)
 
 	send_simple_mail(settings.EMAIL_SENDER,
 					 settings.NOTIFICATION_RECEIVER,
 					 "A blog was approved on Planet PostgreSQL",
-					 u"The blog at {0} by {1} {2}\nwas marked as approved by {3}.\n\n".format(blog.feedurl, u.first_name, u.last_name, request.user.username),
+					 u"The blog at {0} by {1} {2}\nwas marked as approved by {3}.\n\n".format(blog.feedurl, blog.user.first_name, blog.user.last_name, request.user.username),
 					 sendername="Planet PostgreSQL",
 					 receivername="Planet PostgreSQL Moderators",
 	)
 
 	send_simple_mail(settings.EMAIL_SENDER,
-					 u.email,
+					 blog.user.email,
 					 "Your blog submission to Planet PostgreSQL",
 					 u"The blog at {0} that you submitted to Planet PostgreSQL has\nbeen approved.\n\n".format(blog.feedurl),
 					 sendername="Planet PostgreSQL",
-					 receivername = u"{0} {1}".format(u.first_name, u.last_name),
+					 receivername = u"{0} {1}".format(blog.user.first_name, blog.user.last_name),
 	)
 
 	blog.approved = True
