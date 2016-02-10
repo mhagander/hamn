@@ -98,6 +98,9 @@ The blog is currently waiting for moderator approval.
   <input class="btn btn-default" type="submit" value="Save">
   <a class="btn btn-default" href="/register/">Cancel</a>
   <a class="btn btn-default" onClick="confirmDeleteBlog({{blog.id}})">Delete</a>
+{%if blog.approved and blog.has_entries%}
+  <a class="btn btn-default" onClick="confirmArchiveBlog({{blog.id}})">Archive</a>
+{%endif%}
 </form>
 
 {%if not new%}
@@ -128,8 +131,14 @@ function confirmDelete(blogid, postid) {
 }
 
 function confirmDeleteBlog(blogid) {
-  if(confirm("Are you sure you want to delete this blog?\n\nAll entries in the blog as well as all history will be deleted.\n")) {
+  if(confirm("Are you sure you want to delete this blog?\n\nAll entries in the blog as well as all history will be deleted.\n\nNormally, you should Archive the blog instead of delete it if it has any posts in it, since those posts will then not be deleted.\n\nAre you sure you want to delete (and not archive) this blog?")) {
      document.location.href='/register/delete/' + blogid + '/';
+  }
+}
+
+function confirmArchiveBlog(blogid) {
+   if(confirm("Are you sure you want to archive this blog?\n\nArchiving means that Planet PostgreSQL will no longer attempt to download any entries from the blog (so you will not get any error messages), but it remains in the history of Planet for future reference.\n\nAre you sure?")) {
+     document.location.href='/register/archive/' + blogid + '/';
   }
 }
 </script>

@@ -24,6 +24,7 @@ class Blog(models.Model):
 	lastget = models.DateTimeField(default=datetime(2000,1,1))
 	user = models.ForeignKey(User, null=False, blank=False)
 	approved = models.BooleanField(default=False)
+	archived = models.BooleanField(default=False)
 	authorfilter = models.CharField(max_length=255,default='',blank=True)
 	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
 	twitteruser = models.CharField(max_length=255, default='', blank=True)

@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     (r'^new/$', 'hamnadmin.register.views.edit'),
     (r'^edit/(?P<id>\d+)/$', 'hamnadmin.register.views.edit'),
     (r'^delete/(?P<id>\d+)/$', 'hamnadmin.register.views.delete'),
+    (r'^archive/(?P<id>\d+)/$', 'hamnadmin.register.views.archive'),
 
     (r'^blogposts/(\d+)/hide/(\d+)/$', 'hamnadmin.register.views.blogpost_hide'),
     (r'^blogposts/(\d+)/unhide/(\d+)/$', 'hamnadmin.register.views.blogpost_unhide'),

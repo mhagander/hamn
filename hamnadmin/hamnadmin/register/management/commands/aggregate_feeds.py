@@ -41,7 +41,9 @@ class Command(BaseCommand):
 		if options['id']:
 			feeds = Blog.objects.filter(pk=options['id'])
 		else:
-			feeds = Blog.objects.filter(pk__in=(1,2))
+			# Fetch all feeds - that are not archived. We do fetch feeds that are not approved,
+			# to make sure they work.
+			feeds = Blog.objects.filter(archived=False)
 
 		# Fan out the fetching itself
 		fetchers = [FeedFetcher(f, self.trace) for f in feeds]

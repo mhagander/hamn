@@ -33,7 +33,7 @@ def planet_home(request):
 
 def planet_feeds(request):
 	return render_to_response('feeds.tmpl', {
-		'feeds': Blog.objects.filter(approved=True),
+		'feeds': Blog.objects.filter(approved=True, archived=False),
 		'teams': Team.objects.filter(blog__approved=True).distinct().order_by('name'),
 	}, context_instance=RequestContext(request))
 
@@ -50,9 +50,9 @@ def issuperuser(user):
 @login_required
 def root(request):
 	if request.user.is_superuser and request.GET.has_key('admin') and request.GET['admin'] == '1':
-		blogs = Blog.objects.all()
+		blogs = Blog.objects.all().order_by('archived', 'approved', 'name')
 	else:
-		blogs = Blog.objects.filter(user=request.user)
+		blogs = Blog.objects.filter(user=request.user).order_by('archived', 'approved', 'name')
 	return render_to_response('index.html',{
 		'blogs': blogs,
 		'teams': Team.objects.all().order_by('name'),
@@ -132,6 +132,26 @@ def delete(request, id):
 	messages.info(request, "Blog deleted.")
 	purge_root_and_feeds()
 	purge_url('/feeds.html')
+	return HttpResponseRedirect("/register/")
+
+@login_required
+@transaction.atomic
+def archive(request, id):
+	if request.user.is_superuser:
+		blog = get_object_or_404(Blog, id=id)
+	else:
+		blog = get_object_or_404(Blog, id=id, user=request.user)
+
+	send_simple_mail(settings.EMAIL_SENDER,
+					 settings.NOTIFICATION_RECEIVER,
+					 "A blog was archived on Planet PostgreSQL",
+					 u"The blog at {0} by {1}\nwas archived by {2}\n\n".format(blog.feedurl, blog.name, request.user.username),
+					 sendername="Planet PostgreSQL",
+					 receivername="Planet PostgreSQL Moderators",
+	)
+	blog.archived = True
+	blog.save()
+	messages.info(request, "Blog archived.")
 	return HttpResponseRedirect("/register/")
 
 def __getvalidblogpost(request, blogid, postid):
