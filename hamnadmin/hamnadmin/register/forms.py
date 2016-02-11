@@ -29,7 +29,7 @@ class BlogEditForm(forms.ModelForm):
 
 		# Create a fake instance to pass down. We'll just throw it away
 		feedobj = Blog(feedurl=self.cleaned_data['feedurl'], authorfilter=self.cleaned_data['authorfilter'])
-		fetcher = FeedFetcher(feedobj, _trace)
+		fetcher = FeedFetcher(feedobj, _trace, False)
 		try:
 			entries = list(fetcher.parse())
 		except Exception, e:

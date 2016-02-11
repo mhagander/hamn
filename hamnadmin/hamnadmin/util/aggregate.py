@@ -7,9 +7,10 @@ import feedparser
 from hamnadmin.register.models import Post
 
 class FeedFetcher(object):
-	def __init__(self, feed, tracefunc=None):
+	def __init__(self, feed, tracefunc=None, update=True):
 		self.feed = feed
 		self.tracefunc = tracefunc
+		self.update = update
 		self.newest_entry_date = None
 
 	def _trace(self, msg):
@@ -104,12 +105,13 @@ class FeedFetcher(object):
 				# currently define rediculously long as 5 days
 				d = datetime.datetime.now()
 
-			self.feed.lastget = d
-			self.feed.save()
+			if self.update:
+				self.feed.lastget = d
+				self.feed.save()
 		else:
 			# We didn't get a Last-Modified time, so set it to the entry date
 			# for the latest entry in this feed.
-			if self.newest_entry_date:
+			if self.newest_entry_date and self.update:
 				self.feed.lastget = self.newest_entry_date
 				self.feed.save()
 
