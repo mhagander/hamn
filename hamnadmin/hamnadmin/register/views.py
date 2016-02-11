@@ -55,7 +55,7 @@ def root(request):
 		blogs = Blog.objects.filter(user=request.user).order_by('archived', 'approved', 'name')
 	return render_to_response('index.html',{
 		'blogs': blogs,
-		'teams': Team.objects.all().order_by('name'),
+		'teams': Team.objects.filter(manager=request.user).order_by('name'),
 	}, context_instance=RequestContext(request))
 
 @login_required
@@ -72,6 +72,7 @@ def edit(request, id=None):
 	if request.method == 'POST':
 		saved_url = blog.feedurl
 		saved_filter = blog.authorfilter
+		saved_team = blog.team
 		form = BlogEditForm(request, data=request.POST, instance=blog)
 		if form.is_valid():
 			if id:
@@ -101,6 +102,21 @@ def edit(request, id=None):
 						messages.info(request, "did not change")
 
 			obj = form.save()
+
+			if obj.team and obj.team != saved_team:
+				# We allow anybody to join a team by default, and will just send a notice
+				# so the team manager can undo it.
+				send_simple_mail(settings.EMAIL_SENDER,
+								 obj.team.manager.email,
+								 "A blog joined your team on Planet PostgreSQL",
+								 u"The blog at {0} by {1} {2}\nhas been added to yor team {3} on Planet PostgreSQL\n\nIf this is correct, you do not need to do anything.\n\nIf this is incorrect, please go to\n\nhttps://planet.postgresql.org/register/\n\nand click the button to remove the blog from your team.\nWe apologize if this causes work for you.\n\n".format(
+									 obj.feedurl,
+									 obj.user.first_name, obj.user.last_name,
+									 obj.team.name),
+								 sendername="Planet PostgreSQL",
+								 receivername=u"{0} {1}".format(obj.team.manager.first_name, obj.team.manager.last_name),
+								 )
+
 			return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
 	else:
 		form =  BlogEditForm(request, instance=blog)
@@ -152,6 +168,41 @@ def archive(request, id):
 	blog.archived = True
 	blog.save()
 	messages.info(request, "Blog archived.")
+	return HttpResponseRedirect("/register/")
+
+@login_required
+@transaction.atomic
+def remove_from_team(request, teamid, blogid):
+	team = get_object_or_404(Team, id=teamid, manager=request.user)
+	blog = get_object_or_404(Blog, id=blogid)
+
+	if blog.team != team:
+		messages.error(request, "The blog at {0} does not (any more?) belong to the team {1}!".format(
+			blog.feedurl,
+			team.name))
+		return HttpResponseRedirect("/register/")
+
+	blog.team = None
+	blog.save()
+
+	send_simple_mail(settings.EMAIL_SENDER,
+					 settings.NOTIFICATION_RECEIVER,
+					 "A blog was removed from a team on Planet PostgreSQL",
+					 u"The blog at {0} by {1} {2}\nwas removed from team {3} by {4}.\n".format(
+						 blog.feedurl, blog.user.first_name, blog.user.last_name, team.name, request.user.username),
+					 sendername="Planet PostgreSQL",
+					 receivername="Planet PostgreSQL Moderators",
+					 )
+
+	send_simple_mail(settings.EMAIL_SENDER,
+					 blog.user.email,
+					 "Your blog on Planet PostgreSQL was removed from the team",
+					 u"Your blog at {0} has been removed\nfrom the team {1} on Planet PostgreSQL.\n\nIf you believe this to be in error, please contact\nthe team administrator.\n\n".format(blog.feedurl, team.name),
+					 sendername="Planet PostgreSQL",
+					 receivername=u"{0} {1}".format(blog.user.first_name, blog.user.last_name),
+					 )
+
+	messages.info(request, "Blog {0} removed from team {1}".format(blog.feedurl, team.name))
 	return HttpResponseRedirect("/register/")
 
 def __getvalidblogpost(request, blogid, postid):

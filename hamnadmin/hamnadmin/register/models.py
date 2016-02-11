@@ -7,6 +7,7 @@ from hamnadmin.util.shortlink import urlvalmap
 class Team(models.Model):
 	teamurl = models.CharField(max_length=255, blank=False)
 	name = models.CharField(max_length=255, blank=False)
+	manager = models.ForeignKey(User, null=True, blank=True)
 
 	def __unicode__(self):
 		return "%s (%s)" % (self.name, self.teamurl)

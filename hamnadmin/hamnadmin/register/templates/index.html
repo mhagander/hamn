@@ -75,4 +75,49 @@ Note that your blog will have to be approved before it appears
 on the planet.
 </p>
 <a class="btn btn-default" href="new/">Register new blog</a>
+
+{%if teams%}
+<h1>Your teams</h1>
+<p>
+You are listed as a manager for the following teams:
+</p>
+{%for team in teams%}
+<div class="panel panel-info">
+  <div class="panel-heading"><a href="{{team.teamurl}}">{{team.name}}</a></div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-12">
+	The following accounts are members of your team. You can remove any member you want.
+	New membership is requested by the blog owner, and you will receive a notification
+	email when they do.
+      </div>
+    </div>
+    <table class="table table-condensed table-striped">
+      <tr>
+	<th>Name</th>
+	<th>Feed</th>
+	<th>Actions</th>
+      </tr>
+      {%for m in team.blog_set.all%}
+      <tr>
+	<td><a href="{{m.blogurl}}">{{m.name|default:m.feedurl}}</a></td>
+	<td>{{m.feedurl}}</td>
+	<td><a class="btn btn-default btn-sm" onClick="confirmRemoveFromTeam({{team.id}},{{m.id}})">Remove from team</a></td>
+      </tr>
+      {%endfor%}
+    </table>
+  </div>
+</div>
+{%endfor%}
+{%endif%}
+{%endblock%}
+
+{%block extrahead%}
+<script language="javascript">
+function confirmRemoveFromTeam(teamid, feedid) {
+  if (confirm('Are you sure you want to remove this blog from the team?\n\n(A notification will be sent to the blog owner.)\n')) {
+    document.location.href = 'teamremove/' + teamid + '/' + feedid + '/';
+  }
+}
+</script>
 {%endblock%}
