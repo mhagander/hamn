@@ -144,8 +144,8 @@ class Synchronizer:
 
 		curs = self.db.cursor()
 		curs.execute("""
-SELECT email FROM auth_user 
-INNER JOIN feeds ON auth_user.username=feeds.userid 
+SELECT DISTINCT email FROM auth_user
+INNER JOIN feeds ON auth_user.id=feeds.user_id
 WHERE feeds.approved
 """)
 		self.expected = set([r[0] for r in curs.fetchall()])
