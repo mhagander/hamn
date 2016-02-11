@@ -4,6 +4,9 @@ from django.conf import settings
 
 from hamnadmin.register.models import *
 
+class TeamAdmin(admin.ModelAdmin):
+	list_display = ['name', 'manager', 'teamurl']
+
 class BlogAdmin(admin.ModelAdmin):
 	list_display = ['user', 'approved', 'name', 'feedurl', 'authorfilter', ]
 	ordering = ['approved', 'name', ] #meh, multiple ordering not supported
@@ -23,7 +26,7 @@ class PostAdmin(admin.ModelAdmin):
 class AggregatorLogAdmin(admin.ModelAdmin):
 	list_display = ['ts', 'success', 'feed', 'info']
 
-admin.site.register(Team)
+admin.site.register(Team, TeamAdmin)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(AggregatorLog, AggregatorLogAdmin)
