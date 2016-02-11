@@ -98,8 +98,6 @@ def edit(request, id=None):
 						purge_url('/feeds.html')
 
 						return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
-					else:
-						messages.info(request, "did not change")
 
 			obj = form.save()
 
