@@ -18,7 +18,10 @@ class BlogAdmin(admin.ModelAdmin):
 class PostAdmin(admin.ModelAdmin):
 	list_display = ['dat', 'title', 'hidden', 'feed']
 
+class AggregatorLogAdmin(admin.ModelAdmin):
+	list_display = ['ts', 'success', 'feed', 'info']
+
 admin.site.register(Team)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(Post, PostAdmin)
-admin.site.register(AggregatorLog)
+admin.site.register(AggregatorLog, AggregatorLogAdmin)
