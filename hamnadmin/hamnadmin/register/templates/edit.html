@@ -8,7 +8,7 @@
 {%if blog.approved%}
 This blog is currently <span class="label label-success">approved</span>.
 {%if blog.recent_failures%}
-{%if blog.recent_failures > 5%}
+{%if blog.recent_failures <= 5%}
 This blog has generated <span class="label label-warning">sporadic errors</span> in the past 24 hours. See
   the <a href="#log">log</a> below for details.
 {%else%}
