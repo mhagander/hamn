@@ -59,9 +59,16 @@
 </div>
 {%endfor%}
 
-<h2>Full admin</h2>
-<p>Normal moderation shouldn't need it, but just in case - here it is!</p>
-<a class="btn btn-default" href="/register/admin/">Full admin</a>
+<h2>Admin</h2>
+<p>
+Since you are a moderator, you can view all approved feeds as well, in the admin view.
+</p>
+<p><a class="btn btn-default" href="/register/?admin=1">Admin view</a></p>
+<p>
+You should normally never need to use the backend "django admin" interface. But we keep
+it around for the special cases...
+</p>
+<p><a class="btn btn-default" href="/register/admin/">Django admin</a></p>
 
 
 {%endblock%}
