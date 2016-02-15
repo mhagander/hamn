@@ -146,7 +146,7 @@ class Synchronizer:
 		curs.execute("""
 SELECT DISTINCT email FROM auth_user
 INNER JOIN feeds ON auth_user.id=feeds.user_id
-WHERE feeds.approved
+WHERE feeds.approved AND NOT feeds.archived
 """)
 		self.expected = set([r[0] for r in curs.fetchall()])
 
