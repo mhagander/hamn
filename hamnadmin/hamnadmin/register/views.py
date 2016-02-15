@@ -56,6 +56,7 @@ def root(request):
 	return render_to_response('index.html',{
 		'blogs': blogs,
 		'teams': Team.objects.filter(manager=request.user).order_by('name'),
+		'title': 'Your blogs',
 	}, context_instance=RequestContext(request))
 
 @login_required
@@ -125,6 +126,7 @@ def edit(request, id=None):
 		'blog': blog,
 		'log': AggregatorLog.objects.filter(feed=blog).order_by('-ts')[:30],
 		'posts': Post.objects.filter(feed=blog).order_by('-dat')[:10],
+		'title': 'Edit blog: %s' % blog.name,
 	}, RequestContext(request))
 
 @login_required
@@ -255,6 +257,7 @@ def blogpost_delete(request, blogid, postid):
 def moderate(request):
 	return render_to_response('moderate.html',{
 		'blogs': Blog.objects.filter(approved=False).annotate(oldest=Max('posts__dat')).order_by('oldest'),
+		'title': 'Moderation',
 	}, context_instance=RequestContext(request))
 
 @login_required
@@ -294,6 +297,7 @@ def moderate_reject(request, blogid):
 	return render_to_response('moderate_reject.html', {
 		'form': form,
 		'blog': blog,
+		'title': 'Reject blog',
 	}, RequestContext(request))
 
 @login_required
