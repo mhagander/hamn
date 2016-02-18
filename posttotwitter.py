@@ -41,7 +41,7 @@ class PostToTwitter(TwitterClient):
 			return
 		if ret_dict.has_key('error'):
 			raise Exception("Could not post to twitter: %s" % ret_dict['error'])
-		raise Exception("Unparseable response from twitter: %s" % ret)
+		raise Exception("Unparseable response from twitter: %s" % ret_dict)
 
 	def Run(self):
 		c = self.db.cursor()
