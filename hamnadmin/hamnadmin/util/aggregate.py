@@ -79,11 +79,11 @@ class FeedFetcher(object):
 				self._trace("Failed to get date for entry %s (keys %s)" % (entry.link, entry.keys()))
 				continue
 
-				if self.newest_entry_date:
-					if dat > self.newest_entry_date:
-						self.newest_entry_date = dat
-				else:
+			if self.newest_entry_date:
+				if dat > self.newest_entry_date:
 					self.newest_entry_date = dat
+			else:
+				self.newest_entry_date = dat
 
 			yield Post(feed=self.feed,
 					   guid=entry.id,
