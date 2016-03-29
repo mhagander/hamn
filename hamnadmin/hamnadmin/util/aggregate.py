@@ -79,6 +79,9 @@ class FeedFetcher(object):
 				self._trace("Failed to get date for entry %s (keys %s)" % (entry.link, entry.keys()))
 				continue
 
+			if dat > datetime.datetime.now():
+				dat = datetime.datetime.now()
+
 			if self.newest_entry_date:
 				if dat > self.newest_entry_date:
 					self.newest_entry_date = dat
