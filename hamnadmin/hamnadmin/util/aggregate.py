@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import datetime
+import socket
 
 import feedparser
 
@@ -18,6 +19,10 @@ class FeedFetcher(object):
 			self.tracefunc(msg)
 
 	def parse(self, fetchsince=None):
+		# If we can't get a socket connection to complete in 10 seconds,
+		# give up on that feed.
+		socket.setdefaulttimeout(10)
+
 		if fetchsince:
 			parser = feedparser.parse(self.feed.feedurl, modified=fetchsince.timetuple())
 		else:

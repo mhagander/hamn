@@ -12,7 +12,6 @@ from hamnadmin.register.models import *
 from hamnadmin.mailqueue.util import send_simple_mail
 from hamnadmin.util.varnish import purge_url, purge_root_and_feeds
 
-import socket
 import datetime
 import feedparser
 
