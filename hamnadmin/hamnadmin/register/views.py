@@ -305,6 +305,10 @@ def moderate_reject(request, blogid):
 def moderate_approve(request, blogid):
 	blog = get_object_or_404(Blog, id=blogid)
 
+	if blog.approved:
+		messages.info(request, u"Blog {0} was already approved.".format(blog.feedurl))
+		return HttpResponseRedirect("/register/moderate/")
+
 	send_simple_mail(settings.EMAIL_SENDER,
 					 settings.NOTIFICATION_RECEIVER,
 					 "A blog was approved on Planet PostgreSQL",
