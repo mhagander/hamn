@@ -99,7 +99,7 @@ class Post(models.Model):
 		while i > 0:
 			s = urlvalmap[i % 64] + s
 			i /= 64
-		return "http://postgr.es/p/%s" % s
+		return "https://postgr.es/p/%s" % s
 
 class AuditEntry(models.Model):
 	logtime = models.DateTimeField(default=datetime.now)
