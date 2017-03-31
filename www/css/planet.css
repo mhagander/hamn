@@ -99,8 +99,17 @@ div.planetPostContent img {
    margin-left: auto;
    margin-right: auto;
    max-height: 100px;
-   max-width: 100px;
+   max-width: 300px;
+   width: auto;
+   height: auto;
    clear: left;
+}
+
+div.planetPostContent img.wp-smiley {
+    display: inline-block;
+    height: 1em;
+    max-width: 2em;
+    width: auto;
 }
 
 div#planetRight {
