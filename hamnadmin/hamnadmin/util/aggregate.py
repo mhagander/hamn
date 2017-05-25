@@ -45,11 +45,15 @@ class FeedFetcher(object):
 
 		self._trace("Fetched %s, status %s" % (self.feed.feedurl, parser.status))
 
-		if self.feed.blogurl == '':
-			try:
+		try:
+			if self.feed.blogurl == '':
 				self.feed.blogurl = parser.feed.link
-			except:
-				pass
+			elif self.feed.blogurl != parser.feed.link:
+				print "It's new!"
+				print "%s -> %s" % (self.feed.blogurl, parser.feed.link)
+				self.feed.new_blogurl = parser.feed.link
+		except:
+			pass
 
 		for entry in parser.entries:
 			if not self.matches_filter(entry):

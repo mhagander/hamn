@@ -31,6 +31,9 @@ class Blog(models.Model):
 	twitteruser = models.CharField(max_length=255, default='', blank=True)
 	excludestats = models.BooleanField(null=False, blank=False, default=False)
 
+	# Things that may change
+	new_blogurl = None
+
 	def __unicode__(self):
 		return "%s (%s)" % (self.name, self.feedurl)
 
