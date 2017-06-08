@@ -1,4 +1,5 @@
 {% extends "base.tmpl" %}
+{% load static %}
 {% block content %}
 <h1>Feeds</h1>
 <p>
@@ -7,7 +8,7 @@ The following list contains all feeds aggregated at this site.
 
 <ul>
 {% for feed in feeds %}
- <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+ <li><a href="{{feed.feedurl}}"><img src="{% static 'img/feed-icon-14x14.png' %}" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
 {% endfor %}
 </ul>
 
@@ -17,7 +18,7 @@ The following list contains all feeds aggregated at this site.
  <li><a href="{{team.teamurl}}">{{team.name}}</a>
   <ul>
 {%for feed in team.blog_set.all%}
-   <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+   <li><a href="{{feed.feedurl}}"><img src="{% static 'img/feed-icon-14x14.png' %}" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
 {% endfor %}
   </ul>
  </li>

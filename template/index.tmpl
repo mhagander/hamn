@@ -1,4 +1,5 @@
 {% extends "base.tmpl" %}
+{% load static %}
 {% load hamn %}
 {% block content %}
     <div id="planetRight">
@@ -7,7 +8,7 @@
      <div class="planetRightDescription">Number of posts in the past month</div>
      <ul class="toplist">
 {% for feed in topposters %}
-      <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} {%if feed.team%}({{feed.team.name}}) {%endif%}- {{feed.numposts}}</li>
+      <li><a href="{{feed.feedurl}}"><img src="{% static 'img/feed-icon-14x14.png' %}" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} {%if feed.team%}({{feed.team.name}}) {%endif%}- {{feed.numposts}}</li>
 {% endfor %}
      </ul>
 {% endif %}
@@ -22,8 +23,8 @@
 {% endif %}
      <div class="planetRightTitle">Feeds</div>
      <ul>
-      <li><a href="rss20.xml"><img src="img/feed-icon-14x14.png" alt="rss" /></a> <a href="rss20.xml">All feeds (full entries)</a></li>
-      <li><a href="rss20_short.xml"><img src="img/feed-icon-14x14.png" alt="rss" /></a> <a href="rss20_short.xml">All feeds (short entries)</a></li>
+      <li><a href="rss20.xml"><img src="{% static 'img/feed-icon-14x14.png' %}" alt="rss" /></a> <a href="rss20.xml">All feeds (full entries)</a></li>
+      <li><a href="rss20_short.xml"><img src="{% static 'img/feed-icon-14x14.png' %}" alt="rss" /></a> <a href="rss20_short.xml">All feeds (short entries)</a></li>
      </ul>
 {%if twittername %}
      <div class="planetRightTitle">Twitter</div>

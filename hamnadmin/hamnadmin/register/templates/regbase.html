@@ -1,11 +1,12 @@
+{% load static %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>{%if title%}{{title}} - {%endif%}Planet PostgreSQL</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen"></link>
-    <link href="/css/planet_reg.css" rel="stylesheet" media="screen"></link>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen"/>
+      <link href="{% static 'css/planet_reg.css' %}" rel="stylesheet" media="screen"/>
     {% block extrahead %}{% endblock %}
   </head>
 
@@ -13,8 +14,8 @@
     <div class="container">
       <div class="row">
 	<div class="col-sm-12" id="planethdr">
-	  <a href="/register/"><img src="/img/hdr_left.png" alt="PostgreSQL" /></a>
-	  <img class="pull-right" src="/img/hdr_right.png" alt="The world's most advanced open source database" />
+	  <a href="/register/"><img src="{% static 'img/hdr_left.png' %}" alt="PostgreSQL" /></a>
+	  <img class="pull-right" src="{% static 'img/hdr_right.png' %}" alt="The world's most advanced open source database" />
 
 	</div>
       </div>
