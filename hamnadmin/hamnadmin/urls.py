@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import *
 
 # Uncomment the next two lines to enable the admin:
@@ -13,3 +14,13 @@ urlpatterns = patterns('',
     (r'^rss20(?P<type>_short)?\.xml$', PostFeed()),
     (r'^register/', include('hamnadmin.register.urls')),
 )
+
+if settings.DEBUG:
+    # noinspection PyBroadException
+    try:
+        import debug_toolbar
+        urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns
+    except:
+        pass
