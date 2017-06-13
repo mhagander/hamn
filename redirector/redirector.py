@@ -26,8 +26,15 @@ def iddecode(idstr):
 
 def application(environ, start_response):
 	try:
+		# If we have a querystring, get rid of it. This can (presumably)
+		# happen with some click-tracking systems.
+		if '?' in environ['REQUEST_URI']:
+			uri = environ['REQUEST_URI'].split('?')[0]
+		else:
+			uri = environ['REQUEST_URI']
+
 		# Start by getting the id from the request
-		id = iddecode(environ['REQUEST_URI'].split('/')[-1])
+		id = iddecode(uri.split('/')[-1])
 
 		# Let's figure out where this URL should be
 
