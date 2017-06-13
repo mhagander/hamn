@@ -1,0 +1,10 @@
+Django==1.8
+feedparser==5.2.1
+gevent==1.2.2
+httplib2==0.10.3
+psycopg2==2.5.4
+pycrypto==2.6.1
+shellescape==3.4.1
+simplejson==3.10.0
+six==1.10.0
+uTidylib==0.2

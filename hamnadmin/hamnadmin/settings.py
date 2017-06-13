@@ -1,4 +1,8 @@
 # Django settings for admin project.
+import os
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DEBUG = False
 
@@ -48,6 +52,9 @@ ROOT_URLCONF = 'hamnadmin.urls'
 TEMPLATE_DIRS = (
     # Refer back to main planet templates
     "../template",
+)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "../www"),
 )
 
 INSTALLED_APPS = (

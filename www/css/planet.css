@@ -9,7 +9,7 @@ body {
 
 div#planetHeader {
   width: 100%;
-  background: url(/img/hdr_fill.png);
+  background: url(../img/hdr_fill.png);
   padding: 0 0 0 0;
   height: 80px;
   margin: 5px 0 2px 0;
