@@ -7,6 +7,7 @@ from models import Blog
 
 from hamnadmin.util.aggregate import FeedFetcher
 
+import urllib
 import requests
 import requests_oauthlib
 
@@ -66,7 +67,7 @@ class BlogEditForm(forms.ModelForm):
 											 settings.TWITTER_TOKEN,
 											 settings.TWITTER_TOKENSECRET)
 		try:
-			r = tw.get('https://api.twitter.com/1.1/users/show.json?screen_name={0}'.format(u),
+			r = tw.get('https://api.twitter.com/1.1/users/show.json?screen_name={0}'.format(urllib.quote_plus(u)),
 			timeout=5)
 			if r.status_code != 200:
 				raise forms.ValidationError("Could not find twitter user")
