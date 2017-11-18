@@ -27,8 +27,12 @@ class BlogEditForm(forms.ModelForm):
 		def _trace(msg):
 			tracemessages.append(msg)
 
+		if not self.cleaned_data.has_key('feedurl'):
+			# No feedurl present means error already thrown
+			return self.cleaned_data
+
 		# Create a fake instance to pass down. We'll just throw it away
-		feedobj = Blog(feedurl=self.cleaned_data['feedurl'], authorfilter=self.cleaned_data['authorfilter'])
+		feedobj = Blog(feedurl=self.cleaned_data.get('feedurl', None), authorfilter=self.cleaned_data['authorfilter'])
 		fetcher = FeedFetcher(feedobj, _trace, False)
 		try:
 			entries = list(fetcher.parse())
