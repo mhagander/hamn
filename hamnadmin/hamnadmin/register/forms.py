@@ -1,10 +1,14 @@
 from django import forms
 from django.contrib import messages
 from django.core.validators import MinLengthValidator
+from django.conf import settings
 
 from models import Blog
 
 from hamnadmin.util.aggregate import FeedFetcher
+
+import requests
+import requests_oauthlib
 
 class BlogEditForm(forms.ModelForm):
 	class Meta:
@@ -46,10 +50,32 @@ class BlogEditForm(forms.ModelForm):
 		return self.cleaned_data
 
 	def clean_twitteruser(self):
-		if self.cleaned_data['twitteruser'].startswith('@'):
-			return self.cleaned_data['twitteruser'][1:]
-		else:
-			return self.cleaned_data['twitteruser']
+		if self.cleaned_data['twitteruser'] == '':
+			return ''
+
+		u = self.cleaned_data['twitteruser']
+		if u.startswith('@'):
+			u = u[1:]
+
+		if not settings.TWITTER_CLIENT:
+			# Can't validate beyond this unless we have client keys configured
+			return u
+
+		tw = requests_oauthlib.OAuth1Session(settings.TWITTER_CLIENT,
+											 settings.TWITTER_CLIENTSECRET,
+											 settings.TWITTER_TOKEN,
+											 settings.TWITTER_TOKENSECRET)
+		try:
+			r = tw.get('https://api.twitter.com/1.1/users/show.json?screen_name={0}'.format(u),
+			timeout=5)
+			if r.status_code != 200:
+				raise forms.ValidationError("Could not find twitter user")
+			j = r.json()
+			if j['protected']:
+				raise forms.ValidationError("Cannot register protected twitter accounts")
+		except requests.exceptions.ReadTimeout:
+			raise forms.ValidationError("Timeout trying to validate account with twitter")
+		return u
 
 class ModerateRejectForm(forms.Form):
 	message = forms.CharField(min_length=30, required=True, widget=forms.Textarea)

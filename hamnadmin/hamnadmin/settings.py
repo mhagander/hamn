@@ -1,4 +1,5 @@
 # Django settings for admin project.
+import os
 
 DEBUG = False
 
@@ -73,6 +74,22 @@ NOTIFICATION_RECEIVER='planet@postgresql.org'
 
 # Set to None for testing
 VARNISH_URL="http://localhost/varnish-purge"
+
+# Dynamically load settings from the "outer" planet.ini that might
+# be needed.
+try:
+	import ConfigParser
+	_configparser = ConfigParser.ConfigParser()
+	_configparser.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../planet.ini'))
+	TWITTER_CLIENT=_configparser.get('twitter', 'consumer')
+	TWITTER_CLIENTSECRET=_configparser.get('twitter', 'consumersecret')
+	TWITTER_TOKEN=_configparser.get('twitter', 'token')
+	TWITTER_TOKENSECRET=_configparser.get('twitter', 'secret')
+except:
+	TWITTER_CLIENT=None
+	TWITTER_CLIENTSECRET=None
+	TWITTER_TOKEN=None
+	TWITTER_TOKENSECRET=None
 
 # If there is a local_settings.py, let it override our settings
 try:
