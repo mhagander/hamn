@@ -4,9 +4,9 @@
 db=dbname=planetbeta host=/tmp/ user=planetbeta
 
 [list]
-server=localhost
-listname=planet-subscribers
-password=yeahthatssecret
+server=http://localhost:8010
+listname=planet-subscribers@lists.localhost
+apikey=d0b26d3c-9dd9-4bd7-b8fb-cd15e5b99678
 
 [notify]
 mailfrom=webmaster@postgresql.org
