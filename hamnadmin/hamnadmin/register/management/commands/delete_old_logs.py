@@ -12,6 +12,6 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		with transaction.atomic():
 			curs = connection.cursor()
-			curs.execute("DELETE FROM aggregatorlog WHERE success AND ts < NOW()-%(age)s", {
-				'age': timedelta(LOG_KEEP_DAYS),
+			curs.execute("DELETE FROM aggregatorlog WHERE ts < NOW()-%(age)s", {
+				'age': timedelta(days=LOG_KEEP_DAYS),
 			})
