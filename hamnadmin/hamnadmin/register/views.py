@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import send_mail
@@ -23,22 +23,22 @@ def planet_home(request):
 	posts = Post.objects.filter(hidden=False, feed__approved=True).order_by('-dat')[:30]
 	topposters = Blog.objects.filter(approved=True, excludestats=False, posts__hidden=False, posts__dat__gt=statdate).annotate(numposts=Count('posts__id')).order_by('-numposts')[:10]
 	topteams = Team.objects.filter(blog__approved=True, blog__excludestats=False, blog__posts__hidden=False, blog__posts__dat__gt=statdate).annotate(numposts=Count('blog__posts__id')).order_by('-numposts')[:10]
-	return render_to_response('index.tmpl', {
+	return render(request, 'index.tmpl', {
 		'posts': posts,
 		'topposters': topposters,
 		'topteams': topteams,
-	}, context_instance=RequestContext(request))
+	})
 
 
 def planet_feeds(request):
-	return render_to_response('feeds.tmpl', {
+	return render(request, 'feeds.tmpl', {
 		'feeds': Blog.objects.filter(approved=True, archived=False),
 		'teams': Team.objects.filter(blog__approved=True).distinct().order_by('name'),
-	}, context_instance=RequestContext(request))
+	})
 
 def planet_add(request):
-	return render_to_response('add.tmpl', {
-	}, context_instance=RequestContext(request))
+	return render(request, 'add.tmpl', {
+	})
 
 
 
@@ -52,11 +52,11 @@ def root(request):
 		blogs = Blog.objects.all().order_by('archived', 'approved', 'name')
 	else:
 		blogs = Blog.objects.filter(user=request.user).order_by('archived', 'approved', 'name')
-	return render_to_response('index.html',{
+	return render(request, 'index.html',{
 		'blogs': blogs,
 		'teams': Team.objects.filter(manager=request.user).order_by('name'),
 		'title': 'Your blogs',
-	}, context_instance=RequestContext(request))
+	})
 
 @login_required
 @transaction.atomic
@@ -119,14 +119,14 @@ def edit(request, id=None):
 	else:
 		form =  BlogEditForm(request, instance=blog)
 
-	return render_to_response('edit.html', {
+	return render(request, 'edit.html', {
 		'new': id is None,
 		'form': form,
 		'blog': blog,
 		'log': AggregatorLog.objects.filter(feed=blog).order_by('-ts')[:30],
 		'posts': Post.objects.filter(feed=blog).order_by('-dat')[:10],
 		'title': 'Edit blog: %s' % blog.name,
-	}, RequestContext(request))
+	})
 
 @login_required
 @transaction.atomic
@@ -254,10 +254,10 @@ def blogpost_delete(request, blogid, postid):
 @login_required
 @user_passes_test(issuperuser)
 def moderate(request):
-	return render_to_response('moderate.html',{
+	return render(request, 'moderate.html',{
 		'blogs': Blog.objects.filter(approved=False).annotate(oldest=Max('posts__dat')).order_by('oldest'),
 		'title': 'Moderation',
-	}, context_instance=RequestContext(request))
+	})
 
 @login_required
 @user_passes_test(issuperuser)
@@ -293,11 +293,11 @@ def moderate_reject(request, blogid):
 	else:
 		form = ModerateRejectForm()
 
-	return render_to_response('moderate_reject.html', {
+	return render(request, 'moderate_reject.html', {
 		'form': form,
 		'blog': blog,
 		'title': 'Reject blog',
-	}, RequestContext(request))
+	})
 
 @login_required
 @user_passes_test(issuperuser)
