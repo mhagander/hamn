@@ -30,12 +30,6 @@ STATIC_URL = '/media/'
 
 SECRET_KEY = '_q-piuw^kw^v1f%b6nrla+p%=&1bt#z%c$ujhioxe^!z%8q1l0'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -46,10 +40,18 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'hamnadmin.urls'
 
-TEMPLATE_DIRS = (
-    # Refer back to main planet templates
-    "../template",
-)
+TEMPLATES = [{
+	'BACKEND': 'django.template.backends.django.DjangoTemplates',
+	'DIRS': [os.path.join(os.path.dirname(__file__), '../../template')],
+	'APP_DIRS': True,
+	'OPTIONS': {
+		'context_processors': [
+			'django.template.context_processors.request',
+			'django.contrib.auth.context_processors.auth',
+			'django.contrib.messages.context_processors.messages',
+		],
+	},
+}]
 
 INSTALLED_APPS = (
     'django.contrib.auth',
