@@ -49,8 +49,6 @@ class FeedFetcher(object):
 			if self.feed.blogurl == '':
 				self.feed.blogurl = parser.feed.link
 			elif self.feed.blogurl != parser.feed.link:
-				print "It's new!"
-				print "%s -> %s" % (self.feed.blogurl, parser.feed.link)
 				self.feed.new_blogurl = parser.feed.link
 		except:
 			pass
