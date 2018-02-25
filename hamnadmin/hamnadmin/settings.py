@@ -57,7 +57,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-	'django.contrib.staticfiles',
     'hamnadmin.register',
     'hamnadmin.mailqueue',
     'django.contrib.admin',
