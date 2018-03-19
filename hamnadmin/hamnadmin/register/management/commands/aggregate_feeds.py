@@ -75,8 +75,18 @@ class Command(BaseCommand):
 						for entry in results:
 							self.trace("Found entry at %s" % entry.link)
 							# Entry is a post, but we need to check if it's already there. Check
-							# is done on guid.
-							if not Post.objects.filter(feed=feed, guid=entry.guid).exists():
+							# is done on guid. Some blogs use http and https in the guid, and
+							# also change between them depending on how the blog is fetched,
+							# so check for those two explicitly.
+							if 'http://' in entry.guid:
+								alternateguid = entry.guid.replace('http://', 'https://')
+							elif 'https://' in entry.guid:
+								alternateguid = entry.guid.replace('https://', 'http://')
+							else:
+								alternateguid = None
+							# We check if this entry has been syndicated on any *other* blog as well,
+							# so we don't accidentally post something more than once.
+							if not Post.objects.filter(Q(guid=entry.guid) | Q(guid=alternateguid)).exists():
 								self.trace("Saving entry at %s" % entry.link)
 								entry.save()
 								entry.update_shortlink()
