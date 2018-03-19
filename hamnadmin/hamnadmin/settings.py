@@ -76,6 +76,9 @@ NOTIFICATION_RECEIVER='planet@postgresql.org'
 # Set to None for testing
 VARNISH_URL="http://localhost/varnish-purge"
 
+# Max number of entries in a fetch before we start marking them as hidden
+MAX_SAFE_ENTRIES_PER_FETCH=4
+
 # Dynamically load settings from the "outer" planet.ini that might
 # be needed.
 try:

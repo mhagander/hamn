@@ -104,6 +104,7 @@ class Command(BaseCommand):
 							had_entries = feed.has_entries
 						entries = 0
 						titles = []
+						ids = []
 
 						for entry in results:
 							self.trace("Found entry at %s" % entry.link)
@@ -128,22 +129,48 @@ class Command(BaseCommand):
 											  info="Fetched entry at '%s'" % entry.link).save()
 								entries += 1
 								titles.append(entry.title)
+								ids.append(entry.pk)
 								total_entries += 1
 							else:
 								self.trace("Skipping entry: %s" % entry.link)
 
 						if entries > 0 and feed.approved:
-							# Email a notification that they were picked up
-							send_simple_mail(settings.EMAIL_SENDER,
-											 feed.user.email,
-											 "Posts found at your blog at Planet PostgreSQL",
-											 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nIf these entries are correct, you don't have to do anything.\nIf any entry should not be there, head over to\n\nhttps://planet.postgresql.org/register/edit/{2}/\n\nand click the 'Hide' button for those entries as soon\nas possible.\n\nThank you!\n\n".format(
-												 feed.blogurl,
-												 "\n".join(["* " + t for t in titles]),
-												 feed.id),
-											 sendername="Planet PostgreSQL",
-											 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
-											 )
+							# If we picked "too many" entries, this might indicate a misconfigured blog that
+							# stopped doing it's filtering correctly.
+							if entries > settings.MAX_SAFE_ENTRIES_PER_FETCH:
+								self.trace("{0} new entries for {1}, >{2}, hiding".format(
+									entries, feed.feedurl, settings.MAX_SAFE_ENTRIES_PER_FETCH))
+								Post.objects.filter(id__in=ids).update(hidden=True)
+								# Email a notification that they were picked up
+								send_simple_mail(settings.EMAIL_SENDER,
+												 feed.user.email,
+												 "Many posts found at your blog at Planet PostgreSQL",
+												 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nSince this is a large number of posts, they have been fetched\nand marked as hidden, to avoid possible duplicates.\n\nPlease go to https://planet.postgresql.org/register/edit/{{2}}\nand confirm (by unhiding) which of these should be posted.\n\nThank you!\n\n".format(
+													 feed.blogurl,
+													 "\n".join(["* " + t for t in titles]),
+													 feed.id),
+												 sendername="Planet PostgreSQL",
+												 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+								)
+								send_simple_mail(settings.EMAIL_SENDER,
+												 settings.NOTIFICATION_RECEIVER,
+												 "Excessive posts from feed on Planet PostgreSQL",
+												 u"The blog at {0} by {1}\nreceived {2} new posts in a single fetch.\nAs this may be incorect, the posts have been marked as hidden.\nThe author may individually mark them as visible depending on\nprevious posts, and has been sent a notification about this.".format(feed.feedurl, feed.user, len(ids)),
+												 sendername="Planet PostgreSQL",
+												 receivername="Planet PostgreSQL Moderators",
+								)
+							else:
+								# Email a notification that they were picked up
+								send_simple_mail(settings.EMAIL_SENDER,
+												 feed.user.email,
+												 "Posts found at your blog at Planet PostgreSQL",
+												 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nIf these entries are correct, you don't have to do anything.\nIf any entry should not be there, head over to\n\nhttps://planet.postgresql.org/register/edit/{2}/\n\nand click the 'Hide' button for those entries as soon\nas possible.\n\nThank you!\n\n".format(
+													 feed.blogurl,
+													 "\n".join(["* " + t for t in titles]),
+													 feed.id),
+												 sendername="Planet PostgreSQL",
+												 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+								)
 
 						if entries > 0 and not had_entries:
 							# Entries showed up on a blog that was previously empty
