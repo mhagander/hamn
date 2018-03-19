@@ -5,7 +5,7 @@ from django.conf import settings
 
 from models import Blog
 
-from hamnadmin.util.aggregate import FeedFetcher
+from hamnadmin.util.aggregate import FeedFetcher, ParserGotRedirect
 
 import urllib
 import requests
@@ -41,6 +41,8 @@ class BlogEditForm(forms.ModelForm):
 		fetcher = FeedFetcher(feedobj, _trace, False)
 		try:
 			entries = list(fetcher.parse())
+		except ParserGotRedirect:
+			raise forms.ValidationError("This URL returns a permanent redirect")
 		except Exception, e:
 			raise forms.ValidationError("Failed to retreive and parse feed: %s" % e)
 		if len(entries) == 0:

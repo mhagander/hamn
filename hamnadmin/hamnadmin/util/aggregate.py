@@ -7,6 +7,11 @@ import feedparser
 
 from hamnadmin.register.models import Post
 
+class ParserGotRedirect(Exception):
+	def __init__(self, url):
+		self.url = url
+		super(Exception, self).__init__()
+
 class FeedFetcher(object):
 	def __init__(self, feed, tracefunc=None, update=True):
 		self.feed = feed
@@ -39,8 +44,12 @@ class FeedFetcher(object):
 			# Not modified
 			return
 
+		if parser.status == 301 and hasattr(parser, 'href'):
+			# Permanent redirect. Bubble this up with an exception and let the caller
+			# handle it.
+			raise ParserGotRedirect(parser.href)
+
 		if parser.status != 200:
-			# XXX: follow redirect?
 			raise Exception('Feed returned status %s' % parser.status)
 
 		self._trace("Fetched %s, status %s" % (self.feed.feedurl, parser.status))

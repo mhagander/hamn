@@ -5,10 +5,11 @@ import gevent
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.db.models import Q
 from django.conf import settings
 
 from hamnadmin.register.models import Blog, Post, AggregatorLog
-from hamnadmin.util.aggregate import FeedFetcher
+from hamnadmin.util.aggregate import FeedFetcher, ParserGotRedirect
 from hamnadmin.mailqueue.util import send_simple_mail
 from hamnadmin.util.varnish import purge_root_and_feeds
 
@@ -60,7 +61,39 @@ class Command(BaseCommand):
 		try:
 			with transaction.atomic():
 				for feed, results in pr.get():
-					if isinstance(results, Exception):
+					if isinstance(results, ParserGotRedirect):
+						# Received a redirect. If this is a redirect for exactly the same URL just
+						# from http to https, special case this and allow it. For any other redirect,
+						# we don't follow it since it might no longer be a properly filtered feed
+						# for example.
+						if results.url == feed.feedurl:
+							# Redirect to itself! Should never happen, of course.
+							AggregatorLog(feed=feed, success=False,
+										  info="Feed returned redirect loop to itself!").save()
+						elif results.url == feed.feedurl.replace('http://', 'https://'):
+							# OK, update it!
+							AggregatorLog(feed=feed, success=True,
+										  info="Feed returned redirect to https, updating registration").save()
+							send_simple_mail(settings.EMAIL_SENDER,
+											 feed.user.email,
+											 "Your blog at Planet PostgreSQL redirected",
+											 u"The blog aggregator at Planet PostgreSQL has picked up a redirect for your blog.\nOld URL: {0}\nNew URL: {1}\n\nThe database has been updated, and new entries will be fetched from the secure URL in the future.\n".format(feed.feedurl, results.url),
+											 sendername="Planet PostgreSQL",
+											 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+											 )
+							send_simple_mail(settings.EMAIL_SENDER,
+											 settings.NOTIFICATION_RECEIVER,
+											 "Blog redirect detected on Planet PostgreSQL",
+											 u"The blog at {0} by {1}\nis returning a redirect to a https version of itself.\n\nThe database has automatically been updated, and will start fetching using https in the future,\n\n".format(feed.feedurl, feed.user),
+											 sendername="Planet PostgreSQL",
+											 receivername="Planet PostgreSQL Moderators",
+							)
+							feed.feedurl = results.url
+							feed.save()
+						else:
+							AggregatorLog(feed=feed, success=False,
+										  info="Feed returned redirect (http 301)").save()
+					elif isinstance(results, Exception):
 						AggregatorLog(feed=feed,
 									  success=False,
 									  info=results).save()
@@ -162,6 +195,8 @@ class Command(BaseCommand):
 			self.trace("Fetching %s since %s" % (fetcher.feed.feedurl, since))
 		try:
 			entries = list(fetcher.parse(since))
+		except ParserGotRedirect, e:
+			return (fetcher.feed, e)
 		except Exception, e:
 			self.stderr.write("Failed to fetch '%s': %s" % (fetcher.feed.feedurl, e))
 			return (fetcher.feed, e)
