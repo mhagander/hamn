@@ -129,6 +129,8 @@ class Command(BaseCommand):
 								entries += 1
 								titles.append(entry.title)
 								total_entries += 1
+							else:
+								self.trace("Skipping entry: %s" % entry.link)
 
 						if entries > 0 and feed.approved:
 							# Email a notification that they were picked up
@@ -155,7 +157,7 @@ class Command(BaseCommand):
 
 						# If the blog URL changed, update it as requested
 						if getattr(feed, 'new_blogurl', None):
-							print("URL changed for %s to %s" % (feed.feedurl, feed.new_blogurl))
+							self.trace("URL changed for %s to %s" % (feed.feedurl, feed.new_blogurl))
 							send_simple_mail(settings.EMAIL_SENDER,
 											 settings.NOTIFICATION_RECEIVER,
 											 "A blog url changed on Planet PostgreSQL",
