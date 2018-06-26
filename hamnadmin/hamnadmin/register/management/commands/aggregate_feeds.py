@@ -145,7 +145,7 @@ class Command(BaseCommand):
 								send_simple_mail(settings.EMAIL_SENDER,
 												 feed.user.email,
 												 "Many posts found at your blog at Planet PostgreSQL",
-												 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nSince this is a large number of posts, they have been fetched\nand marked as hidden, to avoid possible duplicates.\n\nPlease go to https://planet.postgresql.org/register/edit/{{2}}\nand confirm (by unhiding) which of these should be posted.\n\nThank you!\n\n".format(
+												 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nSince this is a large number of posts, they have been fetched\nand marked as hidden, to avoid possible duplicates.\n\nPlease go to https://planet.postgresql.org/register/edit/{2}\nand confirm (by unhiding) which of these should be posted.\n\nThank you!\n\n".format(
 													 feed.blogurl,
 													 "\n".join(["* " + t for t in titles]),
 													 feed.id),
