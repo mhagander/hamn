@@ -85,6 +85,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'teams',
+                'ordering': ['name', ],
             },
         ),
         migrations.AddField(
