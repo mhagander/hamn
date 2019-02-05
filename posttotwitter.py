@@ -5,7 +5,7 @@
 This file contains the functions to generate short
 URLs and tweets from what's currently in the database.
 
-Copyright (C) 2009-2011 PostgreSQL Global Development Group
+Copyright (C) 2009-2019 PostgreSQL Global Development Group
 """
 
 # Post links to articles on twitter
@@ -33,15 +33,11 @@ class PostToTwitter(TwitterClient):
 		"""
 		Actually make a post to twitter!
 		"""
-		ret_dict =self.twitter_request('statuses/update.json', 'POST', {
-				'status': msg.encode('utf-8'),
-				})
-
-		if ret_dict.has_key('created_at'):
-			return
-		if ret_dict.has_key('error'):
-			raise Exception("Could not post to twitter: %s" % ret_dict['error'])
-		raise Exception("Unparseable response from twitter: %s" % ret_dict)
+		ret_dict = self.tw.post('{0}statuses/update.json', data={
+				'status': msg,
+		})
+		if r.status_code != 200:
+			raise Exception("Could not post to twitter, status code {0}".format(r.status_code))
 
 	def Run(self):
 		c = self.db.cursor()
