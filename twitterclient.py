@@ -5,12 +5,9 @@
 This file contains a base class for twitter integration
 scripts.
 
-Copyright (C) 2009-2010 PostgreSQL Global Development Group
+Copyright (C) 2009-2019 PostgreSQL Global Development Group
 """
-import oauth2 as oauth
-import simplejson as json
-import time
-import urllib
+import requests_oauthlib
 
 class TwitterClient(object):
 	"""
@@ -27,40 +24,13 @@ class TwitterClient(object):
 		"""
 		self.twittername = cfg.get('twitter', 'account')
 		self.twitterlist = cfg.get('twitter', 'listname')
-		self.oauth_token = oauth.Token(cfg.get('twitter', 'token'), cfg.get('twitter', 'secret'))
-		self.oauth_consumer = oauth.Consumer(cfg.get('twitter', 'consumer'), cfg.get('twitter', 'consumersecret'))
 
-	def twitter_request(self, apicall, method='GET', ext_params=None):
-		params = {
-			'oauth_version': "1.0",
-			'oauth_nonce': oauth.generate_nonce(),
-			'oauth_timestamp': int(time.time()),
-			'oauth_token': self.oauth_token.key,
-			'oauth_consumer_key': self.oauth_consumer.key,
-			}
-		if ext_params:
-			params.update(ext_params)
+		self.tw = requests_oauthlib.OAuth1Session(cfg.get('twitter', 'consumer'),
+												  cfg.get('twitter', 'consumersecret'),
+												  cfg.get('twitter', 'token'),
+												  cfg.get('twitter', 'secret'))
 
-		url = "https://api.twitter.com/1.1/%s" % apicall
-
-		req = oauth.Request(method=method,
-							url=url,
-							parameters=params)
-		req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.oauth_consumer, self.oauth_token)
-		if method=='GET':
-			instream = urllib.urlopen(req.to_url())
-		else:
-			instream=urllib.urlopen(url, req.to_postdata())
-
-		# Make the actual call to twitter
-		ret=instream.read()
-		instream.close()
-		try:
-			return json.loads(ret)
-		except json.decoder.JSONDecodeError:
-			print "Received non-JSON response to a JSON request!"
-			print ret
-			raise
+		self.twitter_api = 'https://api.twitter.com/1.1/'
 
 	def list_subscribers(self):
 		# Eek. It seems subscribers are paged even if we don't ask for it
@@ -68,28 +38,48 @@ class TwitterClient(object):
 		cursor=-1
 		handles = []
 		while cursor != 0:
-			response = self.twitter_request('lists/members.json', 'GET', {
+			response = self.tw.get('{0}lists/members.json'.format(self.twitter_api), params={
 				'owner_screen_name': self.twittername,
 				'slug': self.twitterlist,
 				'cursor': cursor,
 				})
-			handles.extend([x['screen_name'].lower() for x in response['users']])
-			cursor = response['next_cursor']
+			if response.status_code != 200:
+				print response.json()
+				raise Exception("Received status {0} when listing users".format(response.status_code))
+			j = response.json()
+			handles.extend([x['screen_name'].lower() for x in j['users']])
+			cursor = j['next_cursor']
 
 		return handles
 
 	def remove_subscriber(self, name):
 		print "Removing twitter user %s from list." % name
-		self.twitter_request('lists/members/destroy.json', 'POST', {
+		r = self.tw.post('{0}lists/members/destroy.json'.format(self.twitter_api), data={
 			'owner_screen_name': self.twittername,
 			'slug': self.twitterlist,
 			'screen_name': name,
-			})
+		})
+		if r.status_code != 200:
+			try:
+				err = r.json()['errors'][0]['message']
+			except:
+				err = 'Response does not contain error messages with json'
+			print "Failed to remove subscriber {0}: {1}".format(name, err)
+			return False
+		return True
 
 	def add_subscriber(self, name):
 		print "Adding twitter user %s to list." % name
-		self.twitter_request('lists/members/create.json', 'POST', {
+		r = self.tw.post('{0}lists/members/create.json'.format(self.twitter_api), data={
 			'owner_screen_name': self.twittername,
 			'slug': self.twitterlist,
 			'screen_name': name,
-			})
+		})
+		if r.status_code != 200:
+			try:
+				err = r.json()['errors'][0]['message']
+			except:
+				err = 'Response does not contain error messages with json'
+			print "Failed to add subscriber {0}: {1}".format(name, err)
+			return False
+		return True

@@ -5,7 +5,7 @@
 This file contains the functions to synchronize the list
 of twitter handles with a list on the twitter account.
 
-Copyright (C) 2009-2010 PostgreSQL Global Development Group
+Copyright (C) 2009-2019 PostgreSQL Global Development Group
 """
 
 import psycopg2
@@ -30,8 +30,23 @@ class SyncTwitter(TwitterClient):
 		current = set(self.list_subscribers())
 
 		# Start by deleting, then adding the new ones
-		map(self.remove_subscriber, current.difference(expected))
-		map(self.add_subscriber, expected.difference(current))
+		for s in current.difference(expected):
+			# We don't care about the return code and just keep running if it
+			# fails, since we will try again later.
+			self.remove_subscriber(s)
+		for s in expected.difference(current):
+			# If we fail to add a subscriber, stop trying
+			if not self.add_subscriber(s):
+				# Most likely it's things like it doesn't exist or we don't have permissions
+				# to follow it.
+				print "Failed to add twitter subscriber {0}, removing from feed record".format(s)
+
+				# To be on the safe side, store the old twitter username. In case the twitter APIs
+				# go bonkers on us and we end up removing too much.
+				curs.execute("UPDATE feeds SET oldtwitteruser=twitteruser, twitteruser='' WHERE lower(twitteruser)=%(twitter)s", {
+					'twitter': s,
+				})
+		self.db.commit()
 
 
 if __name__=="__main__":

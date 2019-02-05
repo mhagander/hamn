@@ -44,7 +44,8 @@ CREATE TABLE feeds (
     userid text,
     approved boolean DEFAULT false NOT NULL,
     authorfilter text DEFAULT ''::text NOT NULL,
-    twitteruser text DEFAULT ''::text NOT NULL
+    twitteruser text DEFAULT ''::text NOT NULL,
+    oldtwitteruser text DEFAULT ''::text NOT NULL
 );
 
 
