@@ -33,8 +33,8 @@ class PostToTwitter(TwitterClient):
 		"""
 		Actually make a post to twitter!
 		"""
-		ret_dict = self.tw.post('{0}statuses/update.json'.format(self.twitter_api), data={
-				'status': msg,
+		r = self.tw.post('{0}statuses/update.json'.format(self.twitter_api), data={
+			'status': msg,
 		})
 		if r.status_code != 200:
 			raise Exception("Could not post to twitter, status code {0}".format(r.status_code))
