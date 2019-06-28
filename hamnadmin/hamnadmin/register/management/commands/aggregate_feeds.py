@@ -224,9 +224,9 @@ class Command(BaseCommand):
 			self.trace("Fetching %s since %s" % (fetcher.feed.feedurl, since))
 		try:
 			entries = list(fetcher.parse(since))
-		except ParserGotRedirect, e:
+		except ParserGotRedirect as e:
 			return (fetcher.feed, e)
-		except Exception, e:
+		except Exception as e:
 			self.stderr.write("Failed to fetch '%s': %s" % (fetcher.feed.feedurl, e))
 			return (fetcher.feed, e)
 		return (fetcher.feed, entries)

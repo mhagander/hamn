@@ -43,7 +43,7 @@ class BlogEditForm(forms.ModelForm):
 			entries = list(fetcher.parse())
 		except ParserGotRedirect:
 			raise forms.ValidationError("This URL returns a permanent redirect")
-		except Exception, e:
+		except Exception as e:
 			raise forms.ValidationError("Failed to retreive and parse feed: %s" % e)
 		if len(entries) == 0:
 			for m in tracemessages:

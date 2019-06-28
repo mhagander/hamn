@@ -13,7 +13,7 @@ def purge_url(url):
 			response = urllib2.urlopen(request, timeout=2)
 			if response.getcode() != 200:
 				raise Exception("Invalid response code %s" % response.getcode())
-		except Exception, e:
+		except Exception as e:
 			raise Exception("Failed to purge '{0}': {1}'".format(url, e))
 
 def purge_root_and_feeds():
