@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """PostgreSQL Planet Aggregator
 
 This is a FastCGI implementation of the planet URL redirector.
@@ -9,7 +9,7 @@ URL for the post requested.
 Copyright (C) 2011 PostgreSQL Global Development Group
 """
 
-import ConfigParser
+import configparser
 import psycopg2
 
 # Simple map used to shorten id values to URLs
@@ -66,7 +66,7 @@ def application(environ, start_response):
 			"<a href=\"%s\">moved here</a>\n" % r[0][0],
 			"</body>\n</html>\n"
 			]
-	except Exception, ex:
+	except Exception as ex:
 		start_response('500 Internal Server Error', [
 				('Content-type', 'text/plain')
 				])
@@ -77,6 +77,6 @@ def application(environ, start_response):
 			]
 
 
-c = ConfigParser.ConfigParser()
+c = configparser.ConfigParser()
 c.read('redir.ini')
 connstr = c.get('planet', 'db')
