@@ -9,7 +9,7 @@ class Team(models.Model):
 	name = models.CharField(max_length=255, blank=False)
 	manager = models.ForeignKey(User, null=True, blank=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return "%s (%s)" % (self.name, self.teamurl)
 
 	class Meta:
@@ -35,7 +35,7 @@ class Blog(models.Model):
 	# Things that may change
 	new_blogurl = None
 
-	def __unicode__(self):
+	def __str__(self):
 		return "%s (%s)" % (self.name, self.feedurl)
 
 	@property
@@ -80,7 +80,7 @@ class Post(models.Model):
 	twittered = models.BooleanField(default=False)
 	shortlink = models.CharField(max_length=255)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.title
 
 	class Meta:
@@ -115,7 +115,7 @@ class AuditEntry(models.Model):
 		self.user = username
 		self.logtxt = txt
 
-	def __unicode__(self):
+	def __str__(self):
 		return "%s (%s): %s" % (self.logtime, self.user, self.logtxt)
 
 	class Meta:
@@ -132,5 +132,5 @@ class AggregatorLog(models.Model):
 		db_table = 'aggregatorlog'
 		ordering = ['-ts']
 
-	def __unicode__(self):
+	def __str__(self):
 		return "Log entry for %s (%s)" % (self.feed.name, self.ts)

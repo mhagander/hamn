@@ -26,7 +26,7 @@ class Command(BaseCommand):
 				send_simple_mail(settings.EMAIL_SENDER,
 								 feed.user.email,
 								 "Errors retreiving your feed for Planet PostgreSQL",
-								 u"""Your blog aggregated to Planet PostgreSQL with feed URL
+								 """Your blog aggregated to Planet PostgreSQL with feed URL
 
 {0}
 
@@ -52,5 +52,5 @@ is generating more than {3} errors per day.
 		   feed.id,
 		   THRESHOLD),
 								 sendername="Planet PostgreSQL",
-								 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+								 receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
 								 )

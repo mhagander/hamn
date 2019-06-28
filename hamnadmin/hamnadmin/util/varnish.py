@@ -4,7 +4,7 @@ import urllib.request, urllib.error, urllib.parse
 
 def purge_url(url):
 	if not settings.VARNISH_URL:
-		print "Not purging {0}".format(url)
+		print("Not purging {0}".format(url))
 	else:
 		try:
 			request = urllib2.Request(settings.VARNISH_URL, headers={

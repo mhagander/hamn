@@ -52,8 +52,8 @@ class PostToTwitter(TwitterClient):
 				# in case it's needed.
 				try:
 					short = self.shortid(post[0])
-				except Exception, e:
-					print "Failed to shorten URL %s: %s" % (post[2], e)
+				except Exception as e:
+					print("Failed to shorten URL %s: %s" % (post[2], e))
 					continue
 
 				c.execute("UPDATE posts SET shortlink=%(short)s WHERE id=%(id)s", {
@@ -65,14 +65,14 @@ class PostToTwitter(TwitterClient):
 			# Set up the string to twitter
 			if post[5] and len(post[5])>1:
 				# Twitter username registered
-				msg = unicode("%s (@%s): %s %s") % (
+				msg = "%s (@%s): %s %s" % (
 					post[4],
 					post[5],
 					self.trimpost(post[1],len(post[4])+len(post[5])+len(short)+7),
 					short,
 				)
 			else:
-				msg = unicode("%s: %s %s") % (
+				msg = "%s: %s %s" % (
 					post[4],
 					self.trimpost(post[1],len(post[4])+len(short)+3),
 					short,
@@ -81,8 +81,8 @@ class PostToTwitter(TwitterClient):
 			# Now post it to twitter
 			try:
 				self.do_post(msg)
-			except Exception, e:
-				print "Error posting to twitter (post %s): %s" % (post[0], e)
+			except Exception as e:
+				print("Error posting to twitter (post %s): %s" % (post[0], e))
 				# We'll just try again with the next one
 				continue
 
@@ -90,7 +90,7 @@ class PostToTwitter(TwitterClient):
 			c.execute("UPDATE posts SET twittered='t' WHERE id=%(id)s", { 'id': post[0] })
 			self.db.commit()
 
-			print unicode("Twittered: %s" % msg).encode('utf8')
+			print("Twittered: %s" % msg)
 
 
 	# Trim a post to the length required by twitter, so we don't fail to post

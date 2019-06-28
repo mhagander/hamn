@@ -39,7 +39,7 @@ class SyncTwitter(TwitterClient):
 			if not self.add_subscriber(s):
 				# Most likely it's things like it doesn't exist or we don't have permissions
 				# to follow it.
-				print "Failed to add twitter subscriber {0}, removing from feed record".format(s)
+				print("Failed to add twitter subscriber {0}, removing from feed record".format(s))
 
 				# To be on the safe side, store the old twitter username. In case the twitter APIs
 				# go bonkers on us and we end up removing too much.

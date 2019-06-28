@@ -44,7 +44,7 @@ class TwitterClient(object):
 				'cursor': cursor,
 				})
 			if response.status_code != 200:
-				print response.json()
+				print(response.json())
 				raise Exception("Received status {0} when listing users".format(response.status_code))
 			j = response.json()
 			handles.extend([x['screen_name'].lower() for x in j['users']])
@@ -53,7 +53,7 @@ class TwitterClient(object):
 		return handles
 
 	def remove_subscriber(self, name):
-		print "Removing twitter user %s from list." % name
+		print("Removing twitter user %s from list." % name)
 		r = self.tw.post('{0}lists/members/destroy.json'.format(self.twitter_api), data={
 			'owner_screen_name': self.twittername,
 			'slug': self.twitterlist,
@@ -64,12 +64,12 @@ class TwitterClient(object):
 				err = r.json()['errors'][0]['message']
 			except:
 				err = 'Response does not contain error messages with json'
-			print "Failed to remove subscriber {0}: {1}".format(name, err)
+			print("Failed to remove subscriber {0}: {1}".format(name, err))
 			return False
 		return True
 
 	def add_subscriber(self, name):
-		print "Adding twitter user %s to list." % name
+		print("Adding twitter user %s to list." % name)
 		r = self.tw.post('{0}lists/members/create.json'.format(self.twitter_api), data={
 			'owner_screen_name': self.twittername,
 			'slug': self.twitterlist,
@@ -80,6 +80,6 @@ class TwitterClient(object):
 				err = r.json()['errors'][0]['message']
 			except:
 				err = 'Response does not contain error messages with json'
-			print "Failed to add subscriber {0}: {1}".format(name, err)
+			print("Failed to add subscriber {0}: {1}".format(name, err))
 			return False
 		return True

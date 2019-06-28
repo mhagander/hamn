@@ -77,14 +77,14 @@ class Command(BaseCommand):
 							send_simple_mail(settings.EMAIL_SENDER,
 											 feed.user.email,
 											 "Your blog at Planet PostgreSQL redirected",
-											 u"The blog aggregator at Planet PostgreSQL has picked up a redirect for your blog.\nOld URL: {0}\nNew URL: {1}\n\nThe database has been updated, and new entries will be fetched from the secure URL in the future.\n".format(feed.feedurl, results.url),
+											 "The blog aggregator at Planet PostgreSQL has picked up a redirect for your blog.\nOld URL: {0}\nNew URL: {1}\n\nThe database has been updated, and new entries will be fetched from the secure URL in the future.\n".format(feed.feedurl, results.url),
 											 sendername="Planet PostgreSQL",
-											 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+											 receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
 											 )
 							send_simple_mail(settings.EMAIL_SENDER,
 											 settings.NOTIFICATION_RECEIVER,
 											 "Blog redirect detected on Planet PostgreSQL",
-											 u"The blog at {0} by {1}\nis returning a redirect to a https version of itself.\n\nThe database has automatically been updated, and will start fetching using https in the future,\n\n".format(feed.feedurl, feed.user),
+											 "The blog at {0} by {1}\nis returning a redirect to a https version of itself.\n\nThe database has automatically been updated, and will start fetching using https in the future,\n\n".format(feed.feedurl, feed.user),
 											 sendername="Planet PostgreSQL",
 											 receivername="Planet PostgreSQL Moderators",
 							)
@@ -145,17 +145,17 @@ class Command(BaseCommand):
 								send_simple_mail(settings.EMAIL_SENDER,
 												 feed.user.email,
 												 "Many posts found at your blog at Planet PostgreSQL",
-												 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nSince this is a large number of posts, they have been fetched\nand marked as hidden, to avoid possible duplicates.\n\nPlease go to https://planet.postgresql.org/register/edit/{2}\nand confirm (by unhiding) which of these should be posted.\n\nThank you!\n\n".format(
+												 "The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nSince this is a large number of posts, they have been fetched\nand marked as hidden, to avoid possible duplicates.\n\nPlease go to https://planet.postgresql.org/register/edit/{2}\nand confirm (by unhiding) which of these should be posted.\n\nThank you!\n\n".format(
 													 feed.blogurl,
 													 "\n".join(["* " + t for t in titles]),
 													 feed.id),
 												 sendername="Planet PostgreSQL",
-												 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+												 receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
 								)
 								send_simple_mail(settings.EMAIL_SENDER,
 												 settings.NOTIFICATION_RECEIVER,
 												 "Excessive posts from feed on Planet PostgreSQL",
-												 u"The blog at {0} by {1}\nreceived {2} new posts in a single fetch.\nAs this may be incorect, the posts have been marked as hidden.\nThe author may individually mark them as visible depending on\nprevious posts, and has been sent a notification about this.".format(feed.feedurl, feed.user, len(ids)),
+												 "The blog at {0} by {1}\nreceived {2} new posts in a single fetch.\nAs this may be incorect, the posts have been marked as hidden.\nThe author may individually mark them as visible depending on\nprevious posts, and has been sent a notification about this.".format(feed.feedurl, feed.user, len(ids)),
 												 sendername="Planet PostgreSQL",
 												 receivername="Planet PostgreSQL Moderators",
 								)
@@ -164,12 +164,12 @@ class Command(BaseCommand):
 								send_simple_mail(settings.EMAIL_SENDER,
 												 feed.user.email,
 												 "Posts found at your blog at Planet PostgreSQL",
-												 u"The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nIf these entries are correct, you don't have to do anything.\nIf any entry should not be there, head over to\n\nhttps://planet.postgresql.org/register/edit/{2}/\n\nand click the 'Hide' button for those entries as soon\nas possible.\n\nThank you!\n\n".format(
+												 "The blog aggregator at Planet PostgreSQL has just picked up the following\nposts from your blog at {0}:\n\n{1}\n\nIf these entries are correct, you don't have to do anything.\nIf any entry should not be there, head over to\n\nhttps://planet.postgresql.org/register/edit/{2}/\n\nand click the 'Hide' button for those entries as soon\nas possible.\n\nThank you!\n\n".format(
 													 feed.blogurl,
 													 "\n".join(["* " + t for t in titles]),
 													 feed.id),
 												 sendername="Planet PostgreSQL",
-												 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+												 receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
 								)
 
 						if entries > 0 and not had_entries:
@@ -177,7 +177,7 @@ class Command(BaseCommand):
 							send_simple_mail(settings.EMAIL_SENDER,
 											 settings.NOTIFICATION_RECEIVER,
 											 "A blog was added to Planet PostgreSQL",
-											 u"The blog at {0} by {1}\nwas added to Planet PostgreSQL, and has now received entries.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user),
+											 "The blog at {0} by {1}\nwas added to Planet PostgreSQL, and has now received entries.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user),
 											 sendername="Planet PostgreSQL",
 											 receivername="Planet PostgreSQL Moderators",
 							)
@@ -188,20 +188,20 @@ class Command(BaseCommand):
 							send_simple_mail(settings.EMAIL_SENDER,
 											 settings.NOTIFICATION_RECEIVER,
 											 "A blog url changed on Planet PostgreSQL",
-											 u"When checking the blog at {0} by {1}\nthe blog URL was updated to:\n{2}\n(from previous value {3})\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user, feed.new_blogurl, feed.blogurl),
+											 "When checking the blog at {0} by {1}\nthe blog URL was updated to:\n{2}\n(from previous value {3})\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user, feed.new_blogurl, feed.blogurl),
 											 sendername="Planet PostgreSQL",
 											 receivername="Planet PostgreSQL Moderators",
 							)
 							send_simple_mail(settings.EMAIL_SENDER,
 											 feed.user.email,
 											 "URL of your blog at Planet PostgreSQL updated",
-											 u"The blog aggregator at Planet PostgreSQL has update the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\nIf this is correct, you don't have to do anything.\nIf not, please contact planet@postgresql.org\n".format(
+											 "The blog aggregator at Planet PostgreSQL has update the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\nIf this is correct, you don't have to do anything.\nIf not, please contact planet@postgresql.org\n".format(
 												 feed.feedurl,
 												 feed.new_blogurl,
 												 feed.blogurl,
 											 ),
 											 sendername="Planet PostgreSQL",
-											 receivername=u"{0} {1}".format(feed.user.first_name, feed.user.last_name),
+											 receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
 											 )
 							feed.blogurl = feed.new_blogurl
 							feed.save()
