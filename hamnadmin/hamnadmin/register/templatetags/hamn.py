@@ -9,5 +9,7 @@ register = template.Library()
 @register.filter(name='postcontents')
 @stringfilter
 def postcontents(value):
-	return mark_safe(TruncateAndClean(value))
-
+	try:
+		return mark_safe(TruncateAndClean(value))
+	except Exception as e:
+		return "Unable to clean HTML"
