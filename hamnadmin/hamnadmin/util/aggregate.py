@@ -92,7 +92,7 @@ class FeedFetcher(object):
 			elif hasattr(entry, 'updated_parsed'):
 				dat = datetime.datetime(*(entry.updated_parsed[0:6]))
 			else:
-				self._trace("Failed to get date for entry %s (keys %s)" % (entry.link, entry.keys()))
+				self._trace("Failed to get date for entry %s (keys %s)" % (entry.link, list(entry.keys())))
 				continue
 
 			if dat > datetime.datetime.now():
