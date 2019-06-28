@@ -102,7 +102,7 @@ class Post(models.Model):
 		i = self.id
 		while i > 0:
 			s = urlvalmap[i % 64] + s
-			i /= 64
+			i //= 64
 		return "https://postgr.es/p/%s" % s
 
 class AuditEntry(models.Model):
