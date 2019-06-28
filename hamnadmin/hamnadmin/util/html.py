@@ -1,19 +1,24 @@
 from html.parser import HTMLParser
-import tidy
+import tidylib
 import urllib.parse
-
-_tidyopts = dict(   drop_proprietary_attributes=1,
-					alt_text='',
-					hide_comments=1,
-					output_xhtml=1,
-					show_body_only=1,
-					clean=1,
-					char_encoding='utf8',
-)
 
 def TruncateAndClean(txt):
 	# First apply Tidy
-	txt = unicode(str(tidy.parseString(txt.encode('utf-8'), **_tidyopts)),'utf8')
+	(txt, errors) = tidylib.tidy_document(txt,
+										  options={
+											  'drop_proprietary_attributes': 1,
+											  'alt_text': '',
+											  'hide_comments': 1,
+											  'output_xhtml': 1,
+											  'show_body_only': 1,
+											  'clean': 1,
+											  'char_encoding': 'utf8',
+											  'show-warnings': 0,
+											  'show-info': 0,
+										  })
+
+	if errors:
+		raise Exception("Tidy failed: %s" % errors)
 
 	# Then truncate as necessary
 	ht = HtmlTruncator(2048)
