@@ -34,6 +34,9 @@ class PostFeed(Feed):
 
 	def item_description(self, item):
 		if hasattr(item, 'short'):
-			return TruncateAndClean(item.txt)
+			try:
+				return TruncateAndClean(item.txt)
+			except Exception as e:
+				return "Unable to clean HTML"
 		else:
 			return item.txt
