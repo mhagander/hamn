@@ -63,7 +63,7 @@ def application(environ, start_response):
 				])
 		return [
 			b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
-			b"<a href=\"%s\">moved here</a>\n" % r[0][0],
+			b"<a href=\"%s\">moved here</a>\n" % r[0][0].encode('utf8'),
 			b"</body>\n</html>\n"
 			]
 	except Exception as ex:
