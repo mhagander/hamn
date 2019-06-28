@@ -85,8 +85,8 @@ MAX_SAFE_ENTRIES_PER_FETCH=4
 # Dynamically load settings from the "outer" planet.ini that might
 # be needed.
 try:
-	import ConfigParser
-	_configparser = ConfigParser.ConfigParser()
+	import configparser
+	_configparser = configparser.ConfigParser()
 	_configparser.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../planet.ini'))
 	TWITTER_CLIENT=_configparser.get('twitter', 'consumer')
 	TWITTER_CLIENTSECRET=_configparser.get('twitter', 'consumersecret')
@@ -100,7 +100,7 @@ except:
 
 # If there is a local_settings.py, let it override our settings
 try:
-	from local_settings import *
+	from .local_settings import *
 except:
 	pass
 

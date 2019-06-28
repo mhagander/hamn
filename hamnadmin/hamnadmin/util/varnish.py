@@ -1,6 +1,6 @@
 from django.conf import settings
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 def purge_url(url):
 	if not settings.VARNISH_URL:

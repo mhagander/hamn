@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # vim: ai ts=4 sts=4 sw=4
 """PostgreSQL Planet Aggregator
 
@@ -12,9 +12,8 @@ Copyright (C) 2009-2019 PostgreSQL Global Development Group
 
 import psycopg2
 import psycopg2.extensions
-import urllib
 import simplejson as json
-import ConfigParser
+import configparser
 from twitterclient import TwitterClient
 
 
@@ -114,7 +113,7 @@ class PostToTwitter(TwitterClient):
 
 
 if __name__=="__main__":
-	c = ConfigParser.ConfigParser()
+	c = configparser.ConfigParser()
 	c.read('planet.ini')
 	PostToTwitter(c).Run()
 

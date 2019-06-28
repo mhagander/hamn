@@ -3,11 +3,11 @@ from django.contrib import messages
 from django.core.validators import MinLengthValidator
 from django.conf import settings
 
-from models import Blog
+from .models import Blog
 
 from hamnadmin.util.aggregate import FeedFetcher, ParserGotRedirect
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import requests
 import requests_oauthlib
 

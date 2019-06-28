@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # vim: ai ts=4 sts=4 sw=4
 """PostgreSQL Planet Aggregator
 

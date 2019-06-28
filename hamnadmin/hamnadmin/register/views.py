@@ -15,7 +15,7 @@ from hamnadmin.util.varnish import purge_url, purge_root_and_feeds
 import datetime
 import feedparser
 
-from forms import BlogEditForm, ModerateRejectForm
+from .forms import BlogEditForm, ModerateRejectForm
 
 # Public planet
 def planet_home(request):

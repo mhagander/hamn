@@ -1,6 +1,6 @@
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 import tidy
-import urllib
+import urllib.parse
 
 _tidyopts = dict(   drop_proprietary_attributes=1,
 					alt_text='',
@@ -50,7 +50,7 @@ class HtmlTruncator(HTMLParser):
 		if len(p) < 2:
 			# Don't crash on invalid URLs
 			return ""
-		return p[0] + ":" + urllib.quote(p[1])
+		return p[0] + ":" + urllib.parse.quote(p[1])
 
 	def cleanhref(self, attrs):
 		if attrs[0] == 'href':

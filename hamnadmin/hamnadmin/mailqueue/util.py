@@ -1,11 +1,11 @@
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.nonmultipart import MIMENonMultipart
-from email.Utils import formatdate, formataddr
+from email.utils import formatdate, formataddr
 from email.header import Header
 from email import encoders
 
-from models import QueuedMail
+from .models import QueuedMail
 
 def _encoded_email_header(name, email):
 	if name:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # vim: ai ts=4 sts=4 sw=4
 """PostgreSQL Planet Aggregator
 
@@ -10,10 +10,10 @@ Copyright (C) 2010 PostgreSQL Global Development Group
 
 import sys
 import cgi
-import ConfigParser
+import configparser
 import requests_oauthlib
 
-cfg = ConfigParser.ConfigParser()
+cfg = configparser.ConfigParser()
 cfg.read('planet.ini')
 
 if not cfg.has_option('twitter', 'consumer') or not cfg.has_option('twitter', 'consumersecret'):

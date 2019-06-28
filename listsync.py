@@ -1,20 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Planet PostgreSQL - list synchronizer
 
 This file contains the functions to synchronize the list of subscribers
 to planet with those of a pglister mailinglist.
 
-Copyright (C) 2008-2017PostgreSQL Global Development Group
+Copyright (C) 2008-2017 PostgreSQL Global Development Group
 """
 
 import sys
-import ConfigParser
+import configparser
 import psycopg2
 import requests
 
 
 if __name__=="__main__":
-	c = ConfigParser.ConfigParser()
+	c = configparser.ConfigParser()
 	c.read('planet.ini')
 
 	conn = psycopg2.connect(c.get('planet', 'db'))

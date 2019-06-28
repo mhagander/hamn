@@ -2,7 +2,7 @@ from django.contrib.syndication.views import Feed
 
 from hamnadmin.util.html import TruncateAndClean
 
-from models import Post
+from .models import Post
 
 class PostFeed(Feed):
 	title = 'Planet PostgreSQL'
