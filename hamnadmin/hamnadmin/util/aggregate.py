@@ -77,7 +77,7 @@ class FeedFetcher(object):
 				txtalts.append(entry.content[0].value)
 			except:
 				pass
-			if entry.has_key('summary'):
+			if 'summary' in entry:
 				txtalts.append(entry.summary)
 
 			# Select the longest text
@@ -140,9 +140,9 @@ class FeedFetcher(object):
 		if self.feed.authorfilter:
 			# Match against an author filter
 
-			if entry.has_key('author_detail'):
+			if 'author_detail' in entry:
 				return entry.author_detail.name == self.feed.authorfilter
-			elif entry.has_key('author'):
+			elif 'author' in entry:
 				return entry.author == self.feed.authorfilter
 			else:
 				return False

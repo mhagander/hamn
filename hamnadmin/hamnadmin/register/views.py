@@ -48,7 +48,7 @@ def issuperuser(user):
 
 @login_required
 def root(request):
-	if request.user.is_superuser and request.GET.has_key('admin') and request.GET['admin'] == '1':
+	if request.user.is_superuser and 'admin' in request.GET and request.GET['admin'] == '1':
 		blogs = Blog.objects.all().order_by('archived', 'approved', 'name')
 	else:
 		blogs = Blog.objects.filter(user=request.user).order_by('archived', 'approved', 'name')

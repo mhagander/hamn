@@ -32,7 +32,7 @@ class BlogEditForm(forms.ModelForm):
 		def _trace(msg):
 			tracemessages.append(msg)
 
-		if not self.cleaned_data.has_key('feedurl'):
+		if 'feedurl' not in self.cleaned_data:
 			# No feedurl present means error already thrown
 			return self.cleaned_data
 
