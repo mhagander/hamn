@@ -53,7 +53,7 @@ def application(environ, start_response):
 			start_response('404 Not Found', [
 					('Content-type', 'text/plain'),
 					])
-			return ["Link not found\n"]
+			return [b"Link not found\n"]
 
 		# We have a link, return a redirect to it
 		start_response('301 Moved Permanently', [
@@ -62,9 +62,9 @@ def application(environ, start_response):
 				('X-Planet', str(id))
 				])
 		return [
-			"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
-			"<a href=\"%s\">moved here</a>\n" % r[0][0],
-			"</body>\n</html>\n"
+			b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
+			b"<a href=\"%s\">moved here</a>\n" % r[0][0],
+			b"</body>\n</html>\n"
 			]
 	except Exception as ex:
 		start_response('500 Internal Server Error', [
