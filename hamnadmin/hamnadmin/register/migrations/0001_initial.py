@@ -47,8 +47,8 @@ class Migration(migrations.Migration):
                 ('lastget', models.DateTimeField(default=datetime.datetime(2000, 1, 1, 0, 0))),
                 ('userid', models.CharField(max_length=255)),
                 ('approved', models.BooleanField()),
-                ('authorfilter', models.CharField(default=b'', max_length=255, blank=True)),
-                ('twitteruser', models.CharField(default=b'', max_length=255, blank=True)),
+                ('authorfilter', models.CharField(default='', max_length=255, blank=True)),
+                ('twitteruser', models.CharField(default='', max_length=255, blank=True)),
                 ('excludestats', models.BooleanField(default=False)),
             ],
             options={
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                 ('hidden', models.BooleanField()),
                 ('twittered', models.BooleanField()),
                 ('shortlink', models.CharField(max_length=255)),
-                ('feed', models.ForeignKey(related_name='posts', db_column=b'feed', to='register.Blog')),
+                ('feed', models.ForeignKey(related_name='posts', db_column='feed', to='register.Blog')),
             ],
             options={
                 'ordering': ['-dat'],
@@ -91,11 +91,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='blog',
             name='team',
-            field=models.ForeignKey(db_column=b'team', blank=True, to='register.Team', null=True),
+            field=models.ForeignKey(db_column='team', blank=True, to='register.Team', null=True),
         ),
         migrations.AddField(
             model_name='aggregatorlog',
             name='feed',
-            field=models.ForeignKey(to='register.Blog', db_column=b'feed'),
+            field=models.ForeignKey(to='register.Blog', db_column='feed'),
         ),
     ]
