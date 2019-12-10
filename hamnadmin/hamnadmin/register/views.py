@@ -107,7 +107,7 @@ def edit(request, id=None):
 				send_simple_mail(settings.EMAIL_SENDER,
 								 obj.team.manager.email,
 								 "A blog joined your team on Planet PostgreSQL",
-								 "The blog at {0} by {1} {2}\nhas been added to yor team {3} on Planet PostgreSQL\n\nIf this is correct, you do not need to do anything.\n\nIf this is incorrect, please go to\n\nhttps://planet.postgresql.org/register/\n\nand click the button to remove the blog from your team.\nWe apologize if this causes work for you.\n\n".format(
+								 "The blog at {0} by {1} {2}\nhas been added to your team {3} on Planet PostgreSQL\n\nIf this is correct, you do not need to do anything.\n\nIf this is incorrect, please go to\n\nhttps://planet.postgresql.org/register/\n\nand click the button to remove the blog from your team.\nWe apologize if this causes work for you.\n\n".format(
 									 obj.feedurl,
 									 obj.user.first_name, obj.user.last_name,
 									 obj.team.name),
