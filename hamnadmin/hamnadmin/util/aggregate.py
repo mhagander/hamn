@@ -3,7 +3,7 @@
 import datetime
 import socket
 
-import feedparser
+from vendor.feedparser import feedparser
 
 from hamnadmin.register.models import Post
 

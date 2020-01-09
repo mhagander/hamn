@@ -13,7 +13,7 @@ from hamnadmin.mailqueue.util import send_simple_mail
 from hamnadmin.util.varnish import purge_url, purge_root_and_feeds
 
 import datetime
-import feedparser
+from vendor.feedparser import feedparser
 
 from .forms import BlogEditForm, ModerateRejectForm
 
