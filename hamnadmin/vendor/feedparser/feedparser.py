@@ -3771,10 +3771,13 @@ def _gen_georss_coords(value, swap=True, dims=2):
     latlons = map(float, value.strip().replace(',', ' ').split())
     nxt = latlons.__next__
     while True:
-        t = [nxt(), nxt()][::swap and -1 or 1]
-        if dims == 3:
-            t.append(nxt())
-        yield tuple(t)
+        try:
+            t = [nxt(), nxt()][::swap and -1 or 1]
+            if dims == 3:
+                t.append(nxt())
+            yield tuple(t)
+        except StopIteration:
+            return
 
 def _parse_georss_point(value, swap=True, dims=2):
     # A point contains a single latitude-longitude pair, separated by
