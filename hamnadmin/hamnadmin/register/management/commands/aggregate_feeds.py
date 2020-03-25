@@ -155,7 +155,7 @@ class Command(BaseCommand):
 								send_simple_mail(settings.EMAIL_SENDER,
 												 settings.NOTIFICATION_RECEIVER,
 												 "Excessive posts from feed on Planet PostgreSQL",
-												 "The blog at {0} by {1}\nreceived {2} new posts in a single fetch.\nAs this may be incorect, the posts have been marked as hidden.\nThe author may individually mark them as visible depending on\nprevious posts, and has been sent a notification about this.".format(feed.feedurl, feed.user, len(ids)),
+												 "The blog at {0} by {1}\nreceived {2} new posts in a single fetch.\nAs this may be incorrect, the posts have been marked as hidden.\nThe author may individually mark them as visible depending on\nprevious posts, and has been sent a notification about this.".format(feed.feedurl, feed.user, len(ids)),
 												 sendername="Planet PostgreSQL",
 												 receivername="Planet PostgreSQL Moderators",
 								)
