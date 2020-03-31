@@ -30,7 +30,7 @@ STATIC_URL = '/media/'
 
 SECRET_KEY = '_q-piuw^kw^v1f%b6nrla+p%=&1bt#z%c$ujhioxe^!z%8q1l0'
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.messages',
     'hamnadmin.register',
     'hamnadmin.mailqueue',
     'django.contrib.admin',

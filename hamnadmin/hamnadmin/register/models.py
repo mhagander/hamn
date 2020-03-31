@@ -7,7 +7,7 @@ from hamnadmin.util.shortlink import urlvalmap
 class Team(models.Model):
 	teamurl = models.CharField(max_length=255, blank=False)
 	name = models.CharField(max_length=255, blank=False)
-	manager = models.ForeignKey(User, null=True, blank=True)
+	manager = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return "%s (%s)" % (self.name, self.teamurl)
@@ -24,11 +24,11 @@ class Blog(models.Model):
 	name = models.CharField(max_length=255, blank=False)
 	blogurl = models.CharField(max_length=255, blank=False)
 	lastget = models.DateTimeField(default=datetime(2000,1,1))
-	user = models.ForeignKey(User, null=False, blank=False)
+	user = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
 	approved = models.BooleanField(default=False)
 	archived = models.BooleanField(default=False)
 	authorfilter = models.CharField(max_length=255,default='',blank=True)
-	team = models.ForeignKey(Team,db_column='team', blank=True, null=True)
+	team = models.ForeignKey(Team,db_column='team', blank=True, null=True, on_delete=models.CASCADE)
 	twitteruser = models.CharField(max_length=255, default='', blank=True)
 	excludestats = models.BooleanField(null=False, blank=False, default=False)
 
@@ -69,7 +69,7 @@ class Blog(models.Model):
 		pass
 
 class Post(models.Model):
-	feed = models.ForeignKey(Blog,db_column='feed',related_name='posts')
+	feed = models.ForeignKey(Blog,db_column='feed',related_name='posts', on_delete=models.CASCADE)
 	guid = models.CharField(max_length=255)
 	link = models.CharField(max_length=255)
 	txt = models.TextField()
@@ -124,7 +124,7 @@ class AuditEntry(models.Model):
 		
 class AggregatorLog(models.Model):
 	ts = models.DateTimeField(auto_now=True)
-	feed = models.ForeignKey(Blog, db_column='feed')
+	feed = models.ForeignKey(Blog, db_column='feed', on_delete=models.CASCADE)
 	success = models.BooleanField()
 	info = models.TextField()
 	

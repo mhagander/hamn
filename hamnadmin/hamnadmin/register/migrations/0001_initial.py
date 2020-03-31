@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                 ('hidden', models.BooleanField()),
                 ('twittered', models.BooleanField()),
                 ('shortlink', models.CharField(max_length=255)),
-                ('feed', models.ForeignKey(related_name='posts', db_column='feed', to='register.Blog')),
+                ('feed', models.ForeignKey(related_name='posts', db_column='feed', to='register.Blog', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-dat'],
@@ -91,11 +91,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='blog',
             name='team',
-            field=models.ForeignKey(db_column='team', blank=True, to='register.Team', null=True),
+            field=models.ForeignKey(db_column='team', blank=True, to='register.Team', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='aggregatorlog',
             name='feed',
-            field=models.ForeignKey(to='register.Blog', db_column='feed'),
+            field=models.ForeignKey(to='register.Blog', db_column='feed', on_delete=models.CASCADE),
         ),
     ]

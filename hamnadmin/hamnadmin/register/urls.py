@@ -26,5 +26,5 @@ urlpatterns = [
     url(r'^auth_receive/$', hamnadmin.auth.auth_receive),
     url(r'^logout/$', hamnadmin.auth.logout),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 ]

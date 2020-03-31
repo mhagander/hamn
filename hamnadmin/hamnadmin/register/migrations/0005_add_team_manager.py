@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='team',
             name='manager',
-            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
         ),
     ]
