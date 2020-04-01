@@ -44,7 +44,7 @@ def planet_add(request):
 
 # Registration interface (login and all)
 def issuperuser(user):
-	return user.is_authenticated() and user.is_superuser
+	return user.is_authenticated and user.is_superuser
 
 @login_required
 def root(request):
