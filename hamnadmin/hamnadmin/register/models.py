@@ -19,6 +19,10 @@ class Team(models.Model):
 	class Admin:
 		pass
 
+	@property
+	def all_blogs(self):
+		return self.blog_set.filter(approved=True, archived=False)
+
 class Blog(models.Model):
 	feedurl = models.CharField(max_length=255, blank=False)
 	name = models.CharField(max_length=255, blank=False)

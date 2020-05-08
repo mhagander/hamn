@@ -16,7 +16,7 @@ The following list contains all feeds aggregated at this site.
 {% for team in teams %}
  <li><a href="{{team.teamurl}}">{{team.name}}</a>
   <ul>
-{%for feed in team.blog_set.all%}
+{%for feed in team.all_blogs %}
    <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
 {% endfor %}
   </ul>
