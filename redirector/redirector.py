@@ -18,63 +18,63 @@ _urlvalmap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', '
 connstr = ""
 
 def iddecode(idstr):
-	idval = 0
-	for c in idstr:
-		idval *= 64
-		idval += _urlvalmap.index(c)
-	return idval
+    idval = 0
+    for c in idstr:
+        idval *= 64
+        idval += _urlvalmap.index(c)
+    return idval
 
 def application(environ, start_response):
-	try:
-		# If we have a querystring, get rid of it. This can (presumably)
-		# happen with some click-tracking systems.
-		if '?' in environ['REQUEST_URI']:
-			uri = environ['REQUEST_URI'].split('?')[0]
-		else:
-			uri = environ['REQUEST_URI']
+    try:
+        # If we have a querystring, get rid of it. This can (presumably)
+        # happen with some click-tracking systems.
+        if '?' in environ['REQUEST_URI']:
+            uri = environ['REQUEST_URI'].split('?')[0]
+        else:
+            uri = environ['REQUEST_URI']
 
-		# Start by getting the id from the request
-		id = iddecode(uri.split('/')[-1])
+        # Start by getting the id from the request
+        id = iddecode(uri.split('/')[-1])
 
-		# Let's figure out where this URL should be
+        # Let's figure out where this URL should be
 
-		# Since we cache heavily with varnish in front of this, we don't
-		# bother with any connection pooling.
-		conn = psycopg2.connect(connstr)
-		c = conn.cursor()
-		c.execute("SELECT link FROM posts WHERE id=%(id)s", {
-				'id': id
-				})
-		r = c.fetchall()
+        # Since we cache heavily with varnish in front of this, we don't
+        # bother with any connection pooling.
+        conn = psycopg2.connect(connstr)
+        c = conn.cursor()
+        c.execute("SELECT link FROM posts WHERE id=%(id)s", {
+                'id': id
+                })
+        r = c.fetchall()
 
-		conn.close()
+        conn.close()
 
-		if len(r) != 1:
-			start_response('404 Not Found', [
-					('Content-type', 'text/plain'),
-					])
-			return [b"Link not found\n"]
+        if len(r) != 1:
+            start_response('404 Not Found', [
+                    ('Content-type', 'text/plain'),
+                    ])
+            return [b"Link not found\n"]
 
-		# We have a link, return a redirect to it
-		start_response('301 Moved Permanently', [
-				('Content-type', 'text/html'),
-				('Location', r[0][0]),
-				('X-Planet', str(id))
-				])
-		return [
-			b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
-			b"<a href=\"%s\">moved here</a>\n" % r[0][0].encode('utf8'),
-			b"</body>\n</html>\n"
-			]
-	except Exception as ex:
-		start_response('500 Internal Server Error', [
-				('Content-type', 'text/plain')
-				])
+        # We have a link, return a redirect to it
+        start_response('301 Moved Permanently', [
+                ('Content-type', 'text/html'),
+                ('Location', r[0][0]),
+                ('X-Planet', str(id))
+                ])
+        return [
+            b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
+            b"<a href=\"%s\">moved here</a>\n" % r[0][0].encode('utf8'),
+            b"</body>\n</html>\n"
+            ]
+    except Exception as ex:
+        start_response('500 Internal Server Error', [
+                ('Content-type', 'text/plain')
+                ])
 
-		return [
-			"An internal server error occured\n",
-			str(ex)
-			]
+        return [
+            "An internal server error occured\n",
+            str(ex)
+            ]
 
 
 c = configparser.ConfigParser()

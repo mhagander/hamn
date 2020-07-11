@@ -7,11 +7,11 @@ from datetime import timedelta
 LOG_KEEP_DAYS=300
 
 class Command(BaseCommand):
-	help = "Delete old logs"
+    help = "Delete old logs"
 
-	def handle(self, *args, **options):
-		with transaction.atomic():
-			curs = connection.cursor()
-			curs.execute("DELETE FROM aggregatorlog WHERE ts < NOW()-%(age)s", {
-				'age': timedelta(days=LOG_KEEP_DAYS),
-			})
+    def handle(self, *args, **options):
+        with transaction.atomic():
+            curs = connection.cursor()
+            curs.execute("DELETE FROM aggregatorlog WHERE ts < NOW()-%(age)s", {
+                'age': timedelta(days=LOG_KEEP_DAYS),
+            })

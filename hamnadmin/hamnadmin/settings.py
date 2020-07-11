@@ -10,12 +10,12 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES={
-	'default': {
-		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': 'planetbeta',
-		'USER': 'admin',
-		}
-	}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'planetbeta',
+        'USER': 'admin',
+        }
+    }
 
 TIME_ZONE = 'GMT'
 LANGUAGE_CODE = 'en-us'
@@ -33,7 +33,7 @@ SECRET_KEY = '_q-piuw^kw^v1f%b6nrla+p%=&1bt#z%c$ujhioxe^!z%8q1l0'
 MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
@@ -41,19 +41,19 @@ MIDDLEWARE = (
 ROOT_URLCONF = 'hamnadmin.urls'
 
 TEMPLATES = [{
-	'BACKEND': 'django.template.backends.django.DjangoTemplates',
-	'DIRS': [os.path.join(os.path.dirname(__file__), '../../template')],
-	'OPTIONS': {
-		'context_processors': [
-			'django.template.context_processors.request',
-			'django.contrib.auth.context_processors.auth',
-			'django.contrib.messages.context_processors.messages',
-		],
-		'loaders': [
-			'django.template.loaders.filesystem.Loader',
-			'django.template.loaders.app_directories.Loader',
-		],
-	},
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [os.path.join(os.path.dirname(__file__), '../../template')],
+    'OPTIONS': {
+        'context_processors': [
+            'django.template.context_processors.request',
+            'django.contrib.auth.context_processors.auth',
+            'django.contrib.messages.context_processors.messages',
+        ],
+        'loaders': [
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+        ],
+    },
 }]
 
 INSTALLED_APPS = (
@@ -86,22 +86,22 @@ MAX_SAFE_ENTRIES_PER_FETCH=4
 # Dynamically load settings from the "outer" planet.ini that might
 # be needed.
 try:
-	import configparser
-	_configparser = configparser.ConfigParser()
-	_configparser.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../planet.ini'))
-	TWITTER_CLIENT=_configparser.get('twitter', 'consumer')
-	TWITTER_CLIENTSECRET=_configparser.get('twitter', 'consumersecret')
-	TWITTER_TOKEN=_configparser.get('twitter', 'token')
-	TWITTER_TOKENSECRET=_configparser.get('twitter', 'secret')
+    import configparser
+    _configparser = configparser.ConfigParser()
+    _configparser.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../planet.ini'))
+    TWITTER_CLIENT=_configparser.get('twitter', 'consumer')
+    TWITTER_CLIENTSECRET=_configparser.get('twitter', 'consumersecret')
+    TWITTER_TOKEN=_configparser.get('twitter', 'token')
+    TWITTER_TOKENSECRET=_configparser.get('twitter', 'secret')
 except:
-	TWITTER_CLIENT=None
-	TWITTER_CLIENTSECRET=None
-	TWITTER_TOKEN=None
-	TWITTER_TOKENSECRET=None
+    TWITTER_CLIENT=None
+    TWITTER_CLIENTSECRET=None
+    TWITTER_TOKEN=None
+    TWITTER_TOKENSECRET=None
 
 # If there is a local_settings.py, let it override our settings
 try:
-	from .local_settings import *
+    from .local_settings import *
 except:
-	pass
+    pass
 

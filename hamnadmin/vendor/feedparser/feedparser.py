@@ -1954,7 +1954,7 @@ class _FeedParserMixin:
 
     def _start_psc_chapters(self, attrsD):
         if self.psc_chapters_flag is None:
-	    # Transition from None -> True
+        # Transition from None -> True
             self.psc_chapters_flag = True
             attrsD['chapters'] = []
             self._getContext()['psc_chapters'] = FeedParserDict(attrsD)
