@@ -13,18 +13,19 @@ import psycopg2.extensions
 import configparser
 from twitterclient import TwitterClient
 
+
 class SyncTwitter(TwitterClient):
     def __init__(self, cfg):
         TwitterClient.__init__(self, cfg)
 
         psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-        self.db = psycopg2.connect(cfg.get('planet','db'))
+        self.db = psycopg2.connect(cfg.get('planet', 'db'))
 
     def Run(self):
         # Get list of handles that should be on the list
         curs = self.db.cursor()
-        curs.execute("SELECT DISTINCT lower(twitteruser) FROM feeds WHERE approved AND NOT (twitteruser IS NULL OR twitteruser='') ORDER BY lower(twitteruser)");
-        expected = set([r[0].replace('@','') for r in curs.fetchall()])
+        curs.execute("SELECT DISTINCT lower(twitteruser) FROM feeds WHERE approved AND NOT (twitteruser IS NULL OR twitteruser='') ORDER BY lower(twitteruser)")
+        expected = set([r[0].replace('@', '') for r in curs.fetchall()])
 
         # Get list of current screen names the list is following
         current = set(self.list_subscribers())
@@ -49,7 +50,7 @@ class SyncTwitter(TwitterClient):
         self.db.commit()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     c = configparser.ConfigParser()
     c.read('planet.ini')
     SyncTwitter(c).Run()

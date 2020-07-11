@@ -4,12 +4,12 @@ import os
 DEBUG = False
 
 ADMINS = (
-   ('PostgreSQL Webmaster', 'webmaster@postgresql.org'),
+    ('PostgreSQL Webmaster', 'webmaster@postgresql.org'),
 )
 
 MANAGERS = ADMINS
 
-DATABASES={
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'planetbeta',
@@ -72,16 +72,16 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_URL = '/register/login'
 
-ALLOWED_HOSTS=['*']
+ALLOWED_HOSTS = ['*']
 
-EMAIL_SENDER='planet@postgresql.org'
-NOTIFICATION_RECEIVER='planet@postgresql.org'
+EMAIL_SENDER = 'planet@postgresql.org'
+NOTIFICATION_RECEIVER = 'planet@postgresql.org'
 
 # Set to None for testing
-VARNISH_URL="http://localhost/varnish-purge"
+VARNISH_URL = "http://localhost/varnish-purge"
 
 # Max number of entries in a fetch before we start marking them as hidden
-MAX_SAFE_ENTRIES_PER_FETCH=4
+MAX_SAFE_ENTRIES_PER_FETCH = 4
 
 # Dynamically load settings from the "outer" planet.ini that might
 # be needed.
@@ -89,19 +89,18 @@ try:
     import configparser
     _configparser = configparser.ConfigParser()
     _configparser.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../planet.ini'))
-    TWITTER_CLIENT=_configparser.get('twitter', 'consumer')
-    TWITTER_CLIENTSECRET=_configparser.get('twitter', 'consumersecret')
-    TWITTER_TOKEN=_configparser.get('twitter', 'token')
-    TWITTER_TOKENSECRET=_configparser.get('twitter', 'secret')
-except:
-    TWITTER_CLIENT=None
-    TWITTER_CLIENTSECRET=None
-    TWITTER_TOKEN=None
-    TWITTER_TOKENSECRET=None
+    TWITTER_CLIENT = _configparser.get('twitter', 'consumer')
+    TWITTER_CLIENTSECRET = _configparser.get('twitter', 'consumersecret')
+    TWITTER_TOKEN = _configparser.get('twitter', 'token')
+    TWITTER_TOKENSECRET = _configparser.get('twitter', 'secret')
+except Exception:
+    TWITTER_CLIENT = None
+    TWITTER_CLIENTSECRET = None
+    TWITTER_TOKEN = None
+    TWITTER_TOKENSECRET = None
 
 # If there is a local_settings.py, let it override our settings
 try:
     from .local_settings import *
-except:
+except Exception:
     pass
-

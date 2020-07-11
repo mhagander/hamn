@@ -4,6 +4,7 @@ from hamnadmin.util.html import TruncateAndClean
 
 from .models import Post
 
+
 class PostFeed(Feed):
     title = 'Planet PostgreSQL'
     link = 'https://planet.postgresql.org'
@@ -17,7 +18,7 @@ class PostFeed(Feed):
     def items(self, type):
         qs = Post.objects.filter(feed__approved=True, hidden=False).order_by('-dat')
         if type == "_short":
-            qs = qs.extra(select = {'short': 1})
+            qs = qs.extra(select={'short': 1})
         return qs[:30]
 
     def item_title(self, item):
@@ -36,7 +37,7 @@ class PostFeed(Feed):
         if hasattr(item, 'short'):
             try:
                 return TruncateAndClean(item.txt)
-            except Exception as e:
+            except Exception:
                 return "Unable to clean HTML"
         else:
             return item.txt

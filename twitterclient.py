@@ -9,6 +9,7 @@ Copyright (C) 2009-2019 PostgreSQL Global Development Group
 """
 import requests_oauthlib
 
+
 class TwitterClient(object):
     """
     Base class representing a twitter client, implementing all those twitter
@@ -35,7 +36,7 @@ class TwitterClient(object):
     def list_subscribers(self):
         # Eek. It seems subscribers are paged even if we don't ask for it
         # Thus, we need to loop with multiple requests
-        cursor=-1
+        cursor = -1
         handles = []
         while cursor != 0:
             response = self.tw.get('{0}lists/members.json'.format(self.twitter_api), params={
@@ -62,7 +63,7 @@ class TwitterClient(object):
         if r.status_code != 200:
             try:
                 err = r.json()['errors'][0]['message']
-            except:
+            except Exception:
                 err = 'Response does not contain error messages with json'
             print("Failed to remove subscriber {0}: {1}".format(name, err))
             return False
@@ -78,7 +79,7 @@ class TwitterClient(object):
         if r.status_code != 200:
             try:
                 err = r.json()['errors'][0]['message']
-            except:
+            except Exception:
                 err = 'Response does not contain error messages with json'
             print("Failed to add subscriber {0}: {1}".format(name, err))
             return False

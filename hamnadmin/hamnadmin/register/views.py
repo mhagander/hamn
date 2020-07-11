@@ -14,6 +14,7 @@ import datetime
 
 from .forms import BlogEditForm, ModerateRejectForm
 
+
 # Public planet
 def planet_home(request):
     statdate = datetime.datetime.now() - datetime.timedelta(days=61)
@@ -33,15 +34,16 @@ def planet_feeds(request):
         'teams': Team.objects.filter(blog__approved=True).distinct().order_by('name'),
     })
 
+
 def planet_add(request):
     return render(request, 'add.tmpl', {
     })
 
 
-
 # Registration interface (login and all)
 def issuperuser(user):
     return user.is_authenticated and user.is_superuser
+
 
 @login_required
 def root(request):
@@ -49,11 +51,12 @@ def root(request):
         blogs = Blog.objects.all().order_by('archived', 'approved', 'name')
     else:
         blogs = Blog.objects.filter(user=request.user).order_by('archived', 'approved', 'name')
-    return render(request, 'index.html',{
+    return render(request, 'index.html', {
         'blogs': blogs,
         'teams': Team.objects.filter(manager=request.user).order_by('name'),
         'title': 'Your blogs',
     })
+
 
 @login_required
 @transaction.atomic
@@ -64,7 +67,7 @@ def edit(request, id=None):
         else:
             blog = get_object_or_404(Blog, id=id, user=request.user)
     else:
-        blog = Blog(user=request.user, name = "{0} {1}".format(request.user.first_name, request.user.last_name))
+        blog = Blog(user=request.user, name="{0} {1}".format(request.user.first_name, request.user.last_name))
 
     if request.method == 'POST':
         saved_url = blog.feedurl
@@ -81,13 +84,14 @@ def edit(request, id=None):
                         obj.approved = False
                         obj.save()
 
-                        send_simple_mail(settings.EMAIL_SENDER,
-                                         settings.NOTIFICATION_RECEIVER,
-                                         "A blog was edited on Planet PostgreSQL",
-                                         "The blog at {0}\nwas edited by {1} in a way that needs new moderation.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(blog.feedurl, blog.user),
-                                         sendername="Planet PostgreSQL",
-                                         receivername="Planet PostgreSQL Moderators",
-                                     )
+                        send_simple_mail(
+                            settings.EMAIL_SENDER,
+                            settings.NOTIFICATION_RECEIVER,
+                            "A blog was edited on Planet PostgreSQL",
+                            "The blog at {0}\nwas edited by {1} in a way that needs new moderation.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(blog.feedurl, blog.user),
+                            sendername="Planet PostgreSQL",
+                            receivername="Planet PostgreSQL Moderators",
+                        )
 
                         messages.warning(request, "Blog has been resubmitted for moderation, and is temporarily disabled.")
 
@@ -114,7 +118,7 @@ def edit(request, id=None):
 
             return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
     else:
-        form =  BlogEditForm(request, instance=blog)
+        form = BlogEditForm(request, instance=blog)
 
     return render(request, 'edit.html', {
         'new': id is None,
@@ -125,6 +129,7 @@ def edit(request, id=None):
         'title': 'Edit blog: %s' % blog.name,
     })
 
+
 @login_required
 @transaction.atomic
 def delete(request, id):
@@ -133,18 +138,20 @@ def delete(request, id):
     else:
         blog = get_object_or_404(Blog, id=id, user=request.user)
 
-    send_simple_mail(settings.EMAIL_SENDER,
-                     settings.NOTIFICATION_RECEIVER,
-                     "A blog was deleted on Planet PostgreSQL",
-                     "The blog at {0} by {1}\nwas deleted by {2}\n\n".format(blog.feedurl, blog.name, request.user.username),
-                     sendername="Planet PostgreSQL",
-                     receivername="Planet PostgreSQL Moderators",
+    send_simple_mail(
+        settings.EMAIL_SENDER,
+        settings.NOTIFICATION_RECEIVER,
+        "A blog was deleted on Planet PostgreSQL",
+        "The blog at {0} by {1}\nwas deleted by {2}\n\n".format(blog.feedurl, blog.name, request.user.username),
+        sendername="Planet PostgreSQL",
+        receivername="Planet PostgreSQL Moderators",
     )
     blog.delete()
     messages.info(request, "Blog deleted.")
     purge_root_and_feeds()
     purge_url('/feeds.html')
     return HttpResponseRedirect("/register/")
+
 
 @login_required
 @transaction.atomic
@@ -154,17 +161,19 @@ def archive(request, id):
     else:
         blog = get_object_or_404(Blog, id=id, user=request.user)
 
-    send_simple_mail(settings.EMAIL_SENDER,
-                     settings.NOTIFICATION_RECEIVER,
-                     "A blog was archived on Planet PostgreSQL",
-                     "The blog at {0} by {1}\nwas archived by {2}\n\n".format(blog.feedurl, blog.name, request.user.username),
-                     sendername="Planet PostgreSQL",
-                     receivername="Planet PostgreSQL Moderators",
+    send_simple_mail(
+        settings.EMAIL_SENDER,
+        settings.NOTIFICATION_RECEIVER,
+        "A blog was archived on Planet PostgreSQL",
+        "The blog at {0} by {1}\nwas archived by {2}\n\n".format(blog.feedurl, blog.name, request.user.username),
+        sendername="Planet PostgreSQL",
+        receivername="Planet PostgreSQL Moderators",
     )
     blog.archived = True
     blog.save()
     messages.info(request, "Blog archived.")
     return HttpResponseRedirect("/register/")
+
 
 @login_required
 @transaction.atomic
@@ -201,6 +210,7 @@ def remove_from_team(request, teamid, blogid):
     messages.info(request, "Blog {0} removed from team {1}".format(blog.feedurl, team.name))
     return HttpResponseRedirect("/register/")
 
+
 def __getvalidblogpost(request, blogid, postid):
     blog = get_object_or_404(Blog, id=blogid)
     post = get_object_or_404(Post, id=postid)
@@ -209,6 +219,7 @@ def __getvalidblogpost(request, blogid, postid):
     if not post.feed.id == blog.id:
         raise Exception("Blog does not match post")
     return post
+
 
 def __setposthide(request, blogid, postid, status):
     post = __getvalidblogpost(request, blogid, postid)
@@ -219,15 +230,18 @@ def __setposthide(request, blogid, postid, status):
     purge_root_and_feeds()
     return HttpResponseRedirect("/register/edit/{0}/".format(blogid))
 
+
 @login_required
 @transaction.atomic
 def blogpost_hide(request, blogid, postid):
     return __setposthide(request, blogid, postid, True)
 
+
 @login_required
 @transaction.atomic
 def blogpost_unhide(request, blogid, postid):
     return __setposthide(request, blogid, postid, False)
+
 
 @login_required
 @transaction.atomic
@@ -237,7 +251,7 @@ def blogpost_delete(request, blogid, postid):
 
     # Update the feed last fetched date to be just before this entry, so that we end up
     # re-fetching it if necessary.
-    post.feed.lastget = post.dat - timedelta(minutes=1)
+    post.feed.lastget = post.dat - datetime.timedelta(minutes=1)
     post.feed.save()
 
     # Now actually delete it
@@ -247,14 +261,16 @@ def blogpost_delete(request, blogid, postid):
     purge_root_and_feeds()
     return HttpResponseRedirect("/register/edit/{0}/".format(blogid))
 
+
 # Moderation
 @login_required
 @user_passes_test(issuperuser)
 def moderate(request):
-    return render(request, 'moderate.html',{
+    return render(request, 'moderate.html', {
         'blogs': Blog.objects.filter(approved=False).annotate(oldest=Max('posts__dat')).order_by('oldest'),
         'title': 'Moderation',
     })
+
 
 @login_required
 @user_passes_test(issuperuser)
@@ -267,22 +283,24 @@ def moderate_reject(request, blogid):
         if form.is_valid():
             # Ok, actually reject this blog.
             # Always send moderator mail
-            send_simple_mail(settings.EMAIL_SENDER,
-                             settings.NOTIFICATION_RECEIVER,
-                             "A blog was rejected on Planet PostgreSQL",
-                             "The blog at {0} by {1} {2}\nwas marked as rejected by {3}. The message given was:\n\n{4}\n\n".format(blog.feedurl, blog.user.first_name, blog.user.last_name, request.user.username, form.cleaned_data['message']),
-                             sendername="Planet PostgreSQL",
-                             receivername="Planet PostgreSQL Moderators",
-                             )
+            send_simple_mail(
+                settings.EMAIL_SENDER,
+                settings.NOTIFICATION_RECEIVER,
+                "A blog was rejected on Planet PostgreSQL",
+                "The blog at {0} by {1} {2}\nwas marked as rejected by {3}. The message given was:\n\n{4}\n\n".format(blog.feedurl, blog.user.first_name, blog.user.last_name, request.user.username, form.cleaned_data['message']),
+                sendername="Planet PostgreSQL",
+                receivername="Planet PostgreSQL Moderators",
+            )
             messages.info(request, "Blog {0} rejected, notification sent to moderators".format(blog.feedurl))
             if not form.cleaned_data['modsonly']:
-                send_simple_mail(settings.EMAIL_SENDER,
-                                 blog.user.email,
-                                 "Your blog submission to Planet PostgreSQL",
-                                 "The blog at {0} that you submitted to Planet PostgreSQL has\nunfortunately been rejected. The reason given was:\n\n{1}\n\n".format(blog.feedurl, form.cleaned_data['message']),
-                                 sendername="Planet PostgreSQL",
-                                 receivername = "{0} {1}".format(blog.user.first_name, blog.user.last_name),
-                                 )
+                send_simple_mail(
+                    settings.EMAIL_SENDER,
+                    blog.user.email,
+                    "Your blog submission to Planet PostgreSQL",
+                    "The blog at {0} that you submitted to Planet PostgreSQL has\nunfortunately been rejected. The reason given was:\n\n{1}\n\n".format(blog.feedurl, form.cleaned_data['message']),
+                    sendername="Planet PostgreSQL",
+                    receivername="{0} {1}".format(blog.user.first_name, blog.user.last_name),
+                )
                 messages.info(request, "Blog {0} rejected, notification sent to blog owner".format(blog.feedurl))
 
             blog.delete()
@@ -296,6 +314,7 @@ def moderate_reject(request, blogid):
         'title': 'Reject blog',
     })
 
+
 @login_required
 @user_passes_test(issuperuser)
 @transaction.atomic
@@ -306,20 +325,22 @@ def moderate_approve(request, blogid):
         messages.info(request, "Blog {0} was already approved.".format(blog.feedurl))
         return HttpResponseRedirect("/register/moderate/")
 
-    send_simple_mail(settings.EMAIL_SENDER,
-                     settings.NOTIFICATION_RECEIVER,
-                     "A blog was approved on Planet PostgreSQL",
-                     "The blog at {0} by {1} {2}\nwas marked as approved by {3}.\n\n".format(blog.feedurl, blog.user.first_name, blog.user.last_name, request.user.username),
-                     sendername="Planet PostgreSQL",
-                     receivername="Planet PostgreSQL Moderators",
+    send_simple_mail(
+        settings.EMAIL_SENDER,
+        settings.NOTIFICATION_RECEIVER,
+        "A blog was approved on Planet PostgreSQL",
+        "The blog at {0} by {1} {2}\nwas marked as approved by {3}.\n\n".format(blog.feedurl, blog.user.first_name, blog.user.last_name, request.user.username),
+        sendername="Planet PostgreSQL",
+        receivername="Planet PostgreSQL Moderators",
     )
 
-    send_simple_mail(settings.EMAIL_SENDER,
-                     blog.user.email,
-                     "Your blog submission to Planet PostgreSQL",
-                     "The blog at {0} that you submitted to Planet PostgreSQL has\nbeen approved.\n\n".format(blog.feedurl),
-                     sendername="Planet PostgreSQL",
-                     receivername = "{0} {1}".format(blog.user.first_name, blog.user.last_name),
+    send_simple_mail(
+        settings.EMAIL_SENDER,
+        blog.user.email,
+        "Your blog submission to Planet PostgreSQL",
+        "The blog at {0} that you submitted to Planet PostgreSQL has\nbeen approved.\n\n".format(blog.feedurl),
+        sendername="Planet PostgreSQL",
+        receivername="{0} {1}".format(blog.user.first_name, blog.user.last_name),
     )
 
     blog.approved = True

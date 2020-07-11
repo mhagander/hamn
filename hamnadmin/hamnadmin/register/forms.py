@@ -9,6 +9,7 @@ from hamnadmin.util.aggregate import FeedFetcher, ParserGotRedirect
 import requests
 import requests_oauthlib
 
+
 class BlogEditForm(forms.ModelForm):
     class Meta:
         model = Blog
@@ -21,12 +22,12 @@ class BlogEditForm(forms.ModelForm):
             f.widget.attrs['class'] = 'form-control'
 
         if kwargs['instance'].approved:
-            self.fields['feedurl'].help_text="Note that changing the feed URL will disable the blog pending new moderation"
-            self.fields['authorfilter'].help_text="Note that changing the author filter will disable the blog pending new moderation"
-
+            self.fields['feedurl'].help_text = "Note that changing the feed URL will disable the blog pending new moderation"
+            self.fields['authorfilter'].help_text = "Note that changing the author filter will disable the blog pending new moderation"
 
     def clean(self):
         tracemessages = []
+
         def _trace(msg):
             tracemessages.append(msg)
 
@@ -78,6 +79,7 @@ class BlogEditForm(forms.ModelForm):
         except requests.exceptions.ReadTimeout:
             raise forms.ValidationError("Timeout trying to validate account with twitter")
         return u
+
 
 class ModerateRejectForm(forms.Form):
     message = forms.CharField(min_length=30, required=True, widget=forms.Textarea)

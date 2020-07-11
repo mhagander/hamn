@@ -17,12 +17,14 @@ _urlvalmap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', '
 
 connstr = ""
 
+
 def iddecode(idstr):
     idval = 0
     for c in idstr:
         idval *= 64
         idval += _urlvalmap.index(c)
     return idval
+
 
 def application(environ, start_response):
     try:
@@ -43,38 +45,38 @@ def application(environ, start_response):
         conn = psycopg2.connect(connstr)
         c = conn.cursor()
         c.execute("SELECT link FROM posts WHERE id=%(id)s", {
-                'id': id
-                })
+            'id': id
+        })
         r = c.fetchall()
 
         conn.close()
 
         if len(r) != 1:
             start_response('404 Not Found', [
-                    ('Content-type', 'text/plain'),
-                    ])
+                ('Content-type', 'text/plain'),
+            ])
             return [b"Link not found\n"]
 
         # We have a link, return a redirect to it
         start_response('301 Moved Permanently', [
-                ('Content-type', 'text/html'),
-                ('Location', r[0][0]),
-                ('X-Planet', str(id))
-                ])
+            ('Content-type', 'text/html'),
+            ('Location', r[0][0]),
+            ('X-Planet', str(id))
+        ])
         return [
             b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
             b"<a href=\"%s\">moved here</a>\n" % r[0][0].encode('utf8'),
             b"</body>\n</html>\n"
-            ]
+        ]
     except Exception as ex:
         start_response('500 Internal Server Error', [
-                ('Content-type', 'text/plain')
-                ])
+            ('Content-type', 'text/plain')
+        ])
 
         return [
             "An internal server error occured\n",
             str(ex)
-            ]
+        ]
 
 
 c = configparser.ConfigParser()

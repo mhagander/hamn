@@ -4,7 +4,8 @@ from django.db import transaction, connection
 from datetime import timedelta
 
 # How long should we keep logs?
-LOG_KEEP_DAYS=300
+LOG_KEEP_DAYS = 300
+
 
 class Command(BaseCommand):
     help = "Delete old logs"

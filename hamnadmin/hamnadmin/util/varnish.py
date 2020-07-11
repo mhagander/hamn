@@ -2,6 +2,7 @@ from django.conf import settings
 
 import requests
 
+
 def purge_url(url):
     if not settings.VARNISH_URL:
         print("Not purging {0}".format(url))
@@ -14,6 +15,7 @@ def purge_url(url):
                 raise Exception("Invalid response code %s" % r.status_code)
         except Exception as e:
             raise Exception("Failed to purge '{0}': {1}'".format(url, e))
+
 
 def purge_root_and_feeds():
     purge_url('/(|rss20.*)$')

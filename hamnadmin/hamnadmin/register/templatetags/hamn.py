@@ -6,10 +6,11 @@ from hamnadmin.util.html import TruncateAndClean
 
 register = template.Library()
 
+
 @register.filter(name='postcontents')
 @stringfilter
 def postcontents(value):
     try:
         return mark_safe(TruncateAndClean(value))
-    except Exception as e:
+    except Exception:
         return "Unable to clean HTML"

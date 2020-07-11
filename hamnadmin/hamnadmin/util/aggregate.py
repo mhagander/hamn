@@ -7,10 +7,12 @@ from vendor.feedparser import feedparser
 
 from hamnadmin.register.models import Post
 
+
 class ParserGotRedirect(Exception):
     def __init__(self, url):
         self.url = url
         super(Exception, self).__init__()
+
 
 class FeedFetcher(object):
     def __init__(self, feed, tracefunc=None, update=True):
@@ -59,7 +61,7 @@ class FeedFetcher(object):
                 self.feed.blogurl = parser.feed.link
             elif self.feed.blogurl != parser.feed.link:
                 self.feed.new_blogurl = parser.feed.link
-        except:
+        except Exception:
             pass
 
         for entry in parser.entries:
@@ -75,7 +77,7 @@ class FeedFetcher(object):
             txtalts = []
             try:
                 txtalts.append(entry.content[0].value)
-            except:
+            except Exception:
                 pass
             if 'summary' in entry:
                 txtalts.append(entry.summary)
@@ -112,13 +114,12 @@ class FeedFetcher(object):
                        title=entry.title,
                        )
 
-
         # Check if we got back a Last-Modified time
         if hasattr(parser, 'modified_parsed') and parser['modified_parsed']:
             # Last-Modified header retreived. If we did receive it, we will
             # trust the content (assuming we can parse it)
             d = datetime.datetime(*parser['modified_parsed'][:6])
-            if (d-datetime.datetime.now()).days > 5:
+            if (d - datetime.datetime.now()).days > 5:
                 # Except if it's ridiculously long in the future, we'll set it
                 # to right now instead, to deal with buggy blog software. We
                 # currently define rediculously long as 5 days

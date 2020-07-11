@@ -12,6 +12,7 @@ import smtplib
 
 from hamnadmin.mailqueue.models import QueuedMail
 
+
 class Command(BaseCommand):
     help = 'Send queued mail'
 

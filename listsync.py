@@ -13,7 +13,7 @@ import psycopg2
 import requests
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     c = configparser.ConfigParser()
     c.read('planet.ini')
 
@@ -26,9 +26,10 @@ WHERE feeds.approved AND NOT feeds.archived
 """)
     syncstruct = [{'email': r[0]} for r in curs.fetchall()]
 
-    r = requests.put('{0}/api/subscribers/{1}/'.format(c.get('list', 'server'), c.get('list', 'listname')),
-                     headers={'X-api-key': c.get('list', 'apikey')},
-                     json=syncstruct,
+    r = requests.put(
+        '{0}/api/subscribers/{1}/'.format(c.get('list', 'server'), c.get('list', 'listname')),
+        headers={'X-api-key': c.get('list', 'apikey')},
+        json=syncstruct,
     )
     if r.status_code != 200:
         print("Failed to talk to pglister api: %s" % r.status_code)

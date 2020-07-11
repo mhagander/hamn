@@ -2,6 +2,7 @@ from html.parser import HTMLParser
 import tidylib
 import urllib.parse
 
+
 def TruncateAndClean(txt):
     # First apply Tidy
     (txt, errors) = tidylib.tidy_document(txt,
@@ -27,9 +28,10 @@ def TruncateAndClean(txt):
 
     # Remove initial <br /> tags
     while out.startswith('<br'):
-        out = out[out.find('>')+1:]
+        out = out[out.find('>') + 1:]
 
     return out
+
 
 class HtmlTruncator(HTMLParser):
     def __init__(self, maxlen):
@@ -40,18 +42,19 @@ class HtmlTruncator(HTMLParser):
         self.trunctxt = ''
         self.tagstack = []
         self.skiprest = False
-    
+
     def feed(self, txt):
         txt = txt.lstrip()
         self.fulltxt += txt
         HTMLParser.feed(self, txt)
 
     def handle_startendtag(self, tag, attrs):
-        if self.skiprest: return
+        if self.skiprest:
+            return
         self.trunctxt += self.get_starttag_text()
-    
+
     def quoteurl(self, str):
-        p = str.split(":",2)
+        p = str.split(":", 2)
         if len(p) < 2:
             # Don't crash on invalid URLs
             return ""
@@ -63,29 +66,33 @@ class HtmlTruncator(HTMLParser):
         return attrs
 
     def handle_starttag(self, tag, attrs):
-        if self.skiprest: return
+        if self.skiprest:
+            return
         self.trunctxt += "<" + tag
-        self.trunctxt += (' '.join([(' %s="%s"' % (k,v)) for k,v in map(self.cleanhref, attrs)]))
+        self.trunctxt += (' '.join([(' %s="%s"' % (k, v)) for k, v in map(self.cleanhref, attrs)]))
         self.trunctxt += ">"
         self.tagstack.append(tag)
 
     def handle_endtag(self, tag):
-        if self.skiprest: return
+        if self.skiprest:
+            return
         self.trunctxt += "</" + tag + ">"
         self.tagstack.pop()
 
     def handle_entityref(self, ref):
         self.len += 1
-        if self.skiprest: return
+        if self.skiprest:
+            return
         self.trunctxt += "&" + ref + ";"
 
     def handle_data(self, data):
         self.len += len(data)
-        if self.skiprest: return
+        if self.skiprest:
+            return
         self.trunctxt += data
         if self.len > self.maxlen:
             # Passed max length, so truncate text as close to the limit as possible
-            self.trunctxt = self.trunctxt[0:len(self.trunctxt)-(self.len-self.maxlen)]
+            self.trunctxt = self.trunctxt[0:len(self.trunctxt) - (self.len - self.maxlen)]
 
             # Now append any tags that weren't properly closed
             self.tagstack.reverse()

@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from hamnadmin.util.shortlink import urlvalmap
 
+
 class Team(models.Model):
     teamurl = models.CharField(max_length=255, blank=False)
     name = models.CharField(max_length=255, blank=False)
@@ -23,16 +24,17 @@ class Team(models.Model):
     def all_blogs(self):
         return self.blog_set.filter(approved=True, archived=False)
 
+
 class Blog(models.Model):
     feedurl = models.CharField(max_length=255, blank=False)
     name = models.CharField(max_length=255, blank=False)
     blogurl = models.CharField(max_length=255, blank=False)
-    lastget = models.DateTimeField(default=datetime(2000,1,1))
+    lastget = models.DateTimeField(default=datetime(2000, 1, 1))
     user = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
-    authorfilter = models.CharField(max_length=255,default='',blank=True)
-    team = models.ForeignKey(Team,db_column='team', blank=True, null=True, on_delete=models.CASCADE)
+    authorfilter = models.CharField(max_length=255, default='', blank=True)
+    team = models.ForeignKey(Team, db_column='team', blank=True, null=True, on_delete=models.CASCADE)
     twitteruser = models.CharField(max_length=255, default='', blank=True)
     excludestats = models.BooleanField(null=False, blank=False, default=False)
 
@@ -48,7 +50,7 @@ class Blog(models.Model):
 
     @property
     def recent_failures(self):
-        return self.aggregatorlog_set.filter(success=False, ts__gt=datetime.now()-timedelta(days=1)).count()
+        return self.aggregatorlog_set.filter(success=False, ts__gt=datetime.now() - timedelta(days=1)).count()
 
     @property
     def has_entries(self):
@@ -58,7 +60,7 @@ class Blog(models.Model):
     def latestentry(self):
         try:
             return self.posts.filter(hidden=False)[0]
-        except:
+        except Exception:
             return None
 
     @property
@@ -67,13 +69,14 @@ class Blog(models.Model):
 
     class Meta:
         db_table = 'feeds'
-        ordering = ['approved','name']
+        ordering = ['approved', 'name']
 
     class Admin:
         pass
 
+
 class Post(models.Model):
-    feed = models.ForeignKey(Blog,db_column='feed',related_name='posts', on_delete=models.CASCADE)
+    feed = models.ForeignKey(Blog, db_column='feed', related_name='posts', on_delete=models.CASCADE)
     guid = models.CharField(max_length=255)
     link = models.CharField(max_length=255)
     txt = models.TextField()
@@ -109,6 +112,7 @@ class Post(models.Model):
             i //= 64
         return "https://postgr.es/p/%s" % s
 
+
 class AuditEntry(models.Model):
     logtime = models.DateTimeField(default=datetime.now)
     user = models.CharField(max_length=32)
@@ -125,13 +129,14 @@ class AuditEntry(models.Model):
     class Meta:
         db_table = 'auditlog'
         ordering = ['logtime']
-        
+
+
 class AggregatorLog(models.Model):
     ts = models.DateTimeField(auto_now=True)
     feed = models.ForeignKey(Blog, db_column='feed', on_delete=models.CASCADE)
     success = models.BooleanField()
     info = models.TextField()
-    
+
     class Meta:
         db_table = 'aggregatorlog'
         ordering = ['-ts']

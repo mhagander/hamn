@@ -19,13 +19,13 @@ from twitterclient import TwitterClient
 # Simple map used to shorten id values to URLs
 _urlvalmap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '-', '_']
 
+
 class PostToTwitter(TwitterClient):
     def __init__(self, cfg):
         TwitterClient.__init__(self, cfg)
 
         psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-        self.db = psycopg2.connect(c.get('planet','db'))
-
+        self.db = psycopg2.connect(c.get('planet', 'db'))
 
     def do_post(self, msg):
         """
@@ -43,7 +43,7 @@ class PostToTwitter(TwitterClient):
                  FROM posts INNER JOIN feeds ON posts.feed=feeds.id
                  WHERE approved AND age(dat) < '7 days' AND NOT (twittered OR hidden) ORDER BY dat""")
         for post in c.fetchall():
-            if post[3] and len(post[3])>1:
+            if post[3] and len(post[3]) > 1:
                 short = post[3]
             else:
                 # No short-link exists, so create one. We need the short-link
@@ -62,18 +62,18 @@ class PostToTwitter(TwitterClient):
                 self.db.commit()
 
             # Set up the string to twitter
-            if post[5] and len(post[5])>1:
+            if post[5] and len(post[5]) > 1:
                 # Twitter username registered
                 msg = "%s (@%s): %s %s" % (
                     post[4],
                     post[5],
-                    self.trimpost(post[1],len(post[4])+len(post[5])+len(short)+7),
+                    self.trimpost(post[1], len(post[4]) + len(post[5]) + len(short) + 7),
                     short,
                 )
             else:
                 msg = "%s: %s %s" % (
                     post[4],
-                    self.trimpost(post[1],len(post[4])+len(short)+3),
+                    self.trimpost(post[1], len(post[4]) + len(short) + 3),
                     short,
                 )
 
@@ -86,11 +86,10 @@ class PostToTwitter(TwitterClient):
                 continue
 
             # Flag this item as posted
-            c.execute("UPDATE posts SET twittered='t' WHERE id=%(id)s", { 'id': post[0] })
+            c.execute("UPDATE posts SET twittered='t' WHERE id=%(id)s", {'id': post[0]})
             self.db.commit()
 
             print("Twittered: %s" % msg)
-
 
     # Trim a post to the length required by twitter, so we don't fail to post
     # if a title is really long. Assume other parts of the string to be
@@ -98,8 +97,7 @@ class PostToTwitter(TwitterClient):
     def trimpost(self, txt, otherlen):
         if len(txt) + otherlen < 140:
             return txt
-        return "%s..." % (txt[:(140-otherlen-3)])
-
+        return "%s..." % (txt[:(140 - otherlen - 3)])
 
     # Trim an URL using https://postgr.es
     def shortid(self, id):
@@ -110,9 +108,7 @@ class PostToTwitter(TwitterClient):
         return "https://postgr.es/p/%s" % s
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     c = configparser.ConfigParser()
     c.read('planet.ini')
     PostToTwitter(c).Run()
-

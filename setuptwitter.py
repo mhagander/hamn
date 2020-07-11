@@ -41,6 +41,3 @@ print("Access token received.")
 print("Register the following two valuesi n planet.ini under [twitter]:")
 print("token={0}".format(tokens.get('oauth_token')))
 print("secret={0}".format(tokens.get('oauth_token_secret')))
-
-
-
