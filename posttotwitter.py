@@ -12,7 +12,6 @@ Copyright (C) 2009-2019 PostgreSQL Global Development Group
 
 import psycopg2
 import psycopg2.extensions
-import simplejson as json
 import configparser
 from twitterclient import TwitterClient
 

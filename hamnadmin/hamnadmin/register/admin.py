@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django import forms
-from django.conf import settings
 
-from hamnadmin.register.models import *
+from hamnadmin.register.models import Blog, Team, Post, AggregatorLog
+
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ['name', 'manager', 'teamurl']

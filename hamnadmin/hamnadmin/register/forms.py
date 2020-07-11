@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import messages
-from django.core.validators import MinLengthValidator
 from django.conf import settings
 
 from .models import Blog

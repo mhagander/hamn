@@ -1,19 +1,16 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import RequestContext
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
-from django.core.mail import send_mail
 from django.db import transaction
-from django.db.models import Q, Count, Max
+from django.db.models import Count, Max
 from django.contrib import messages
 
-from hamnadmin.register.models import *
+from hamnadmin.register.models import Post, Blog, Team, AggregatorLog, AuditEntry
 from hamnadmin.mailqueue.util import send_simple_mail
 from hamnadmin.util.varnish import purge_url, purge_root_and_feeds
 
 import datetime
-from vendor.feedparser import feedparser
 
 from .forms import BlogEditForm, ModerateRejectForm
 

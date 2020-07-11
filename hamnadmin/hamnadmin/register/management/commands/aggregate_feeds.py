@@ -1,9 +1,7 @@
-#from gevent import monkey
-#monkey.patch_all()
 from gevent.threadpool import ThreadPool
 import gevent
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Q
 from django.conf import settings
