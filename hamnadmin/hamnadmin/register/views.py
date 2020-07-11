@@ -82,7 +82,7 @@ def edit(request, id=None):
                     if saved_url != form.cleaned_data['feedurl'] or saved_filter != form.cleaned_data['authorfilter']:
                         obj = form.save()
                         obj.approved = False
-                        obj.save()
+                        obj.save(update_fields=['approved'])
 
                         send_simple_mail(
                             settings.EMAIL_SENDER,
@@ -170,7 +170,7 @@ def archive(request, id):
         receivername="Planet PostgreSQL Moderators",
     )
     blog.archived = True
-    blog.save()
+    blog.save(update_fields=['archived'])
     messages.info(request, "Blog archived.")
     return HttpResponseRedirect("/register/")
 
@@ -188,7 +188,7 @@ def remove_from_team(request, teamid, blogid):
         return HttpResponseRedirect("/register/")
 
     blog.team = None
-    blog.save()
+    blog.save(update_fields=['team'])
 
     send_simple_mail(settings.EMAIL_SENDER,
                      settings.NOTIFICATION_RECEIVER,
@@ -224,7 +224,7 @@ def __getvalidblogpost(request, blogid, postid):
 def __setposthide(request, blogid, postid, status):
     post = __getvalidblogpost(request, blogid, postid)
     post.hidden = status
-    post.save()
+    post.save(update_fields=['hidden'])
     AuditEntry(request.user.username, 'Set post %s on blog %s visibility to %s' % (postid, blogid, status)).save()
     messages.info(request, 'Set post "%s" to %s' % (post.title, status and "hidden" or "visible"), extra_tags="top")
     purge_root_and_feeds()
@@ -252,7 +252,7 @@ def blogpost_delete(request, blogid, postid):
     # Update the feed last fetched date to be just before this entry, so that we end up
     # re-fetching it if necessary.
     post.feed.lastget = post.dat - datetime.timedelta(minutes=1)
-    post.feed.save()
+    post.feed.save(update_fields=['lastget'])
 
     # Now actually delete it
     post.delete()
@@ -344,7 +344,7 @@ def moderate_approve(request, blogid):
     )
 
     blog.approved = True
-    blog.save()
+    blog.save(update_fields=['approved'])
 
     AuditEntry(request.user.username, 'Approved blog %s at %s' % (blog.id, blog.feedurl)).save()
 

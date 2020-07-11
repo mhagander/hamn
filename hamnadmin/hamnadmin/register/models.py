@@ -102,7 +102,7 @@ class Post(models.Model):
 
     def update_shortlink(self):
         self.shortlink = self._get_shortlink()
-        self.save()
+        self.save(update_fields=['shortlink'])
 
     def _get_shortlink(self):
         s = ""

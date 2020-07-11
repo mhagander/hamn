@@ -88,7 +88,7 @@ class Command(BaseCommand):
                                 receivername="Planet PostgreSQL Moderators",
                             )
                             feed.feedurl = results.url
-                            feed.save()
+                            feed.save(update_fields=['feedurl'])
                         else:
                             AggregatorLog(feed=feed, success=False,
                                           info="Feed returned redirect (http 301)").save()
@@ -209,7 +209,7 @@ class Command(BaseCommand):
                                 receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
                             )
                             feed.blogurl = feed.new_blogurl
-                            feed.save()
+                            feed.save(update_fields=['blogurl'])
                 if self.debug:
                     # Roll back transaction without error
                     raise BreakoutException()

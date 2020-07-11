@@ -127,13 +127,13 @@ class FeedFetcher(object):
 
             if self.update:
                 self.feed.lastget = d
-                self.feed.save()
+                self.feed.save(update_fields=['lastget'])
         else:
             # We didn't get a Last-Modified time, so set it to the entry date
             # for the latest entry in this feed.
             if self.newest_entry_date and self.update:
                 self.feed.lastget = self.newest_entry_date
-                self.feed.save()
+                self.feed.save(update_fields=['lastget'])
 
     def matches_filter(self, entry):
         # For now, we only match against self.feed.authorfilter. In the future,
