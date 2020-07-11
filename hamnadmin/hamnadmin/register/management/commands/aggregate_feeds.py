@@ -6,6 +6,8 @@ from django.db import transaction
 from django.db.models import Q
 from django.conf import settings
 
+from datetime import datetime
+
 from hamnadmin.register.models import Blog, Post, AggregatorLog
 from hamnadmin.util.aggregate import FeedFetcher, ParserGotRedirect
 from hamnadmin.mailqueue.util import send_simple_mail
@@ -104,6 +106,10 @@ class Command(BaseCommand):
                         entries = 0
                         titles = []
                         ids = []
+
+                        # Flag this as a successful get, even if there were no new entries
+                        feed.lastsuccess = datetime.now()
+                        feed.save(update_fields=['lastsuccess'])
 
                         for entry in results:
                             self.trace("Found entry at %s" % entry.link)

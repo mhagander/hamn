@@ -30,6 +30,7 @@ class Blog(models.Model):
     name = models.CharField(max_length=255, blank=False)
     blogurl = models.CharField(max_length=255, blank=False)
     lastget = models.DateTimeField(default=datetime(2000, 1, 1))
+    lastsuccess = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
