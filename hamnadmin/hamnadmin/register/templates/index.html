@@ -36,7 +36,8 @@ You have the following blog(s) registered:
 Last http get: {{blog.lastget|date:"Y-m-d H:i:s"}}<br/>
  </td>
 
- <td>
+ <td class="feedstatus">
+   <div>
    {%if blog.archived%}
    <span class="label label-info">Archived</span>
    {%elif blog.approved%}
@@ -46,6 +47,10 @@ Last http get: {{blog.lastget|date:"Y-m-d H:i:s"}}<br/>
      {%else%}
       <a href="edit/{{blog.id}}/#log"><span class="label label-warning">Sporadic errors</span></a>
     {%endif%}
+      </div>
+      <div>
+      {% if blog.last_was_error%}<span class="label label-danger">Last attempt failed</span>
+      {%else%}<span class="label label-success">Last attempt succeeded</span>{%endif%}
    {%else%}
     <span class="label label-success">Approved and working</span>
    {%endif%}{#recent_failures#}
@@ -56,6 +61,7 @@ Last http get: {{blog.lastget|date:"Y-m-d H:i:s"}}<br/>
     <span class="label label-danger">No entries found</span>
    {%endif%}
   {%endif%}
+   </div>
  </td>
  <td>
    {%if not blog.archived%}

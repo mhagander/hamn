@@ -7,3 +7,7 @@ div#planethdr {
 input.form-control[type=checkbox] {
 width: 10px;
 }
+
+td.feedstatus div {
+    margin-bottom: 0.5rem;
+}
