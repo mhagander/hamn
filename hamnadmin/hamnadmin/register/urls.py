@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^moderate/approve/(\d+)/$', hamnadmin.register.views.moderate_approve),
     url(r'^login/$', hamnadmin.auth.login),
     url(r'^auth_receive/$', hamnadmin.auth.auth_receive),
+    url(r'^auth_api/$', hamnadmin.auth.auth_api),
     url(r'^logout/$', hamnadmin.auth.logout),
 
     url(r'^admin/', admin.site.urls),
