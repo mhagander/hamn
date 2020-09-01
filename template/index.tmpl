@@ -4,7 +4,7 @@
     <div id="planetRight">
 {% if topposters %}
      <div class="planetRightTitle">Top posters</div>
-     <div class="planetRightDescription">Number of posts in the past month</div>
+     <div class="planetRightDescription">Number of posts in the past two months</div>
      <ul class="toplist">
 {% for feed in topposters %}
       <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%} {%if feed.team%}({{feed.team.name}}) {%endif%}- {{feed.numposts}}</li>
@@ -13,7 +13,7 @@
 {% endif %}
 {% if topteams %}
      <div class="planetRightTitle">Top teams</div>
-     <div class="planetRightDescription">Number of posts in the past month</div>
+     <div class="planetRightDescription">Number of posts in the past two months</div>
      <ul>
 {% for team in topteams %}
       <li><a href="{{team.teamurl}}">{{team.name}}</a> - {{team.numposts}}</li>
