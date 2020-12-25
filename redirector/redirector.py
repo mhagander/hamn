@@ -18,10 +18,16 @@ _urlvalmap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', '
 connstr = ""
 
 
+class Make404(Exception):
+    pass
+
+
 def iddecode(idstr):
     idval = 0
     for c in idstr:
         idval *= 64
+        if c not in _urlvalmap:
+            raise Make404()
         idval += _urlvalmap.index(c)
     return idval
 
@@ -52,10 +58,7 @@ def application(environ, start_response):
         conn.close()
 
         if len(r) != 1:
-            start_response('404 Not Found', [
-                ('Content-type', 'text/plain'),
-            ])
-            return [b"Link not found\n"]
+            raise Make404()
 
         # We have a link, return a redirect to it
         start_response('301 Moved Permanently', [
@@ -68,6 +71,11 @@ def application(environ, start_response):
             b"<a href=\"%s\">moved here</a>\n" % r[0][0].encode('utf8'),
             b"</body>\n</html>\n"
         ]
+    except Make404:
+        start_response('404 Not Found', [
+            ('Content-type', 'text/plain'),
+        ])
+        return [b"Link not found\n"]
     except Exception as ex:
         start_response('500 Internal Server Error', [
             ('Content-type', 'text/plain')
