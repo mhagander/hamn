@@ -33,6 +33,12 @@ def iddecode(idstr):
 
 
 def application(environ, start_response):
+    # Generate our own little robots.txt
+    if environ['REQUEST_URI'].startswith('/robots.txt'):
+        start_response('200 OK', [
+            ('Content-type', 'text/plain'),
+        ])
+        return [b"User-Agent: *\nDisallow: /\n"]
     try:
         # If we have a querystring, get rid of it. This can (presumably)
         # happen with some click-tracking systems.
