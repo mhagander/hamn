@@ -14,7 +14,7 @@ def _encoded_email_header(name, email):
     return email
 
 
-def send_simple_mail(sender, receiver, subject, msgtxt, attachments=None, bcc=None, sendername=None, receivername=None):
+def send_simple_mail(sender, receiver, subject, msgtxt, attachments=None, bcc=None, sendername=None, receivername=None, suppress_auto_replies=True):
     # attachment format, each is a tuple of (name, mimetype,contents)
     # content should be *binary* and not base64 encoded, since we need to
     # use the base64 routines from the email library to get a properly
@@ -24,6 +24,10 @@ def send_simple_mail(sender, receiver, subject, msgtxt, attachments=None, bcc=No
     msg['To'] = _encoded_email_header(receivername, receiver)
     msg['From'] = _encoded_email_header(sendername, sender)
     msg['Date'] = formatdate(localtime=True)
+
+    if suppress_auto_replies:
+        msg['X-Auto-Response-Suppress'] = 'All'
+        msg['Auto-Submitted'] = 'auto-generated'
 
     msg.attach(MIMEText(msgtxt, _charset='utf-8'))
 
