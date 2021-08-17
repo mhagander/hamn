@@ -3,7 +3,7 @@ import gevent
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.conf import settings
 
 from datetime import datetime
@@ -44,6 +44,9 @@ class Command(BaseCommand):
             # Fetch all feeds - that are not archived. We do fetch feeds that are not approved,
             # to make sure they work.
             feeds = Blog.objects.filter(archived=False)
+        feeds = feeds.annotate(
+            has_entries=Exists(Post.objects.filter(feed=OuterRef("pk"), hidden=False)),
+        )
 
         # Fan out the fetching itself
         fetchers = [FeedFetcher(f, self.trace) for f in feeds]

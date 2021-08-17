@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Count, Max
+from django.db.models import Count, Max, Q, Subquery, OuterRef, Exists
 from django.contrib import messages
 
 from hamnadmin.register.models import Post, Blog, Team, AggregatorLog, AuditEntry
@@ -18,7 +18,7 @@ from .forms import BlogEditForm, ModerateRejectForm
 # Public planet
 def planet_home(request):
     statdate = datetime.datetime.now() - datetime.timedelta(days=61)
-    posts = Post.objects.filter(hidden=False, feed__approved=True).order_by('-dat')[:30]
+    posts = Post.objects.select_related('feed', 'feed__team').filter(hidden=False, feed__approved=True).order_by('-dat')[:30]
     topposters = Blog.objects.filter(approved=True, excludestats=False, posts__hidden=False, posts__dat__gt=statdate).annotate(numposts=Count('posts__id')).order_by('-numposts')[:10]
     topteams = Team.objects.filter(blog__approved=True, blog__excludestats=False, blog__posts__hidden=False, blog__posts__dat__gt=statdate).annotate(numposts=Count('blog__posts__id')).order_by('-numposts')[:10]
     return render(request, 'index.tmpl', {
@@ -49,12 +49,19 @@ def issuperuser(user):
 def root(request):
     isadmin = request.user.is_superuser and 'admin' in request.GET and request.GET['admin'] == '1'
     if isadmin:
-        blogs = Blog.objects.all().order_by('archived', 'approved', 'name')
+        blogs = Blog.objects.select_related('user').all()
     else:
-        blogs = Blog.objects.filter(user=request.user).order_by('archived', 'approved', 'name')
+        blogs = Blog.objects.filter(user=request.user)
+
+    blogs = blogs.annotate(
+        has_entries=Exists(Post.objects.filter(feed=OuterRef("pk"), hidden=False)),
+        recent_failures=Count('aggregatorlog', filter=Q(aggregatorlog__success=False, aggregatorlog__ts__gt=datetime.datetime.now() - datetime.timedelta(days=1))),
+        last_was_success=Subquery(AggregatorLog.objects.filter(feed=OuterRef("pk")).values('success')[:1]),
+    ).order_by('archived', 'approved', 'name')
+
     return render(request, 'index.html', {
         'blogs': blogs,
-        'teams': Team.objects.filter(manager=request.user).order_by('name'),
+        'teams': Team.objects.filter(manager=request.user).prefetch_related('blog_set').order_by('name'),
         'title': 'All blogs' if isadmin else 'Your blogs',
         'isadmin': isadmin,
     })
@@ -64,10 +71,14 @@ def root(request):
 @transaction.atomic
 def edit(request, id=None):
     if id:
+        blogqs = Blog.objects.all().annotate(
+            has_entries=Exists(Post.objects.filter(feed=OuterRef("pk"), hidden=False)),
+            recent_failures=Count('aggregatorlog', filter=Q(aggregatorlog__success=False, aggregatorlog__ts__gt=datetime.datetime.now() - datetime.timedelta(days=1))),
+        )
         if request.user.is_superuser:
-            blog = get_object_or_404(Blog, id=id)
+            blog = get_object_or_404(blogqs, id=id)
         else:
-            blog = get_object_or_404(Blog, id=id, user=request.user)
+            blog = get_object_or_404(blogqs, id=id, user=request.user)
     else:
         blog = Blog(user=request.user, name="{0} {1}".format(request.user.first_name, request.user.last_name))
 
@@ -269,7 +280,7 @@ def blogpost_delete(request, blogid, postid):
 @user_passes_test(issuperuser)
 def moderate(request):
     return render(request, 'moderate.html', {
-        'blogs': Blog.objects.filter(approved=False).annotate(oldest=Max('posts__dat')).order_by('oldest'),
+        'blogs': Blog.objects.filter(approved=False).select_related('user', 'team').annotate(oldest=Max('posts__dat')).order_by('oldest'),
         'title': 'Moderation',
     })
 

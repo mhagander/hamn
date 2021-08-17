@@ -50,20 +50,6 @@ class Blog(models.Model):
         return self.user.email
 
     @property
-    def recent_failures(self):
-        return self.aggregatorlog_set.filter(success=False, ts__gt=datetime.now() - timedelta(days=1)).count()
-
-    def last_was_error(self):
-        if self.lastsuccess:
-            return self.aggregatorlog_set.filter(success=False, ts__gt=self.lastsuccess).exists()
-        else:
-            return self.aggregatorlog_set.filter(success=False).exists()
-
-    @property
-    def has_entries(self):
-        return self.posts.filter(hidden=False).exists()
-
-    @property
     def latestentry(self):
         try:
             return self.posts.filter(hidden=False)[0]

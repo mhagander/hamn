@@ -53,8 +53,8 @@ Last successful http fetch dated: {{blog.lastget|date:"Y-m-d H:i:s"}}<br/>
     {%endif%}
       </div>
       <div>
-      {% if blog.last_was_error%}<span class="label label-danger">Last attempt failed</span>
-      {%else%}<span class="label label-success">Last attempt succeeded</span>{%endif%}
+      {% if blog.last_was_success%}<span class="label label-success">Last attempt succeeded</span>
+      {%else%}<span class="label label-danger">Last attempt failed</span>{%endif%}
    {%else%}
     <span class="label label-success">Approved and working</span>
    {%endif%}{#recent_failures#}
