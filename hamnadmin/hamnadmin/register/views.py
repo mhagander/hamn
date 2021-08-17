@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Count, Max, Q, Subquery, OuterRef, Exists
+from django.db.models import Count, Max, Q, Subquery, OuterRef, Exists, FilteredRelation
 from django.contrib import messages
 
 from hamnadmin.register.models import Post, Blog, Team, AggregatorLog, AuditEntry
@@ -55,8 +55,10 @@ def root(request):
 
     blogs = blogs.annotate(
         has_entries=Exists(Post.objects.filter(feed=OuterRef("pk"), hidden=False)),
-        recent_failures=Count('aggregatorlog', filter=Q(aggregatorlog__success=False, aggregatorlog__ts__gt=datetime.datetime.now() - datetime.timedelta(days=1))),
+        recent_failure_entries=FilteredRelation('aggregatorlog', condition=Q(aggregatorlog__success=False, aggregatorlog__ts__gt=datetime.datetime.now() - datetime.timedelta(days=1))),
         last_was_success=Subquery(AggregatorLog.objects.filter(feed=OuterRef("pk")).values('success')[:1]),
+    ).annotate(
+        recent_failures=Count('recent_failure_entries'),
     ).order_by('archived', 'approved', 'name')
 
     return render(request, 'index.html', {
@@ -73,7 +75,9 @@ def edit(request, id=None):
     if id:
         blogqs = Blog.objects.all().annotate(
             has_entries=Exists(Post.objects.filter(feed=OuterRef("pk"), hidden=False)),
-            recent_failures=Count('aggregatorlog', filter=Q(aggregatorlog__success=False, aggregatorlog__ts__gt=datetime.datetime.now() - datetime.timedelta(days=1))),
+            recent_failure_entries=FilteredRelation('aggregatorlog', condition=Q(aggregatorlog__success=False, aggregatorlog__ts__gt=datetime.datetime.now() - datetime.timedelta(days=1))),
+        ).annotate(
+            recent_failures=Count('recent_failure_entries'),
         )
         if request.user.is_superuser:
             blog = get_object_or_404(blogqs, id=id)
