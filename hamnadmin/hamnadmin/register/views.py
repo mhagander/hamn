@@ -47,14 +47,16 @@ def issuperuser(user):
 
 @login_required
 def root(request):
-    if request.user.is_superuser and 'admin' in request.GET and request.GET['admin'] == '1':
+    isadmin = request.user.is_superuser and 'admin' in request.GET and request.GET['admin'] == '1'
+    if isadmin:
         blogs = Blog.objects.all().order_by('archived', 'approved', 'name')
     else:
         blogs = Blog.objects.filter(user=request.user).order_by('archived', 'approved', 'name')
     return render(request, 'index.html', {
         'blogs': blogs,
         'teams': Team.objects.filter(manager=request.user).order_by('name'),
-        'title': 'Your blogs',
+        'title': 'All blogs' if isadmin else 'Your blogs',
+        'isadmin': isadmin,
     })
 
 

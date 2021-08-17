@@ -1,7 +1,7 @@
 {% extends "regbase.html" %}
 {%block content%}
 {%if blogs %}
-<h1>Your blogs</h1>
+<h1>{{title}}</h1>
 
 {%if messages%}
 <div class="alert alert-info">
@@ -11,9 +11,11 @@
 </div>
 {%endif%}
 
+{%if not isadmin%}
 <p>
-You have the following blog(s) registered:
+You have the following blog(s) registered on your account {{user.username}} with email address {{user.email}}.
 </p>
+{%endif%}
 <table class="table table-condensed table-striped table-bordered">
 <tr>
  <th>Name</th>
@@ -24,7 +26,9 @@ You have the following blog(s) registered:
 </tr>
 {%for blog in blogs%}
 <tr valign="top">
- <td>{{blog.name}}</td>
+ <td>{{blog.name}}{%if isadmin%}<br/>
+Account: {{blog.user.username}}<br/>
+Email: {{blog.user.email}}{%endif%}</td>
  <td>
    {%if blog.archived%}
    <span class="label label-info">Archived</span>
