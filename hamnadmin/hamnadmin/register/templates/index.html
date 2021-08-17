@@ -78,6 +78,8 @@ Last successful http fetch dated: {{blog.lastget|date:"Y-m-d H:i:s"}}<br/>
 {%else%}
 <p>We have no blogs registered to your account.</p>
 {%endif%}
+
+{%if not isadmin%}
 <hr/>
 <h2>Register blog</h2>
 <p>
@@ -119,6 +121,7 @@ You are listed as a manager for the following teams:
   </div>
 </div>
 {%endfor%}
+{%endif%}
 {%endif%}
 {%endblock%}
 
