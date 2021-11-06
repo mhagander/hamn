@@ -116,7 +116,7 @@ class FeedFetcher(object):
 
         # Check if we got back a Last-Modified time
         if hasattr(parser, 'modified_parsed') and parser['modified_parsed']:
-            # Last-Modified header retreived. If we did receive it, we will
+            # Last-Modified header retrieved. If we did receive it, we will
             # trust the content (assuming we can parse it)
             d = datetime.datetime(*parser['modified_parsed'][:6])
             if (d - datetime.datetime.now()).days > 5:
