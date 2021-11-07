@@ -17,6 +17,8 @@ DATABASES = {
         }
     }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 TIME_ZONE = 'GMT'
 LANGUAGE_CODE = 'en-us'
 
