@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 send_simple_mail(
                     settings.EMAIL_SENDER,
                     feed.user.email,
-                    "Errors retreiving your feed for Planet PostgreSQL",
+                    "Errors retrieving your feed for Planet PostgreSQL",
                     """Your blog aggregated to Planet PostgreSQL with feed URL
 
 {0}
