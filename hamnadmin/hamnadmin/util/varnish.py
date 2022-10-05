@@ -23,7 +23,7 @@ def purge_xkey(xkey):
     else:
         try:
             r = requests.get(settings.VARNISH_URL, headers={
-                'X-Purge-Key': '^' + xkey,
+                'X-Purge-Key': xkey,
             })
             if r.status_code != 200:
                 raise Exception("Invalid response code %s" % r.status_code)
