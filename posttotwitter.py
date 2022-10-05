@@ -37,6 +37,9 @@ class PostToTwitter(TwitterClient):
         if r.status_code != 200:
             raise Exception("Could not post to twitter, status code {0}".format(r.status_code))
 
+        # Return the id of the tweet
+        return r.json()['id']
+
     def Run(self):
         c = self.db.cursor()
         c.execute("""SELECT posts.id, posts.title, posts.link, posts.shortlink, feeds.name, feeds.twitteruser
@@ -79,14 +82,17 @@ class PostToTwitter(TwitterClient):
 
             # Now post it to twitter
             try:
-                self.do_post(msg)
+                tweetid = self.do_post(msg)
             except Exception as e:
                 print("Error posting to twitter (post %s): %s" % (post[0], e))
                 # We'll just try again with the next one
                 continue
 
             # Flag this item as posted
-            c.execute("UPDATE posts SET twittered='t' WHERE id=%(id)s", {'id': post[0]})
+            c.execute("UPDATE posts SET twittered='t', tweetid=%(tweetid)s WHERE id=%(id)s", {
+                'id': post[0],
+                'tweetid': tweetid,
+            })
             self.db.commit()
 
             print("Twittered: %s" % msg)

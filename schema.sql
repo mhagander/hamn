@@ -64,6 +64,7 @@ CREATE TABLE posts (
     guidisperma boolean NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
     twittered boolean DEFAULT false NOT NULL,
+    tweetid int8 NULL,
     shortlink text
 );
 
