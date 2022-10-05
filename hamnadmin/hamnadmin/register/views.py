@@ -8,7 +8,7 @@ from django.contrib import messages
 
 from hamnadmin.register.models import Post, Blog, Team, AggregatorLog, AuditEntry
 from hamnadmin.mailqueue.util import send_simple_mail
-from hamnadmin.util.varnish import purge_url, purge_root_and_feeds
+from hamnadmin.util.varnish import purge_url, purge_xkey, purge_root_and_feeds
 
 import datetime
 
@@ -245,6 +245,7 @@ def __setposthide(request, blogid, postid, status):
     AuditEntry(request.user.username, 'Set post %s on blog %s visibility to %s' % (postid, blogid, status)).save()
     messages.info(request, 'Set post "%s" to %s' % (post.title, status and "hidden" or "visible"), extra_tags="top")
     purge_root_and_feeds()
+    purge_xkey('post_{}'.format(post.id))
     return HttpResponseRedirect("/register/edit/{0}/".format(blogid))
 
 

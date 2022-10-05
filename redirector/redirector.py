@@ -56,7 +56,7 @@ def application(environ, start_response):
         # bother with any connection pooling.
         conn = psycopg2.connect(connstr)
         c = conn.cursor()
-        c.execute("SELECT link FROM posts WHERE id=%(id)s AND NOT hidden", {
+        c.execute("SELECT link, feed FROM posts WHERE id=%(id)s AND NOT hidden", {
             'id': id
         })
         r = c.fetchall()
@@ -70,7 +70,9 @@ def application(environ, start_response):
         start_response('301 Moved Permanently', [
             ('Content-type', 'text/html'),
             ('Location', r[0][0]),
-            ('X-Planet', str(id))
+            ('X-Planet', str(id)),
+            ('X-Planet-Feed', str(r[0][1])),
+            ('xkey', 'post_{}  feed_{}'.format(id, r[0][1])),
         ])
         return [
             b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
