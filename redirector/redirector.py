@@ -56,7 +56,7 @@ def application(environ, start_response):
         # bother with any connection pooling.
         conn = psycopg2.connect(connstr)
         c = conn.cursor()
-        c.execute("SELECT link, feed FROM posts WHERE id=%(id)s AND NOT hidden", {
+        c.execute("SELECT link, feed, hidden FROM posts WHERE id=%(id)s", {
             'id': id
         })
         r = c.fetchall()
@@ -66,19 +66,30 @@ def application(environ, start_response):
         if len(r) != 1:
             raise Make404()
 
-        # We have a link, return a redirect to it
-        start_response('301 Moved Permanently', [
-            ('Content-type', 'text/html'),
-            ('Location', r[0][0]),
-            ('X-Planet', str(id)),
-            ('X-Planet-Feed', str(r[0][1])),
-            ('xkey', 'post_{}  feed_{}'.format(id, r[0][1])),
-        ])
-        return [
-            b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
-            b"<a href=\"%s\">moved here</a>\n" % r[0][0].encode('utf8'),
-            b"</body>\n</html>\n"
-        ]
+        if r[0][2]:
+            # Entry is hidden. We want a 404 that is tagged with the feed, so we can xkey
+            # purge it properly!
+            start_response('404 Not Found', [
+                ('Content-type', 'text/plain'),
+                ('X-Planet', str(id)),
+                ('X-Planet-Feed', str(r[0][1])),
+                ('xkey', 'post_{}  feed_{}'.format(id, r[0][1])),
+            ])
+            return [b"Link not found\n"]
+        else:
+            # We have a link, return a redirect to it
+            start_response('301 Moved Permanently', [
+                ('Content-type', 'text/html'),
+                ('Location', r[0][0]),
+                ('X-Planet', str(id)),
+                ('X-Planet-Feed', str(r[0][1])),
+                ('xkey', 'post_{}  feed_{}'.format(id, r[0][1])),
+            ])
+            return [
+                b"<html>\n<head>\n<title>postgr.es</title>\n</head>\n<body>\n",
+                b"<a href=\"%s\">moved here</a>\n" % r[0][0].encode('utf8'),
+                b"</body>\n</html>\n"
+            ]
     except Make404:
         start_response('404 Not Found', [
             ('Content-type', 'text/plain'),
