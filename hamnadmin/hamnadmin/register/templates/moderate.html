@@ -23,7 +23,7 @@
 
         <p>The following blogs require moderator action:</p>
         {% for blog in blogs %}
-            <div class="panel panel-info">
+            <div class="panel panel-info border px-3 pb-3">
                 <div class="panel-heading"><h2>{{ blog.name|default:blog.feedurl }}</h2></div>
                 <div class="panel-body">
                     <div class="row">
