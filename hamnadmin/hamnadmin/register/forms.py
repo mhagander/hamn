@@ -82,10 +82,13 @@ class BlogEditForm(forms.ModelForm):
 
 
 class ModerateRejectForm(forms.Form):
-    message = forms.CharField(min_length=30, required=True, widget=forms.Textarea)
-    modsonly = forms.BooleanField(required=False, label="Moderators only", help_text="Should message be sent only to moderators, and not to the submitter (for spam submissions mainly)")
+    message = forms.CharField(min_length=30, required=True, widget=forms.Textarea, help_text="Enter a reason for the blog rejection.")
+    modsonly = forms.BooleanField(required=False, label="Moderators only?", help_text="Should message be sent only to moderators, and not to the submitter (for spam submissions mainly)?")
 
     def __init__(self, *args, **kwargs):
         super(ModerateRejectForm, self).__init__(*args, **kwargs)
         for f in self.fields.values():
-            f.widget.attrs['class'] = 'form-control'
+            if isinstance(f.widget, forms.widgets.CheckboxInput):
+                f.widget.attrs['class'] = 'form-check-input'
+            else:
+                f.widget.attrs['class'] = 'form-control'

@@ -1,83 +1,86 @@
-{% extends "regbase.html" %}
-{%block content%}
-<h1>Blog moderation</h1>
+{% extends "base.tmpl" %}
+{% block content %}
 
-{%if messages%}
-<h3>Results</h3>
-<div class="alert alert-info">
-{%for m in messages%}
-{{m}}<br/>
-{%endfor%}
-</div>
-{%endif%}
+    <div class="col-md-12">
+        {% if messages %}
+            <h3>Results</h3>
+            <div class="alert alert-info">
+                {% for m in messages %}
+                    {{ m }}<br/>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-<p>The following blogs require moderator action</p>
-{%for blog in blogs%}
-<div class="panel panel-info">
-  <div class="panel-heading">{{blog.name|default:blog.feedurl}}</div>
-  <div class="panel-body">
-    <div class="row">
-      <div class="col-sm-1">User</div>
-      <div class="col-sm-10">Username: {{blog.user}}<br/>Email: {{blog.user.email}}<br/>Twitter: {{blog.twitteruser}}<br/>Team: {{blog.team.name}}</div>
+        {% if user.is_superuser %}
+            <h1>Superuser options</h1>
+            <p>As a superuser you have additional options available:</p>
+            <a class="btn btn-primary btn-sm" href="/register/?admin=1">View all blogs</a>
+            <a class="btn btn-primary btn-sm" href="/register/">View your blogs</a>
+            <a class="btn btn-warning btn-sm" href="/register/admin/">Django Admin</a>
+        {% endif %}
+
+        <h1>Blog moderation</h1>
+
+        <p>The following blogs require moderator action:</p>
+        {% for blog in blogs %}
+            <div class="panel panel-info">
+                <div class="panel-heading"><h2>{{ blog.name|default:blog.feedurl }}</h2></div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-1"><strong>User</strong></div>
+                        <div class="col-sm-10"><strong>Username:</strong> {{ blog.user }}<br/><strong>Email:</strong> {{ blog.user.email }}<br/><strong>Twitter:</strong> {{ blog.twitteruser }}<br/><strong>Team:</strong> {{ blog.team.name }}<br/>&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1"><strong>URLs</strong></div>
+                        <div class="col-sm-10">
+                            <strong>Feed URL:</strong> <a href="{{ blog.feedurl }}">{{blog.feedurl}}</a><br/>
+                            <strong>Blog URL:</strong> {% if blog.blogurl %}<a href="{{ blog.blogurl }}">{{ blog.blogurl }}</a>{% else %}Blog not syndicated yet, so no URL available.{% endif %}
+                            {% if blog.authorfilter %}<br/>Author filter: {{ blog.authorfilter }}{% endif %}<br/>&nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1"><strong>Posts</strong></div>
+                        <div class="col-sm-10">
+                            {% if blog.recent_entries %}
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr><th>Time</th><th>Title</th></tr>
+                                    {% for p in blog.recent_entries %}
+                                        <tr>
+                                            <td>{{ p.dat|date:"Y-m-d H:i:s" }}</td>
+                                            <td><a href="{{ p.link }}">{{ p.title }}</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            {% else %}
+                                No entries have been syndicated from this blog yet.
+                            {% endif %}
+                            <em>Last successful HTTP fetch dated: {{ blog.lastget|date:"Y-m-d H:i:s" }} (fetch date or Last-Modified HTTP header).<br/>&nbsp;</em>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            {% if blog.recent_entries %}<a class="btn btn-sm btn-primary" href="javascript:confirmApprove('approve/{{blog.id}}/')">Approve</a>{% endif %}
+                            <a class="btn btn-sm btn-primary" href="/register/edit/{{ blog.id }}/">Edit</a>
+                            <a class="btn btn-sm btn-danger" href="reject/{{ blog.id }}/">Reject</a>
+                            <a class="btn btn-sm btn-primary" href="/register/admin/register/blog/{{ blog.id }}/">Admin</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+        {% endfor %}
     </div>
-    <div class="row">
-      <div class="col-sm-1">URLs</div>
-      <div class="col-sm-10">
-	Feed url: {{blog.feedurl}}<br/>
-	Blog url: {%if blog.blogurl%}<a href="{{blog.blogurl}}">{{blog.blogurl}}</a>{%else%}Blog not syndicated yet, so no URL available.{%endif%}
-	{%if blog.authorfilter%}<br/>Author filter: {{blog.authorfilter}}{%endif%}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-1">Posts</div>
-      <div class="col-sm-10">
-	{%if blog.recent_entries%}
-	<table class="table table-condensed table-striped table-bordered">
-	  <tr><th>Time</th><th>Title</th></tr>
-	  {%for p in blog.recent_entries%}
-	  <tr>
-	    <td>{{p.dat|date:"Y-m-d H:i:s"}}</td>
-	    <td><a href="{{p.link}}">{{p.title}}</a></td>
-	  </tr>
-	  {%endfor%}
-	</table>
-	{%else%}
-	No entries have been syndicated from this blog yet.
-	{%endif%}
-	<br/>Last successful http fetch dated: {{blog.lastget|date:"Y-m-d H:i:s"}} (fetch date or Last-Modified http header).
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-	{%if blog.recent_entries%}<a class="btn btn-default" onClick="confirmApprove('approve/{{blog.id}}/')">Approve</a>{%endif%}
-	<a class="btn btn-default" href="/register/edit/{{blog.id}}/">Edit</a>
-	<a class="btn btn-default" href="reject/{{blog.id}}/">Reject</a>
-	<a class="btn btn-default" href="/register/admin/register/blog/{{blog.id}}/">Admin</a>
-      </div>
-    </div>
-  </div>
-</div>
-{%endfor%}
 
-<h2>Admin</h2>
-<p>
-Since you are a moderator, you can view all approved feeds as well, in the admin view.
-</p>
-<p><a class="btn btn-default" href="/register/?admin=1">Admin view</a></p>
-<p>
-You should normally never need to use the backend "django admin" interface. But we keep
-it around for the special cases...
-</p>
-<p><a class="btn btn-default" href="/register/admin/">Django admin</a></p>
+{% endblock %}
 
+{% block extrahead %}
 
-{%endblock%}
-{%block extrahead%}
-<script language="javascript">
-  function confirmApprove(url) {
-    if (confirm('Are you sure you want to approve this blog?')) {
-      document.location.href = url;
-    }
-  }
-</script>
-{%endblock%}
+    <script type="text/javascript">
+        function confirmApprove(url) {
+            if (window.confirm('Are you sure you want to approve this blog?')) {
+                document.location.href = url;
+            }
+        }
+    </script>
+
+{% endblock %}

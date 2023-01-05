@@ -1,26 +1,35 @@
 {% extends "base.tmpl" %}
+{% block title %}Blog List - Planet PostgreSQL{% endblock %}
 {% block content %}
-<h1>Feeds</h1>
-<p>
-The following list contains all feeds aggregated at this site.
-</p>
 
-<ul>
-{% for feed in feeds %}
- <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
-{% endfor %}
-</ul>
+    <div class="col-md-6">
+        <h1>Feeds</h1>
+        <p>The list below contains all feeds aggregated at this site:</p>
 
-<h2>Teams</h2>
-<ul>
-{% for team in teams %}
- <li><a href="{{team.teamurl}}">{{team.name}}</a>
-  <ul>
-{%for feed in team.all_blogs %}
-   <li><a href="{{feed.feedurl}}"><img src="img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
-{% endfor %}
-  </ul>
- </li>
-{% endfor %}
-</ul>
+        <ul>
+            {% for feed in feeds %}
+                <li><a href="{{feed.feedurl}}"><img src="/img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="col-md-6">
+        <h2>Teams</h2>
+        <p>The list below lists blog teams and their members.</p>
+
+        <ul>
+            {% for team in teams %}
+                {% if team.all_blogs|length > 0 %}
+                    <li><a href="{{team.teamurl}}">{{team.name}}</a>
+                        <ul>
+                            {%for feed in team.all_blogs %}
+                                <li><a href="{{feed.feedurl}}"><img src="/img/feed-icon-14x14.png" alt="RSS"/></a> {%if feed.blogurl %}<a href="{{feed.blogurl}}">{{feed.name}}</a>{%else%}{{feed.name}}{%endif%}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
 {% endblock %}

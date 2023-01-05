@@ -1,155 +1,160 @@
-{% extends "regbase.html" %}
-{%block content%}
-<h1>Edit blog</h1>
+{% extends "base.tmpl" %}
+{% block content %}
+    <div class="col-md-12">
 
-{%if not new%}
-<h3>Status</h3>
-<p>
-{%if blog.approved%}
-This blog is currently <span class="label label-success">approved</span>.
-{%if blog.recent_failures%}
-{%if blog.recent_failures <= 5%}
-This blog has generated <span class="label label-warning">sporadic errors</span> in the past 24 hours. See
-  the <a href="#log">log</a> below for details.
-{%else%}
-This blog has generated <span class="label label-danger">multiple failures</span> in the past 24 hours. See
-  the <a href="#log">log</a> below for details.
-{%endif%}
-{%else%}{#recent_failures#}
-The blog last posted an entry at <span class="label label-info">{{blog.latestentry.dat|date:"Y-m-d H:i:s"}}</span>.
-{%endif%}
+        <h1>Edit blog</h1>
 
-{%else%}
-This blog is currently <span class="label label-warning">not approved</span>.</p>
-{%if blog.has_entries%}
-The blog is currently waiting for moderator approval.
-{%else%}
-  The blog has not yet received any posts. As soon as the first post is syndicated, the blog will be
-  automatically submitted for approval.
-{%endif%}{#has_entries#}
-{%endif%}{#approved#}
-{%endif%}{#not new#}
-</p>
+        {% if not new %}
+            <h3>Status</h3>
+            <p>
+                {% if blog.approved %}
+                    This blog is currently <span class="label label-success">approved</span>.
+                    {% if blog.recent_failures %}
+                        {% if blog.recent_failures <= 5 %}
+                            This blog has generated <span class="label label-warning">sporadic errors</span> in the past 24 hours. See
+                            the <a href="#log">log</a> below for details.
+                        {% else %}
+                            This blog has generated <span class="label label-danger">multiple failures</span> in the past 24 hours. See
+                            the <a href="#log">log</a> below for details.
+                        {% endif %}
+                    {% else %}{#recent_failures#}
+                        The blog last posted an entry at <span class="label label-info">{{ blog.latestentry.dat|date:"Y-m-d H:i:s" }}</span>.
+                    {% endif %}
 
-{%if messages%}
-<h3>Results</h3>
-<div class="alert alert-info">
-{%for m in messages%}
-{{m}}<br/>
-{%endfor%}
-</div>
-{%endif%}
+                {% else %}
+                    This blog is currently <span class="label label-warning">not approved</span>.</p>
+                    {% if blog.has_entries %}
+                        The blog is currently waiting for moderator approval.
+                    {% else %}
+                        The blog has not yet received any posts. As soon as the first post is syndicated, the blog will be
+                        automatically submitted for approval.
+                    {% endif %}{#has_entries#}
+                {% endif %}{#approved#}
+        {% endif %}{#not new#}
+    </p>
 
-{%if posts%}
-<h3>Posts</h3>
-<p>The latest posts received from this blog are:</p>
-<table class="table table-condensed table-striped">
-  <tr>
-    <th>Date</th>
-    <th>Title</th>
-    <th>Show/Hide</th>
-  </tr>
-  {%for p in posts%}
-  <tr>
-    <td>{{p.dat|date:"Y-m-d H:i:s"}}</td>
-    <td><a href="{{p.link}}">{{p.title}}</a></td>
-    <td>
-      {%if p.hidden%}
-      <a class="btn btn-default btn-sm" href="/register/blogposts/{{blog.id}}/unhide/{{p.id}}/">Unhide</a>
-      {%else%}
-      <a class="btn btn-default btn-sm" href="/register/blogposts/{{blog.id}}/hide/{{p.id}}/">Hide</a>
-      {%endif%}
-      <a class="btn btn-default btn-sm" onClick="confirmDelete({{blog.id}},{{p.id}})">Delete/reload</a>
-      </td>
-  </tr>
-  {%endfor%}
-</table>
-<a class="btn btn-default" href="/register/">Return</a>
-{%endif%}
+    {% if messages %}
+        <h3>Results</h3>
+        <div class="alert alert-info">
+            {% for m in messages %}
+                {{ m }}<br/>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if posts %}
+        <h3>Posts</h3>
+        <p>The latest posts received from this blog are:</p>
+        <table class="table table-condensed table-striped">
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Show/Hide</th>
+            </tr>
+            {% for p in posts %}
+                <tr>
+                    <td>{{ p.dat|date:"Y-m-d H:i:s" }}</td>
+                    <td><a href="{{ p.link }}">{{ p.title }}</a></td>
+                    <td>
+                        {% if p.hidden %}
+                            <a class="btn btn-primary btn-sm" href="/register/blogposts/{{ blog.id }}/unhide/{{ p.id }}/">Unhide</a>
+                        {% else %}
+                            <a class="btn btn-primary btn-sm" href="/register/blogposts/{{ blog.id }}/hide/{{ p.id }}/">Hide</a>
+                        {% endif %}
+                        <a class="btn btn-warning btn-sm" href="javascript:confirmDelete({{ blog.id }},{{ p.id }})">Delete/reload</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <a class="btn btn-primary btn-sm" href="/register/">Return</a>
+    {% endif %}
 
 
-<h3>Edit</h3>
+    <h3>Edit</h3>
 
-{%if form.errors%}
-<div class="alert alert-danger">Please correct the errors below, and re-submit the form.</div>
-{%endif%}
+    {% if form.errors %}
+        <div class="alert alert-danger">Please correct the errors below, and re-submit the form.</div>
+    {% endif %}
 
-{%if form.non_field_errors%}
-{%for e in form.non_field_errors%}
-<div class="alert alert-danger">{{e}}</div>
-{%endfor%}
-{%endif%}
+    {% if form.non_field_errors %}
+        {% for e in form.non_field_errors %}
+            <div class="alert alert-danger">{{ e }}</div>
+        {% endfor %}
+    {% endif %}
 
-<form method="post" action="." class="form-horizontal">{%csrf_token%}
-  {%for field in form%}
-  <div class="form-group{%if field.errors%} has-error{%endif%}">
-    <label for="{{field.id}}" class="col-sm-2">{{field.label}}</label>
-    <div class="col-sm-10">
-      <div class="controls">
-	{{field}}
-	<span class="help-block">{{field.help_text}}</span>
-	{%if field.errors%}
-	<span class="help-block">{{field.errors}}</span>
-	{%endif%}
-      </div>
+    <form method="post" action="." class="form-horizontal">{% csrf_token %}
+        {% for field in form %}
+            <div class="form-group{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.id }}" class="col-sm-2">{{ field.label }}</label>
+                <div class="col-sm-10">
+                    <div class="controls">
+                        {{ field }}
+                        <span class="help-block">{{ field.help_text }}</span>
+                        {% if field.errors %}
+                            <span class="help-block">{{ field.errors }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <br />
+        <input class="btn btn-primary btn-sm" type="submit" value="Save">
+        <a class="btn btn-secondary btn-sm" href="/register/">Cancel</a>
+        <a class="btn btn-danger btn-sm" href="javascript:confirmDeleteBlog({{ blog.id }})">Delete</a>
+        {% if blog.approved and blog.has_entries %}
+            <a class="btn btn-primary btn-sm" href="javascript:confirmArchiveBlog({{ blog.id }})">Archive</a>
+        {% endif %}
+    </form>
+
+    {% if not new %}
+        <a name="log"></a>
+        <h3>Log</h3>
+        {% if blog.lastsuccess %}
+            <p>
+                The last successful fetch of this feed was <em>{{ blog.lastsuccess|date:"Y-m-d H:i:s" }}.</em>
+            </p>
+        {% endif %}
+        <table class="table table-condensed table-striped">
+            <tr>
+                <th>Time</th>
+                <th>Success</th>
+                <th>Text</th>
+            </tr>
+            {% for l in log %}
+                <tr>
+                    <td>{{ l.ts|date:"Y-m-d H:i:s" }}</td>
+                    <td>
+                        {% if l.success %}<span class="label label-success">Success</span>
+                        {% elif l.ts < blog.lastsuccess %}<span class="label label-warning" title="A successful fetch has been completed after this failure occurred">Past failure</span>
+                        {% else %}<span class="label label-danger">Failure</span>{% endif %}
+                    </td>
+                    <td>{{ l.info }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}{#not new#}
+
+{% endblock %}
+{% block extrahead %}
+    <script type="text/javascript">
+        function confirmDelete(blogid, postid) {
+            if (window.confirm("Are you sure you want to delete the post?\n\nThe post will automatically re-appear on the next crawl if it's still in the feed. If you don't want that to happen, hide the post instead!\n\nAre you sure?")) {
+                document.location.href='/register/blogposts/' + blogid + '/delete/' + postid + '/';
+            }
+        }
+
+        function confirmDeleteBlog(blogid) {
+            if(window.confirm("Are you sure you want to delete this blog?\n\nAll entries in the blog as well as all history will be deleted.\n\nNormally, you should Archive the blog instead of delete it if it has any posts in it, since those posts will then not be deleted.\n\nAre you sure you want to delete (and not archive) this blog?")) {
+                document.location.href='/register/delete/' + blogid + '/';
+            }
+        }
+
+        function confirmArchiveBlog(blogid) {
+            if(window.confirm("Are you sure you want to archive this blog?\n\nArchiving means that Planet PostgreSQL will no longer attempt to download any entries from the blog (so you will not get any error messages), but it remains in the history of Planet for future reference.\n\nAre you sure?")) {
+                document.location.href='/register/archive/' + blogid + '/';
+            }
+        }
+    </script>
     </div>
-  </div>
-  {%endfor%}
-  <input class="btn btn-default" type="submit" value="Save">
-  <a class="btn btn-default" href="/register/">Cancel</a>
-  <a class="btn btn-default" onClick="confirmDeleteBlog({{blog.id}})">Delete</a>
-{%if blog.approved and blog.has_entries%}
-  <a class="btn btn-default" onClick="confirmArchiveBlog({{blog.id}})">Archive</a>
-{%endif%}
-</form>
 
-{%if not new%}
-<a name="log"></a>
-<h3>Log</h3>
-{%if blog.lastsuccess%}
-<p>
-  The last successful fetch of this feed was <em>{{blog.lastsuccess|date:"Y-m-d H:i:s"}}.</em>
-</p>
-{%endif%}
-<table class="table table-condensed table-striped">
-  <tr>
-    <th>Time</th>
-    <th>Success</th>
-    <th>Text</th>
-  </tr>
-  {%for l in log%}
-  <tr>
-    <td>{{l.ts|date:"Y-m-d H:i:s"}}</td>
-    <td>
-{%if l.success%}<span class="label label-success">Success</span>
-{%elif l.ts < blog.lastsuccess%}<span class="label label-warning" title="A successful fetch has been completed after this failure occurred">Past failure</span>
-{%else%}<span class="label label-danger">Failure</span>{%endif%}
-    </td>
-    <td>{{l.info}}</td>
-  </tr>
-  {%endfor%}
-</table>
-{%endif%}{#not new#}
-
-{%endblock%}
-{%block extrahead%}
-<script language="javascript">
-function confirmDelete(blogid, postid) {
-  if (confirm("Are you sure you want to delete the post?\n\nThe post will automatically re-appear on the next crawl if it's still in the feed. If you don't want that to happen, hide the post instead!\n\nAre you sure?")) {
-     document.location.href='/register/blogposts/' + blogid + '/delete/' + postid + '/';
-  }
-}
-
-function confirmDeleteBlog(blogid) {
-  if(confirm("Are you sure you want to delete this blog?\n\nAll entries in the blog as well as all history will be deleted.\n\nNormally, you should Archive the blog instead of delete it if it has any posts in it, since those posts will then not be deleted.\n\nAre you sure you want to delete (and not archive) this blog?")) {
-     document.location.href='/register/delete/' + blogid + '/';
-  }
-}
-
-function confirmArchiveBlog(blogid) {
-   if(confirm("Are you sure you want to archive this blog?\n\nArchiving means that Planet PostgreSQL will no longer attempt to download any entries from the blog (so you will not get any error messages), but it remains in the history of Planet for future reference.\n\nAre you sure?")) {
-     document.location.href='/register/archive/' + blogid + '/';
-  }
-}
-</script>
-{%endblock%}
+{% endblock %}

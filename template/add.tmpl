@@ -1,21 +1,30 @@
-{%extends "base.tmpl"%}
-{%block content%}
-<h1>Adding your blog to Planet PostgreSQL</h1>
-<p>
-Adding your blog to Planet PostgreSQL is simple, and we encourage all people
-who blog about PostgreSQL to do it. Just follow the steps below:
-</p>
-<ol>
- <li>Make sure your blog follows the <a href="https://www.postgresql.org/about/policies/planet-postgresql/">policy</a>.</li>
- <li>If you don't have one already, 
-  <a href="https://www.postgresql.org/account/signup/">sign up</a>
-  for a PostgreSQL Community Account (same as is used for example for
-  the PostgreSQL <a href="https://wiki.postgresql.org">wiki</a>).
- </li>
- <li>Go to the <a href="/register/">registration</a> website, and add
-  your blog.</li>
- <li>Wait for the blog to get approved by the
-  <a href="mailto:planet _at_ postgresql.org">moderators</a>.</li>
- <li>Wait up to 15 minutes for syndication of your blog to begin.</li>
-</ol>
-{%endblock%}
+{% extends "base.tmpl" %}
+{% block content %}
+
+    <div class="col-md-12">
+        <h1>Adding your blog to Planet PostgreSQL</h1>
+        <p>
+            Adding your blog to Planet PostgreSQL is simple, and we encourage all people
+            who blog about PostgreSQL to do it. Just follow the steps below:
+        </p>
+
+        <ol>
+            <li>Make sure your blog follows the
+                <a href="https://www.postgresql.org/about/policies/planet-postgresql/">policy</a>.</li>
+
+            <li>If you don't have one already,
+                <a href="https://www.postgresql.org/account/signup/">sign up</a>
+                for a PostgreSQL Community Account (same as is used for example for
+                the PostgreSQL <a href="https://wiki.postgresql.org/">wiki</a>).</li>
+
+            <li>Go to the <a href="/register/">registration</a> website, and add
+                your blog.</li>
+
+            <li>Wait for the blog to get approved by the
+                <a href="mailto:planet _at_ postgresql.org">moderators</a>.</li>
+
+            <li>Wait up to 15 minutes for syndication of your blog to begin.</li>
+        </ol>
+    </div>
+
+{% endblock %}

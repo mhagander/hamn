@@ -1,33 +1,86 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
- <head>
-  <title>Planet PostgreSQL</title>
-  <meta http-equiv="Content-Type" content="text/xhtml; charset=utf-8" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="alternate" type="application/rss+xml" title="Planet PostgreSQL" href="https://planet.postgresql.org/rss20.xml" />
-  <style type="text/css" media="screen" title="Normal Text">@import url("/css/planet.css");</style>
- </head>
- <body>
-  <div id="planetWrap">
-   <div id="planetHeader">
-    <div class="fl"><a href="/"><img src="/img/hdr_left.png" alt="PostgreSQL" /></a></div>
-    <div class="fr"><img width="210" height="80" src="/img/hdr_right.png" alt="The world's most advanced open source database" /></div>
-    <div class="cb"></div>
-   </div> <!-- planetHeader -->
-   <div id="planetMain">
-{% block content %} {% endblock %}
-   </div> <!-- planetMain -->
-  </div> <!-- planetWrap -->
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-var pageTracker = _gat._getTracker("UA-1345454-7");
-pageTracker._trackPageview();
-</script>
+        <!-- Bootstrap CSS -->
+        <link href="https://assets.postgresql.org/bootstrap/4/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
- </body>
+        <link rel="stylesheet" href="/css/planet.css">
+
+        <title>{% block title %}{% endblock %}</title>
+
+        {% block extrahead %}{% endblock %}
+    </head>
+
+    <body>
+        <div class="container-fluid">
+
+            <!-- Nav -->
+            <div class="row justify-content-md-center">
+                <div class="col">
+                    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+                        <a class="navbar-brand p-0" href="/">
+                            <img class="logo" src="/img/elephant.png" alt="PostgreSQL Elephant Logo">
+                        </a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#pgNavbar" aria-controls="pgNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="pgNavbar">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item p-2"><a href="/" title="Home">Home</a></li>
+                                <li class="nav-item p-2"><a href="/feeds.html" title="Blog List">Blog List</a></li>
+                                <li class="nav-item p-2"><a href="/add.html" title="Add Your Blog">Add Your Blog</a></li>
+                                <li class="nav-item p-2"><a href="/register/" title="Manage Your Blogs">Manage Your Blogs</a></li>
+                                <li class="nav-item p-2"><a href="https://www.postgresql.org/about/policies/planet-postgresql/" title="Posting Policy">Posting Policy</a></li>
+                            </ul>
+                        </div> <!-- pgNavBar -->
+                    </nav>
+                </div> <!-- col -->
+            </div> <!-- row -->
+            <!-- End Nav -->
+
+            <!-- Content -->
+            <div class="container-fluid margin">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="pgContentWrap">
+                            <div class="row">
+
+                                {% block content %}{% endblock %}
+
+                            </div>
+                            <!-- End Content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <div class="container">
+                <a href="https://www.postgresql.org/about/policies/privacy/">Privacy Policy</a> | <a href="https://www.postgresql.org/about/policies/coc/">Code of Conduct</a>
+                <br/>
+                Copyright © 2008-2022 PostgreSQL Global Development Group
+            </div>
+        </footer>
+        <!-- End Footer -->
+
+        <!-- jQuery/Bootstrap -->
+        <script src="https://assets.postgresql.org/jquery/3/jquery-3.6.1.slim.min.js" crossorigin="anonymous"></script>
+        <script src="https://assets.postgresql.org/bootstrap/4/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+        <!-- Google Analytics -->
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            var pageTracker = _gat._getTracker("UA-1345454-7");
+            pageTracker._trackPageview();
+        </script>
+
+    </body>
 </html>
