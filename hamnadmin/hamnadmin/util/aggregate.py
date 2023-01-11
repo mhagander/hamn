@@ -61,8 +61,8 @@ class FeedFetcher(object):
                 self.feed.blogurl = parser.feed.link
             elif self.feed.blogurl != parser.feed.link:
                 self.feed.new_blogurl = parser.feed.link
-        except Exception:
-            self._trace("Exception when setting blogurl from parser.feed.link: %s" % exception)
+        except Exception as e:
+            self._trace("Exception when setting blogurl from parser.feed.link: %s" % e)
             pass
 
         for entry in parser.entries:
