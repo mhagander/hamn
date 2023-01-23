@@ -63,6 +63,17 @@ div.contentwrap h2:after {
     margin: .5em 0 .5em .75em;
 }
 
+.planetpost img {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   max-height: 100px;
+   max-width: 300px;
+   width: auto;
+   height: auto;
+   clear: left;
+}
+
 h2 a, h3 a {
     text-decoration: none;
     color: #515151;

@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <h5 class="card-title"><a href="{{post.link}}">{{post.title}}</a></h5>
                     <h6 class="card-subtitle mb-2 text-muted">Posted by {%if post.feed.blogurl%}<a href="{{post.feed.blogurl}}">{{post.feed.name}}</a>{%else%}{{post.feed.name}}{%endif%} {%if post.feed.team%} in <a href="{{post.feed.team.teamurl}}">{{post.feed.team.name}}</a>{%endif%} on <span class="date">{{post.dat|date:"Y-m-d"}} at {{post.dat|date:"H:i"}}</span></h6>
-                    <div>
+                    <div class="planetpost">
                         {{post.txt|postcontents}}
                     </div>
                 </div>
