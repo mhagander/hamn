@@ -74,6 +74,26 @@ div.contentwrap h2:after {
    clear: left;
 }
 
+/* Set headers to be smaller than the one we use for the wrapper, which is h5=1.25rem */
+.planetpost h1 {
+   font-size: 1.1rem;
+}
+.planetpost h2 {
+   font-size: 1rem;
+}
+.planetpost h3 {
+   font-size: 0.9rem;
+}
+.planetpost h4 {
+   font-size: 0.8rem;
+}
+.planetpost h5 {
+   font-size: 0.7rem;
+}
+.planetpost h6 {
+   font-size: 0.6rem;
+}
+
 h2 a, h3 a {
     text-decoration: none;
     color: #515151;
