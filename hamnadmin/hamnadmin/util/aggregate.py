@@ -56,10 +56,11 @@ class FeedFetcher(object):
 
         self._trace("Fetched %s, status %s" % (self.feed.feedurl, parser.status))
 
+        # Use an exception block in case parser.feed.link is not in the feed for
+        # some reason.  Caller will pick up on new_blogurl being set and will be
+        # sure to send an email about the change and to get it saved to the database.
         try:
-            if self.feed.blogurl == '':
-                self.feed.blogurl = parser.feed.link
-            elif self.feed.blogurl != parser.feed.link:
+            if self.feed.blogurl != parser.feed.link:
                 self.feed.new_blogurl = parser.feed.link
         except Exception as e:
             self._trace("Exception when setting blogurl from parser.feed.link: %s" % e)

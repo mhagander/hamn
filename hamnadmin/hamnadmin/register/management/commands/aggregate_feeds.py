@@ -114,6 +114,33 @@ class Command(BaseCommand):
                         feed.lastsuccess = datetime.now()
                         feed.save(update_fields=['lastsuccess'])
 
+                        # If the blog URL changed, update it as requested
+                        # Do this here so that the new blogurl is used for emails below.
+                        if getattr(feed, 'new_blogurl', None):
+                            self.trace("URL changed for %s to %s" % (feed.feedurl, feed.new_blogurl))
+                            send_simple_mail(
+                                settings.EMAIL_SENDER,
+                                settings.NOTIFICATION_RECEIVER,
+                                "A blog url changed on Planet PostgreSQL",
+                                "When checking the blog at {0} by {1}\nthe blog URL was updated to:\n{2}\n(from previous value {3})\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user, feed.new_blogurl, feed.blogurl),
+                                sendername="Planet PostgreSQL",
+                                receivername="Planet PostgreSQL Moderators",
+                            )
+                            send_simple_mail(
+                                settings.EMAIL_SENDER,
+                                feed.user.email,
+                                "URL of your blog at Planet PostgreSQL updated",
+                                "The blog aggregator at Planet PostgreSQL has update the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\nIf this is correct, you don't have to do anything.\nIf not, please contact planet@postgresql.org\n".format(
+                                    feed.feedurl,
+                                    feed.new_blogurl,
+                                    feed.blogurl,
+                                ),
+                                sendername="Planet PostgreSQL",
+                                receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
+                            )
+                            feed.blogurl = feed.new_blogurl
+                            feed.save(update_fields=['blogurl'])
+
                         for entry in results:
                             self.trace("Found entry at %s" % entry.link)
                             # Entry is a post, but we need to check if it's already there. Check
@@ -194,31 +221,6 @@ class Command(BaseCommand):
                                 receivername="Planet PostgreSQL Moderators",
                             )
 
-                        # If the blog URL changed, update it as requested
-                        if getattr(feed, 'new_blogurl', None):
-                            self.trace("URL changed for %s to %s" % (feed.feedurl, feed.new_blogurl))
-                            send_simple_mail(
-                                settings.EMAIL_SENDER,
-                                settings.NOTIFICATION_RECEIVER,
-                                "A blog url changed on Planet PostgreSQL",
-                                "When checking the blog at {0} by {1}\nthe blog URL was updated to:\n{2}\n(from previous value {3})\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user, feed.new_blogurl, feed.blogurl),
-                                sendername="Planet PostgreSQL",
-                                receivername="Planet PostgreSQL Moderators",
-                            )
-                            send_simple_mail(
-                                settings.EMAIL_SENDER,
-                                feed.user.email,
-                                "URL of your blog at Planet PostgreSQL updated",
-                                "The blog aggregator at Planet PostgreSQL has update the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\nIf this is correct, you don't have to do anything.\nIf not, please contact planet@postgresql.org\n".format(
-                                    feed.feedurl,
-                                    feed.new_blogurl,
-                                    feed.blogurl,
-                                ),
-                                sendername="Planet PostgreSQL",
-                                receivername="{0} {1}".format(feed.user.first_name, feed.user.last_name),
-                            )
-                            feed.blogurl = feed.new_blogurl
-                            feed.save(update_fields=['blogurl'])
                 if self.debug:
                     # Roll back transaction without error
                     raise BreakoutException()
