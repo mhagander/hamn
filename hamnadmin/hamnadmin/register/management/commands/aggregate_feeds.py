@@ -117,7 +117,7 @@ class Command(BaseCommand):
                         # If the blog URL changed, update it as requested
                         # Do this here so that the new blogurl is used for emails below.
                         if getattr(feed, 'new_blogurl', None):
-                            self.trace("URL changed for %s to %s" % (feed.feedurl, feed.new_blogurl))
+                            self.trace("URL changed for %s from '%s' to '%s'" % (feed.feedurl, feed.blogurl, feed.new_blogurl))
                             send_simple_mail(
                                 settings.EMAIL_SENDER,
                                 settings.NOTIFICATION_RECEIVER,
