@@ -13,16 +13,19 @@ Copyright (C) 2009-2019 PostgreSQL Global Development Group
 import psycopg2
 import psycopg2.extensions
 import configparser
-from twitterclient import TwitterClient
+import requests_oauthlib
 
 
 # Simple map used to shorten id values to URLs
 _urlvalmap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '-', '_']
 
 
-class PostToTwitter(TwitterClient):
+class PostToTwitter(object):
     def __init__(self, cfg):
-        TwitterClient.__init__(self, cfg)
+        self.tw = requests_oauthlib.OAuth1Session(cfg.get('twitter', 'consumer'),
+                                                  cfg.get('twitter', 'consumersecret'),
+                                                  cfg.get('twitter', 'token'),
+                                                  cfg.get('twitter', 'secret'))
 
         psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
         self.db = psycopg2.connect(c.get('planet', 'db'))
@@ -31,14 +34,14 @@ class PostToTwitter(TwitterClient):
         """
         Actually make a post to twitter!
         """
-        r = self.tw.post('{0}statuses/update.json'.format(self.twitter_api), data={
-            'status': msg,
+        r = self.tw.post('https://api.twitter.com/2/tweets', json={
+            'text': msg,
         })
-        if r.status_code != 200:
-            raise Exception("Could not post to twitter, status code {0}".format(r.status_code))
+        if r.status_code != 201:
+            raise Exception("Could not post to twitter, status code {0}, error {1}".format(r.status_code, r.text))
 
         # Return the id of the tweet
-        return r.json()['id']
+        return r.json()['data']['id']
 
     def Run(self):
         c = self.db.cursor()

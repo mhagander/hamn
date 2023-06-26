@@ -22,7 +22,7 @@ if not cfg.has_option('twitter', 'consumer') or not cfg.has_option('twitter', 'c
     print("in the [twitter] section of planet.ini.")
     sys.exit(1)
 
-oauth = requests_oauthlib.OAuth1Session(cfg.get('twitter', 'consumer'), cfg.get('twitter', 'consumersecret'))
+oauth = requests_oauthlib.OAuth1Session(cfg.get('twitter', 'consumer'), cfg.get('twitter', 'consumersecret'), callback_uri='oob')
 fetch_response = oauth.fetch_request_token('https://api.twitter.com/oauth/request_token')
 auth_url = oauth.authorization_url('https://api.twitter.com/oauth/authorize')
 
