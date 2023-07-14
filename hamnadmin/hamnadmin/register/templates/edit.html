@@ -8,21 +8,21 @@
             <h3>Status</h3>
             <p>
                 {% if blog.approved %}
-                    This blog is currently <span class="label label-success">approved</span>.
+                    This blog is currently <span class="badge badge-success">approved</span>.
                     {% if blog.recent_failures %}
                         {% if blog.recent_failures <= 5 %}
-                            This blog has generated <span class="label label-warning">sporadic errors</span> in the past 24 hours. See
+                            This blog has generated <span class="badge badge-warning">sporadic errors</span> in the past 24 hours. See
                             the <a href="#log">log</a> below for details.
                         {% else %}
-                            This blog has generated <span class="label label-danger">multiple failures</span> in the past 24 hours. See
+                            This blog has generated <span class="badge badge-danger">multiple failures</span> in the past 24 hours. See
                             the <a href="#log">log</a> below for details.
                         {% endif %}
                     {% else %}{#recent_failures#}
-                        The blog last posted an entry at <span class="label label-info">{{ blog.latestentry.dat|date:"Y-m-d H:i:s" }}</span>.
+                        The blog last posted an entry at <span class="badge badge-info">{{ blog.latestentry.dat|date:"Y-m-d H:i:s" }}</span>.
                     {% endif %}
 
                 {% else %}
-                    This blog is currently <span class="label label-warning">not approved</span>.</p>
+                    This blog is currently <span class="badge badge-warning">not approved</span>.</p>
                     {% if blog.has_entries %}
                         The blog is currently waiting for moderator approval.
                     {% else %}
@@ -85,7 +85,7 @@
     <form method="post" action="." class="form-horizontal">{% csrf_token %}
         {% for field in form %}
             <div class="form-group{% if field.errors %} has-error{% endif %}">
-                <label for="{{ field.id }}" class="col-sm-2">{{ field.label }}</label>
+                <label for="{{ field.id }}" class="col-sm-2">{{ field.badge }}</badge>
                 <div class="col-sm-10">
                     <div class="controls">
                         {{ field }}
@@ -124,9 +124,9 @@
                 <tr>
                     <td>{{ l.ts|date:"Y-m-d H:i:s" }}</td>
                     <td>
-                        {% if l.success %}<span class="label label-success">Success</span>
-                        {% elif l.ts < blog.lastsuccess %}<span class="label label-warning" title="A successful fetch has been completed after this failure occurred">Past failure</span>
-                        {% else %}<span class="label label-danger">Failure</span>{% endif %}
+                        {% if l.success %}<span class="badge badge-success">Success</span>
+                        {% elif l.ts < blog.lastsuccess %}<span class="badge badge-warning" title="A successful fetch has been completed after this failure occurred">Past failure</span>
+                        {% else %}<span class="badge badge-danger">Failure</span>{% endif %}
                     </td>
                     <td>{{ l.info }}</td>
                 </tr>
