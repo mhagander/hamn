@@ -13,6 +13,7 @@ Copyright (C) 2009-2019 PostgreSQL Global Development Group
 import psycopg2
 import psycopg2.extensions
 import configparser
+import html
 import requests_oauthlib
 
 
@@ -35,7 +36,7 @@ class PostToTwitter(object):
         Actually make a post to twitter!
         """
         r = self.tw.post('https://api.twitter.com/2/tweets', json={
-            'text': msg,
+            'text': html.unescape(msg),
         })
         if r.status_code != 201:
             raise Exception("Could not post to twitter, status code {0}, error {1}".format(r.status_code, r.text))
