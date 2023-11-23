@@ -13,7 +13,7 @@ import requests_oauthlib
 class BlogEditForm(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = ('feedurl', 'team', 'twitteruser', 'authorfilter')
+        fields = ('feedurl', 'team', 'authorfilter')
 
     def __init__(self, request, *args, **kwargs):
         self.request = request
