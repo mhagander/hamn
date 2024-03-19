@@ -147,7 +147,7 @@ class ModeratorNotes(models.Model):
     class Meta:
         db_table = 'moderatornotes'
         verbose_name_plural = 'Moderator notes'
-        ordering = ['-ts']
+        ordering = ['ts']
 
     def __str__(self):
         return "Note for %s by %s at %s" % (self.feed.name, self.user, self.ts)
