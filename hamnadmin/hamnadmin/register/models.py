@@ -136,3 +136,18 @@ class AggregatorLog(models.Model):
 
     def __str__(self):
         return "Log entry for %s (%s)" % (self.feed.name, self.ts)
+
+
+class ModeratorNotes(models.Model):
+    ts = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
+    feed = models.ForeignKey(Blog, null=False, blank=False, db_column='feed', on_delete=models.CASCADE)
+    note = models.TextField()
+
+    class Meta:
+        db_table = 'moderatornotes'
+        verbose_name_plural = 'Moderator notes'
+        ordering = ['-ts']
+
+    def __str__(self):
+        return "Note for %s by %s at %s" % (self.feed.name, self.user, self.ts)

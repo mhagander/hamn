@@ -6,7 +6,7 @@ from django.db import transaction
 from django.db.models import Count, Max, Q, Subquery, OuterRef, Exists, FilteredRelation
 from django.contrib import messages
 
-from hamnadmin.register.models import Post, Blog, Team, AggregatorLog, AuditEntry
+from hamnadmin.register.models import Post, Blog, Team, AggregatorLog, AuditEntry, ModeratorNotes
 from hamnadmin.mailqueue.util import send_simple_mail
 from hamnadmin.util.varnish import purge_url, purge_xkey, purge_root_and_feeds
 
@@ -87,51 +87,56 @@ def edit(request, id=None):
         blog = Blog(user=request.user, name="{0} {1}".format(request.user.first_name, request.user.last_name))
 
     if request.method == 'POST':
-        saved_url = blog.feedurl
-        saved_filter = blog.authorfilter
-        saved_team = blog.team
-        form = BlogEditForm(request, data=request.POST, instance=blog)
-        if form.is_valid():
-            if id:
-                # This is an existing one. If we change the URL of the blog, it needs to be
-                # de-moderated if it was previously approved.
-                if blog.approved:
-                    if saved_url != form.cleaned_data['feedurl'] or saved_filter != form.cleaned_data['authorfilter']:
-                        obj = form.save()
-                        obj.approved = False
-                        obj.save(update_fields=['approved'])
+        if 'note' in request.POST:
+            form = BlogEditForm(request, instance=blog)
+            note = ModeratorNotes(feed=blog, note=request.POST['note'], user=request.user)
+            note.save()
+        else:
+            saved_url = blog.feedurl
+            saved_filter = blog.authorfilter
+            saved_team = blog.team
+            form = BlogEditForm(request, data=request.POST, instance=blog)
+            if form.is_valid():
+                if id:
+                    # This is an existing one. If we change the URL of the blog, it needs to be
+                    # de-moderated if it was previously approved.
+                    if blog.approved:
+                        if saved_url != form.cleaned_data['feedurl'] or saved_filter != form.cleaned_data['authorfilter']:
+                            obj = form.save()
+                            obj.approved = False
+                            obj.save(update_fields=['approved'])
 
-                        send_simple_mail(
-                            settings.EMAIL_SENDER,
-                            settings.NOTIFICATION_RECEIVER,
-                            "A blog was edited on Planet PostgreSQL",
-                            "The blog at {0}\nwas edited by {1} in a way that needs new moderation.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(blog.feedurl, blog.user),
-                            sendername="Planet PostgreSQL",
-                            receivername="Planet PostgreSQL Moderators",
-                        )
+                            send_simple_mail(
+                                settings.EMAIL_SENDER,
+                                settings.NOTIFICATION_RECEIVER,
+                                "A blog was edited on Planet PostgreSQL",
+                                "The blog at {0}\nwas edited by {1} in a way that needs new moderation.\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(blog.feedurl, blog.user),
+                                sendername="Planet PostgreSQL",
+                                receivername="Planet PostgreSQL Moderators",
+                            )
 
-                        messages.warning(request, "Blog has been resubmitted for moderation, and is temporarily disabled.")
+                            messages.warning(request, "Blog has been resubmitted for moderation, and is temporarily disabled.")
 
-                        purge_root_and_feeds()
-                        purge_url('/feeds.html')
+                            purge_root_and_feeds()
+                            purge_url('/feeds.html')
 
-                        return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
+                            return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
 
-            obj = form.save()
+                obj = form.save()
 
-            if obj.team and obj.team != saved_team:
-                # We allow anybody to join a team by default, and will just send a notice
-                # so the team manager can undo it.
-                send_simple_mail(settings.EMAIL_SENDER,
-                                 obj.team.manager.email,
-                                 "A blog joined your team on Planet PostgreSQL",
-                                 "The blog at {0} by {1} {2}\nhas been added to your team {3} on Planet PostgreSQL\n\nIf this is correct, you do not need to do anything.\n\nIf this is incorrect, please go to\n\nhttps://planet.postgresql.org/register/\n\nand click the button to remove the blog from your team.\nWe apologize if this causes work for you.\n\n".format(
-                                     obj.feedurl,
-                                     obj.user.first_name, obj.user.last_name,
-                                     obj.team.name),
-                                 sendername="Planet PostgreSQL",
-                                 receivername="{0} {1}".format(obj.team.manager.first_name, obj.team.manager.last_name),
-                                 )
+                if obj.team and obj.team != saved_team:
+                    # We allow anybody to join a team by default, and will just send a notice
+                    # so the team manager can undo it.
+                    send_simple_mail(settings.EMAIL_SENDER,
+                                     obj.team.manager.email,
+                                     "A blog joined your team on Planet PostgreSQL",
+                                     "The blog at {0} by {1} {2}\nhas been added to your team {3} on Planet PostgreSQL\n\nIf this is correct, you do not need to do anything.\n\nIf this is incorrect, please go to\n\nhttps://planet.postgresql.org/register/\n\nand click the button to remove the blog from your team.\nWe apologize if this causes work for you.\n\n".format(
+                                         obj.feedurl,
+                                         obj.user.first_name, obj.user.last_name,
+                                         obj.team.name),
+                                     sendername="Planet PostgreSQL",
+                                     receivername="{0} {1}".format(obj.team.manager.first_name, obj.team.manager.last_name),
+                                     )
 
             return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
     else:
@@ -142,6 +147,7 @@ def edit(request, id=None):
         'form': form,
         'blog': blog,
         'log': AggregatorLog.objects.filter(feed=blog).order_by('-ts')[:30],
+        'notes': ModeratorNotes.objects.filter(feed=blog).order_by('-ts'),
         'posts': Post.objects.filter(feed=blog).order_by('-dat')[:10],
         'title': 'Edit blog: %s' % blog.name,
     })

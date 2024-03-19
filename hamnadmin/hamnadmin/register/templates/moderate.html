@@ -38,6 +38,26 @@
                             {% if blog.authorfilter %}<br/>Author filter: {{ blog.authorfilter }}{% endif %}<br/>&nbsp;
                         </div>
                     </div>
+
+                    {% if user.is_superuser and blog.moderatornotes_set.all %}
+
+                    <div class="row">
+                        <div class="col-sm-1"><strong>Moderator notes</strong></div>
+                        <div class="col-sm-10">
+                            <table class="table table-condensed table-striped table-bordered">
+                                <tr><th>Notes</th><th>Moderator</th><th>Date/Time</th></tr>
+                                {% for n in blog.moderatornotes_set.all %}
+                                    <tr>
+                                        <td style="width: 60%">{{ n.note }}</td>
+                                        <td style="width: 20%">{{ n.user }}</td>
+                                        <td style="width: 20%">{{ n.ts|date:"Y-m-d H:i:s" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <div class="row">
                         <div class="col-sm-1"><strong>Posts</strong></div>
                         <div class="col-sm-10">

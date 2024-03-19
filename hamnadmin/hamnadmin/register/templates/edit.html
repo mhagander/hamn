@@ -30,8 +30,40 @@
                         automatically submitted for approval.
                     {% endif %}{#has_entries#}
                 {% endif %}{#approved#}
+            </p>
         {% endif %}{#not new#}
-    </p>
+
+    {% if user.is_superuser %}
+        <h3>Moderator Notes</h3>
+        {% if notes %}
+        <table class="table table-condensed table-striped">
+            <tr>
+                <th style="width: 60%">Note</th>
+                <th style="width: 20%">Moderator</th>
+                <th style="width: 20%">Date/Time</th>
+            </tr>
+            {% for n in notes %}
+                <tr>
+                    <td>{{ n.note }}</td>
+                    <td>{{ n.user }}</td>
+                    <td>{{ n.ts|date:"Y-m-d H:i:s" }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <form method="post" action=".">{% csrf_token %}
+            <div class="form-row align-items-center">
+                <div class="col-auto" style="width: 60%">
+                    <label for="id_note" class="sr-only">New note</label>
+                    <input type="text" name="note" class="form-control mb-2" id="id_note">
+                </div>
+                <div class="col-auto" style="width: 40%">
+                    <button type="submit" class="btn btn-primary mb-2">Add Note</button>
+                </div>
+            </div>
+        </form>
+    {% endif %}
 
     {% if messages %}
         <h3>Results</h3>

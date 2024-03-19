@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from hamnadmin.register.models import Blog, Team, Post, AggregatorLog
+from hamnadmin.register.models import Blog, Team, Post, AggregatorLog, ModeratorNotes
 
 
 class TeamAdmin(admin.ModelAdmin):
@@ -29,7 +29,12 @@ class AggregatorLogAdmin(admin.ModelAdmin):
     list_display = ['ts', 'success', 'feed', 'info']
 
 
+class ModeratorNotesAdmin(admin.ModelAdmin):
+    list_display = ['ts', 'user', 'feed', 'note']
+
+
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(AggregatorLog, AggregatorLogAdmin)
+admin.site.register(ModeratorNotes, ModeratorNotesAdmin)
