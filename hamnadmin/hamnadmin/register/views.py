@@ -138,7 +138,7 @@ def edit(request, id=None):
                                      receivername="{0} {1}".format(obj.team.manager.first_name, obj.team.manager.last_name),
                                      )
 
-            return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
+                return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
     else:
         form = BlogEditForm(request, instance=blog)
 
