@@ -91,6 +91,7 @@ def edit(request, id=None):
             form = BlogEditForm(request, instance=blog)
             note = ModeratorNotes(feed=blog, note=request.POST['note'], user=request.user)
             note.save()
+            return HttpResponseRedirect("/register/edit/{0}/".format(blog.id))
         else:
             saved_url = blog.feedurl
             saved_filter = blog.authorfilter
