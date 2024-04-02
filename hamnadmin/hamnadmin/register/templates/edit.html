@@ -33,7 +33,7 @@
             </p>
         {% endif %}{#not new#}
 
-    {% if user.is_superuser %}
+    {% if user.is_superuser and not new %}
         <h3>Moderator Notes</h3>
         {% if notes %}
         <table class="table table-condensed table-striped">
@@ -103,6 +103,7 @@
 
 
     <h3>Edit</h3>
+{% endif %}
 
     {% if form.errors %}
         <div class="alert alert-danger">Please correct the errors below, and re-submit the form.</div>
