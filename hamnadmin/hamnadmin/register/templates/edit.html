@@ -2,7 +2,11 @@
 {% block content %}
     <div class="col-md-12">
 
+    {% if new %}
+        <h1>Add blog</h1>
+    {% else %}
         <h1>Edit blog</h1>
+    {% endif %}
 
         {% if not new %}
             <h3>Status</h3>
