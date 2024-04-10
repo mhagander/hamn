@@ -1,13 +1,13 @@
-from django.conf.urls import url, include
+from django.urls import re_path, include
 
 import hamnadmin.register.views
 from hamnadmin.register.feeds import PostFeed
 
 urlpatterns = [
-    url(r'^$', hamnadmin.register.views.planet_home),
-    url(r'^add.html$', hamnadmin.register.views.planet_add),
-    url(r'^feeds.html$', hamnadmin.register.views.planet_feeds),
+    re_path(r'^$', hamnadmin.register.views.planet_home),
+    re_path(r'^add.html$', hamnadmin.register.views.planet_add),
+    re_path(r'^feeds.html$', hamnadmin.register.views.planet_feeds),
 
-    url(r'^rss20(?P<type>_short)?\.xml$', PostFeed()),
-    url(r'^register/', include('hamnadmin.register.urls')),
+    re_path(r'^rss20(?P<type>_short)?\.xml$', PostFeed()),
+    re_path(r'^register/', include('hamnadmin.register.urls')),
 ]
