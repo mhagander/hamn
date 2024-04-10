@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name_plural': 'Moderator notes',
                 'db_table': 'moderatornotes',
-                'ordering': ['-ts'],
+                'ordering': ['ts'],
             },
         ),
     ]
