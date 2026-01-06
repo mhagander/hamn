@@ -122,7 +122,7 @@ class Command(BaseCommand):
                                 settings.EMAIL_SENDER,
                                 settings.NOTIFICATION_RECEIVER,
                                 "A blog url changed on Planet PostgreSQL",
-                                "When checking the blog at {0} by {1}\nthe blog URL was updated to:\n{2}\n(from previous value {3})\n\nTo moderate: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user, feed.new_blogurl, feed.blogurl),
+                                "When checking the blog at {0} by {1}\nthe blog URL was updated to:\n{2}\n(from previous value {3})\nNo change in approval status has been made.\n\nTo moderate this or other feeds: https://planet.postgresql.org/register/moderate/\n\n".format(feed.feedurl, feed.user, feed.new_blogurl, feed.blogurl),
                                 sendername="Planet PostgreSQL",
                                 receivername="Planet PostgreSQL Moderators",
                             )
@@ -130,7 +130,7 @@ class Command(BaseCommand):
                                 settings.EMAIL_SENDER,
                                 feed.user.email,
                                 "URL of your blog at Planet PostgreSQL updated",
-                                "The blog aggregator at Planet PostgreSQL has updated the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\nIf this is correct, you don't have to do anything.\nIf not, please contact planet@postgresql.org\n".format(
+                                "The blog aggregator at Planet PostgreSQL has automatically updated the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\n\nThis value is retrieved from the feed itself, so if it is not correct,\nthe contents of the feed needs to be corrected.\nIf you have any further questions, please contact planet@postgresql.org\n".format(
                                     feed.feedurl,
                                     feed.new_blogurl,
                                     feed.blogurl,
