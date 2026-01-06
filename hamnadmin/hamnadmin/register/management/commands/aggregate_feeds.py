@@ -130,7 +130,7 @@ class Command(BaseCommand):
                                 settings.EMAIL_SENDER,
                                 feed.user.email,
                                 "URL of your blog at Planet PostgreSQL updated",
-                                "The blog aggregator at Planet PostgreSQL has update the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\nIf this is correct, you don't have to do anything.\nIf not, please contact planet@postgresql.org\n".format(
+                                "The blog aggregator at Planet PostgreSQL has updated the URL of your blog\nwith the feed at {0} to:\n{1} (from {2})\nIf this is correct, you don't have to do anything.\nIf not, please contact planet@postgresql.org\n".format(
                                     feed.feedurl,
                                     feed.new_blogurl,
                                     feed.blogurl,
