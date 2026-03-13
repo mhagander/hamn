@@ -19,6 +19,9 @@ DATABASES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+# We don't use the django timezone support
+USE_TZ = False
+
 TIME_ZONE = 'GMT'
 LANGUAGE_CODE = 'en-us'
 
