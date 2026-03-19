@@ -147,9 +147,9 @@ def edit(request, id=None):
         'new': id is None,
         'form': form,
         'blog': blog,
-        'log': AggregatorLog.objects.filter(feed=blog).order_by('-ts')[:30],
-        'notes': ModeratorNotes.objects.filter(feed=blog).order_by('ts'),
-        'posts': Post.objects.filter(feed=blog).order_by('-dat')[:10],
+        'log': AggregatorLog.objects.filter(feed=blog).order_by('-ts')[:30] if blog.pk else [],
+        'notes': ModeratorNotes.objects.filter(feed=blog).order_by('ts') if blog.pk else [],
+        'posts': Post.objects.filter(feed=blog).order_by('-dat')[:10] if blog.pk else [],
         'title': 'Edit blog: %s' % blog.name,
     })
 
