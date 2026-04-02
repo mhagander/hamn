@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 from datetime import datetime, timedelta
 
 from hamnadmin.util.shortlink import urlvalmap
@@ -36,7 +37,6 @@ class Blog(models.Model):
     archived = models.BooleanField(default=False)
     authorfilter = models.CharField(max_length=255, default='', blank=True)
     team = models.ForeignKey(Team, db_column='team', blank=True, null=True, on_delete=models.CASCADE)
-    twitteruser = models.CharField(max_length=255, default='', blank=True)
     excludestats = models.BooleanField(null=False, blank=False, default=False)
 
     # Things that may change
@@ -77,7 +77,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     guidisperma = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
-    twittered = models.BooleanField(default=False)
+    postedto = models.JSONField(null=False, blank=True, default=dict)
     shortlink = models.CharField(max_length=255)
 
     def __str__(self):

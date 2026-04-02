@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'hamnadmin.register',
     'hamnadmin.mailqueue',
+    'hamnadmin.util',
     'django.contrib.admin',
 )
 
