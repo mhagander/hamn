@@ -30,7 +30,7 @@ class Command(BaseCommand):
         if not curs.fetchall()[0][0]:
             raise CommandError("Failed to get advisory lock, existing social_post process stuck?")
 
-        posts = Post.objects.select_related('feed').only('id', 'title', 'link', 'shortlink', 'feeds__name').filter(feed__approved=True, dat__gt=datetime.now() - timedelta(days=7)).exclude(postedto__has_keys=allprovidernames).order_by('dat')
+        posts = Post.objects.select_related('feed').only('id', 'title', 'link', 'shortlink', 'feed__name').filter(feed__approved=True, dat__gt=datetime.now() - timedelta(days=7)).exclude(postedto__has_keys=allprovidernames).order_by('dat')
 
         for post in posts:
             if not post.shortlink:
