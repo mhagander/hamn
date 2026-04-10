@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
             msg = "%s: %s\n\n%s\n\n#postgresql" % (
                 post.feed.name,
-                post.txt,
+                post.title,
                 post.shortlink,
             )
 
