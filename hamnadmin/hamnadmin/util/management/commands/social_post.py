@@ -53,9 +53,9 @@ class Command(BaseCommand):
                     break
                 post.title = post.title[:-(len(msg) - 295) - 1]
 
-            msg = "%s: %s %s" % (
+            msg = "%s: %s\n\n%s\n\n#postgresql" % (
                 post.feed.name,
-                self.trimpost(post.txt, len(post.title) + len(post.feed.name) + len(post.shortlink) + 3),
+                post.txt,
                 post.shortlink,
             )
 
