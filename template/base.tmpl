@@ -8,7 +8,9 @@
         <link href="https://assets.postgresql.org/bootstrap/4/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
         <link rel="stylesheet" href="/css/planet.css">
-        <link rel="me" href="https://fosstodon.org/@planetpostgres" />
+{%if MASTODON_HOMEURL %}
+        <link rel="me" href="{{ MASTODON_HOMEURL }}" />
+{% endif %}
 
         <title>{% block title %}{% endblock %}</title>
 

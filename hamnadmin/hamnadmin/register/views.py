@@ -25,6 +25,7 @@ def planet_home(request):
         'posts': posts,
         'topposters': topposters,
         'topteams': topteams,
+        'MASTODON_HOMEURL': getattr(settings, 'MASTODON_HOMEURL', None),
     })
 
 
