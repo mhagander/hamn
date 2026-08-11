@@ -45,3 +45,8 @@ class PostFeed(Feed):
                 return "Unable to clean HTML"
         else:
             return item.txt
+
+    def __call__(self, request, *args, **kwargs):
+        r = super().__call__(request, *args, **kwargs)
+        r['xkey'] = 'index'
+        return r

@@ -3,6 +3,20 @@ from django.conf import settings
 import requests
 
 
+def xkey(key):
+    "Add a specific xkey to the page"
+    def _xkey(fn):
+        def __xkey(request, *_args, **_kwargs):
+            resp = fn(request, *_args, **_kwargs)
+            if 'xkey' in resp:
+                resp['xkey'] += ' ' + key
+            else:
+                resp['xkey'] = key
+            return resp
+        return __xkey
+    return _xkey
+
+
 def purge_url(url):
     if not settings.VARNISH_URL:
         print("Not purging {0}".format(url))
@@ -29,7 +43,3 @@ def purge_xkey(xkey):
                 raise Exception("Invalid response code %s" % r.status_code)
         except Exception as e:
             raise Exception("Failed to purge xkey '{0}': {1}'".format(xkey, e))
-
-
-def purge_root_and_feeds():
-    purge_url('/(|rss20.*)$')

@@ -8,7 +8,7 @@ from django.contrib import messages
 
 from hamnadmin.register.models import Post, Blog, Team, AggregatorLog, AuditEntry, ModeratorNotes
 from hamnadmin.mailqueue.util import send_simple_mail
-from hamnadmin.util.varnish import purge_url, purge_xkey, purge_root_and_feeds
+from hamnadmin.util.varnish import xkey, purge_xkey
 
 import datetime
 
@@ -16,6 +16,7 @@ from .forms import BlogEditForm, ModerateRejectForm
 
 
 # Public planet
+@xkey('index')
 def planet_home(request):
     statdate = datetime.datetime.now() - datetime.timedelta(days=61)
     posts = Post.objects.select_related('feed', 'feed__team').filter(hidden=False, feed__approved=True).order_by('-dat')[:30]
@@ -29,6 +30,7 @@ def planet_home(request):
     })
 
 
+@xkey('feedlist')
 def planet_feeds(request):
     return render(request, 'feeds.tmpl', {
         'feeds': Blog.objects.filter(approved=True, archived=False),
@@ -119,8 +121,7 @@ def edit(request, id=None):
 
                             messages.warning(request, "Blog has been resubmitted for moderation, and is temporarily disabled.")
 
-                            purge_root_and_feeds()
-                            purge_url('/feeds.html')
+                            purge_xkey("index feedlist")
 
                             return HttpResponseRedirect("/register/edit/{0}/".format(obj.id))
 
@@ -173,8 +174,7 @@ def delete(request, id):
     )
     blog.delete()
     messages.info(request, "Blog deleted.")
-    purge_root_and_feeds()
-    purge_url('/feeds.html')
+    purge_xkey('index feedlist')
     return HttpResponseRedirect("/register/")
 
 
@@ -252,8 +252,7 @@ def __setposthide(request, blogid, postid, status):
     post.save(update_fields=['hidden'])
     AuditEntry(request.user.username, 'Set post %s on blog %s visibility to %s' % (postid, blogid, status)).save()
     messages.info(request, 'Set post "%s" to %s' % (post.title, status and "hidden" or "visible"), extra_tags="top")
-    purge_root_and_feeds()
-    purge_xkey('post_{}'.format(post.id))
+    purge_xkey('index post_{}'.format(post.id))
     return HttpResponseRedirect("/register/edit/{0}/".format(blogid))
 
 
@@ -284,7 +283,7 @@ def blogpost_delete(request, blogid, postid):
     post.delete()
     AuditEntry(request.user.username, 'Deleted post %s from blog %s' % (postid, blogid)).save()
     messages.info(request, 'Deleted post "%s". It will be reloaded on the next scheduled crawl.' % title)
-    purge_root_and_feeds()
+    purge_xkey('index')
     return HttpResponseRedirect("/register/edit/{0}/".format(blogid))
 
 
@@ -376,7 +375,6 @@ def moderate_approve(request, blogid):
 
     messages.info(request, "Blog {0} approved, notification sent to moderators and owner.".format(blog.feedurl))
 
-    purge_root_and_feeds()
-    purge_url('/feeds.html')
+    purge_xkey('index feedlist')
 
     return HttpResponseRedirect("/register/moderate/")

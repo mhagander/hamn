@@ -11,7 +11,7 @@ from datetime import datetime
 from hamnadmin.register.models import Blog, Post, AggregatorLog
 from hamnadmin.util.aggregate import FeedFetcher, ParserGotRedirect
 from hamnadmin.mailqueue.util import send_simple_mail
-from hamnadmin.util.varnish import purge_root_and_feeds
+from hamnadmin.util.varnish import purge_xkey
 
 
 class BreakoutException(Exception):
@@ -232,7 +232,7 @@ class Command(BaseCommand):
             pass
 
         if total_entries > 0 and not self.debug:
-            purge_root_and_feeds()
+            purge_xkey('index')
 
     def _fetch_one_feed(self, fetcher):
         if self.full:
