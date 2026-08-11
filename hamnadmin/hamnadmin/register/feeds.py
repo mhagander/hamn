@@ -8,9 +8,13 @@ from .models import Post
 class PostFeed(Feed):
     title = 'Planet PostgreSQL'
     link = 'https://planet.postgresql.org'
-    feed_url = 'https://planet.postgresql.org/rss20.xml'
     description = 'Planet PostgreSQL'
     generator = 'Planet PostgreSQL'
+
+    def feed_url(self, type=None):
+        if type == "_short":
+            return 'https://planet.postgresql.org/rss20_short.xml'
+        return 'https://planet.postgresql.org/rss20.xml'
 
     def get_object(self, request, type=None):
         return type
